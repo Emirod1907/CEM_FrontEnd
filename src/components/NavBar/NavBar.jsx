@@ -16,9 +16,9 @@ const NavBar = () => {
                 <NavLink 
                     to={'/eventos/new'}
                     end
-                    className={({isActive})=>{
+                    className={({isActive})=>
                             isActive ? 'link-seleccionado' : 'link'
-                        }}
+                        }
                     >Crear evento</NavLink>
                 <NavLink 
                     to={'/eventos'}
@@ -40,13 +40,6 @@ const NavBar = () => {
                     className={({isActive})=>
                         isActive ? 'link-seleccionado' : 'link'
                     }>Crear Bodega
-                </NavLink>
-                <NavLink 
-                    to={'/'}
-                    end
-                    className={({isActive})=>
-                        isActive ? 'link-seleccionado' : 'link'
-                    }>Hello
                 </NavLink>
                 <NavLink 
                     to={'/login'}
