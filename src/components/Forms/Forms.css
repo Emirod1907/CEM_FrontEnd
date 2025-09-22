@@ -42,3 +42,8 @@
     border-radius: 4px;
     max-width: 300px;
 }
+.form-input-button{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}

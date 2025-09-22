@@ -136,7 +136,7 @@ const CreateEventoForm = () => {
                         onChange={handleChangeImg}
                     />
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input-button'>
                     <button>Crear Evento</button>
                 </div>
             </form>

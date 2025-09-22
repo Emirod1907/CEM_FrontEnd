@@ -67,7 +67,7 @@ const Login = () => {
                             value={form_values_state[fields.USER_PASSWORD]}
                         />
                     </div>
-                    <div>
+                    <div className='form-input-button'>
                         <button>Iniciar Sesion</button>
                     </div>
                 </div>

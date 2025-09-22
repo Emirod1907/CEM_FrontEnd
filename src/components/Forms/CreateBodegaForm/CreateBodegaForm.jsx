@@ -105,7 +105,7 @@ const CreateBodegaForm = () => {
                         value={form_values_state[fields.AFORO]}
                      />
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input-button'>
                     <button>Crear Bodega</button>
                 </div>
             </form>
