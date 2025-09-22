@@ -1,0 +1,55 @@
+
+.card-conteiner{
+    align-items: center;
+    text-align: center;
+    position: relative;
+    width: calc(25% - 40px);
+    min-width: 250px;
+    height: auto;
+    margin: 15px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+    transition: box-shadow 0.3 ease;
+    overflow: hidden;
+    background: #576ce7;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    box-sizing: border-box;
+}
+.discount{
+    background: red;
+}
+.real_price{
+    text-decoration: line-through;
+    background-color: #4a4a4a;
+}
+span{
+    margin: 2px;
+    padding: 5px;
+    border-radius: 3px;
+    box-sizing: border-box;
+    border: 1px solid black;
+    height: fit-content;
+}
+.price_info{
+    align-items: left;
+    display: flex;
+    justify-content: center;
+}
+.final_price{
+    background-color:rgb(153, 231, 153);
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+img{
+    width: 220px;
+    height: 200px;
+    overflow: hidden;
+    object-fit: cover;
+}
+h3{
+    position:relative;
+    display: flex;
+    /*justify-content: left;*/
+    align-items: center;
+}

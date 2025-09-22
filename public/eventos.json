@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "nombre": "Fiesta del Vino Tinto",
+    "descripcion": "Degustación de los mejores vinos tintos de la región acompañados de quesos artesanales",
+    "fecha": "2025-09-15",
+    "precio": 45.99,
+    "cupo": 120,
+    "bodega": "Bodega Los Alamos",
+    "imagen": "https://visitvalledeuco.com/wp-content/uploads/2020/01/salentein-2.jpg"
+  },
+  {
+    "id": 2,
+    "nombre": "Cata Premium de Malbec",
+    "descripcion": "Experiencia exclusiva con vinos Malbec añejos de reserva especial",
+    "fecha": "2025-10-05",
+    "precio": 89.50,
+    "cupo": 40,
+    "bodega": "Viñedos Don Juan",
+    "imagen": "https://ejemplo.com/imagenes/malbec-premium.jpg"
+  },
+  {
+    "id": 3,
+    "nombre": "Noche de Blancos y Mariscos",
+    "descripcion": "Armonización de vinos blancos con selección de mariscos frescos",
+    "fecha": "2025-08-25",
+    "precio": 65.00,
+    "cupo": 80,
+    "bodega": "Bodega Costa Dorada",
+    "imagen": "https://ejemplo.com/imagenes/blancos-mariscos.jpg"
+  },
+  {
+    "id": 4,
+    "nombre": "Festival de Cosecha",
+    "descripcion": "Celebración anual de la cosecha con música en vivo y comida tradicional",
+    "fecha": "2025-03-20",
+    "precio": 30.00,
+    "cupo": 250,
+    "bodega": "Viñas del Valle",
+    "imagen": "https://ejemplo.com/imagenes/festival-cosecha.jpg"
+  },
+  {
+    "id": 5,
+    "nombre": "Taller de Sommelier",
+    "descripcion": "Aprende las técnicas profesionales de cata de vinos con expertos",
+    "fecha": "2025-07-12T18:00:00",
+    "precio": 120.00,
+    "cupo": 25,
+    "bodega": "Bodega El Conocedor",
+    "imagen": "https://vinomanos.com/wp-content/uploads/2024/10/Jardines_1.jpg"
+  }
+]
