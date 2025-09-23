@@ -20,14 +20,20 @@ const Login = () => {
     const [form_values_state, setFormValuesState] = useState(initial_form_state)
     const {isAuthenticated, setIsAuthenticated} = useAuth()
     const navigate = useNavigate()
-    const handleSubmit=(event)=>{
+    const handleSubmit= async(event)=>{
         event.preventDefault()
-        loginRequest(form_values_state)
         if(!form_values_state){
             console.error("form_values_state es undefined!");
             return;}
-        //setIsAuthenticated(true)
-        return console.log('Sesion iniciada satisfactoriamente!')
+        try {
+            const response = await loginRequest(form_values_state)
+            if(response.message === "Sesion iniciada con exito"){
+                setIsAuthenticated(true)
+                console.log('Sesion iniciada satisfactoriamente!')
+            }
+        } catch (error) {
+            console.error("Error en login:", error);
+        }
     }
 
     const handleChangeInputValue = (event) =>{
