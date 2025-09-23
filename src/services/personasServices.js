@@ -51,5 +51,5 @@ try {
   }
 };
 
-export const verifyTokenRequest = ()=> axios.get('auth/verify')
+export const verifyTokenRequest = ()=> axios.get('auth/verify',{withCredentials: true})
   

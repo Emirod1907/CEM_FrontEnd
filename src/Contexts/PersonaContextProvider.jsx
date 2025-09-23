@@ -29,7 +29,8 @@ useEffect(()=>{
     setLoading(false)
     return}
     try {
-      const res = await verifyTokenRequest()
+      const res = await verifyTokenRequest(cookies.token)
+      console.log("Token recibido:", cookies.token)
       console.log(res);
       if(!res.data) 
       {
@@ -37,7 +38,7 @@ useEffect(()=>{
         setLoading(false)
         return;
       }
-      setUser(res.data)
+      setPersona(res.data);
       setIsAuthenticated(true)
       setLoading(false)
     } catch (error) {

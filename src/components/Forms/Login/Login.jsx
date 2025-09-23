@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { loginRequest } from '../../../services/personasServices'
+import { loginRequest, verifyTokenRequest } from '../../../services/personasServices'
 import { useAuth } from '../../../Contexts/PersonaContextProvider'
 import { useNavigate } from 'react-router-dom'
 
@@ -28,10 +28,12 @@ const Login = () => {
         try {
             const response = await loginRequest(form_values_state)
             console.log("Respuesta completa:", response);
-            if(response && response.data && response.data.message === "Sesion iniciada con exito"){
+            if(response && response.message === "Sesion iniciada con exito"){
                 setIsAuthenticated(true)
-                setPersona(response.data)
+                await verifyTokenRequest();
+                console.log("isAutenticated",isAuthenticated)
                 console.log('Sesion iniciada satisfactoriamente!')
+                return
             }
         } catch (error) {
             console.error("Error en login:", error);
