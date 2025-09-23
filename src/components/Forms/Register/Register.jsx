@@ -36,7 +36,8 @@ const Register = () => {
             console.log("Datos a enviar:", JSON.stringify(form_values_state, null, 2));
             alert('Enviado')
             const response = await registerRequest(form_values_state)
-            if(response.sucess){
+            console.log("Respuesta completa:", response);
+            if(response && response.data && response.data.message === "Usuario creado con éxito"){
                 setIsAuthenticated(true);
                 navigate("/eventos/new")
                 return console.log('Usuario registrado satisfactoriamente!')
