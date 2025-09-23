@@ -30,6 +30,7 @@ const Login = () => {
             console.log("Respuesta completa:", response);
             if(response && response.data && response.data.message === "Sesion iniciada con exito"){
                 setIsAuthenticated(true)
+                setPersona(response.data)
                 console.log('Sesion iniciada satisfactoriamente!')
             }
         } catch (error) {

@@ -14,6 +14,7 @@ export const useAuth= () =>{
 
 const PersonaContextProvider = ({children}) => {
 
+const [persona, setPersona] = useState(null)
 const [isAuthenticated, setIsAuthenticated] = useState(false)
 const [ loading, setLoading]= useState(true)
 
@@ -28,7 +29,7 @@ useEffect(()=>{
     setLoading(false)
     return}
     try {
-      const res = await verifyTokenRequest(cookies.token)
+      const res = await verifyTokenRequest()
       console.log(res);
       if(!res.data) 
       {
@@ -36,7 +37,7 @@ useEffect(()=>{
         setLoading(false)
         return;
       }
-
+      setUser(res.data)
       setIsAuthenticated(true)
       setLoading(false)
     } catch (error) {
@@ -55,7 +56,9 @@ useEffect(()=>{
                 // token,
                 loading,
                 isAuthenticated,
-                setIsAuthenticated
+                setIsAuthenticated,
+                persona,
+                setPersona
             }
         }
         >
