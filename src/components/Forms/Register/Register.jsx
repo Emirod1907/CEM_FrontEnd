@@ -137,7 +137,7 @@ const Register = () => {
                 <div className='form-input'>
                     <label htmlFor="user_password">Ingrese su Password</label>
                     <input 
-                        type="pwd" 
+                        type="password" 
                         minLength={7}
                         maxLength={12}
                         id='user_password'
