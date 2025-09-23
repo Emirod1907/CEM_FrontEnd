@@ -27,7 +27,7 @@ const Login = () => {
             return;}
         try {
             const response = await loginRequest(form_values_state)
-            if(response.message === "Sesion iniciada con exito"){
+            if(response.data.message === "Sesion iniciada con exito"){
                 setIsAuthenticated(true)
                 console.log('Sesion iniciada satisfactoriamente!')
             }

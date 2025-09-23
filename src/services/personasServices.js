@@ -32,6 +32,10 @@ try {
     });
     return response.data;
   } catch (error) {
+    
+    if (error.response && error.response.status === 400) {
+          throw new Error(error.response.data.message || 'Contraseña incorrecta');
+    }
     console.error("Error en loginRequest:", error);
     
     if (error.response) {
