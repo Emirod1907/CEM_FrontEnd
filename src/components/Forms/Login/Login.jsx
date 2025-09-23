@@ -50,10 +50,11 @@ const Login = () => {
             <form action="submit" onSubmit={handleSubmit}>
                 <div className='form-container-form-fields'>
                     <div className='form-input'>
-                        <label htmlFor="nombre_usuario">Ingrese su Nombre de Usuario</label>
+                        <label htmlFor="email">Ingrese su email</label>
                         <input 
                             type="text"
-                            id='nombre_usuario'
+                            id='email'
+                            name='email'
                             onChange={handleChangeInputValue}
                             value={form_values_state[fields.EMAIL]}
                         />
@@ -63,6 +64,7 @@ const Login = () => {
                         <input 
                             type="password" 
                             id='user_password'
+                            name='user_password'
                             onChange={handleChangeInputValue}
                             value={form_values_state[fields.USER_PASSWORD]}
                         />
