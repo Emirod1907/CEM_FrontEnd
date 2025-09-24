@@ -29,8 +29,8 @@ const CreateBodegaForm = () => {
         }
         const dataToSend = {
         ...form_values_state,
-        aforo: parseInt(form_values_state.AFORO),
-        imagen: form_values_state.IMAGEN ? 'pending' : null // o maneja la subida primero
+        aforo: form_values_state.aforo ? parseInt(form_values_state.aforo) : 0,
+        imagen: form_values_state.IMAGEN ? 'pending' : null
     }
     console.log("Datos a enviar",dataToSend)
     

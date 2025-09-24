@@ -28,6 +28,7 @@ const Login = () => {
         try {
             const response = await loginRequest(form_values_state)
             console.log("Respuesta completa:", response);
+            //console.log('Token guardado:', response.getItem('token'));
             if(response && response.message === "Sesion iniciada con exito"){
                 setIsAuthenticated(true)
                 await verifyTokenRequest();
