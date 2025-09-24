@@ -23,8 +23,22 @@ const CreateBodegaForm = () => {
     
     const handleSubmit = async(event) =>{
         event.preventDefault()
-        await createBodega(form_values_state)
-        await UploadImg(form_values_state.IMAGEN)
+        try {
+            if(form_values_state.IMAGEN){
+            await UploadImg(form_values_state.IMAGEN)
+        }
+        const dataToSend = {
+        ...form_values_state,
+        aforo: parseInt(form_values_state.AFORO),
+        imagen: form_values_state.IMAGEN ? 'pending' : null // o maneja la subida primero
+    }
+    console.log("Datos a enviar",dataToSend)
+    
+    await createBodega(dataToSend)
+    console.log("Datos enviados",dataToSend)
+        } catch (error) {
+            console.log("errores:",error);
+        }
     }
     const handleChangeInputValue= (event)=>{
         setFormValuesState(
@@ -36,7 +50,7 @@ const CreateBodegaForm = () => {
     const handleChangeImg= (event)=>{
         setFormValuesState(
             (prev_state)=>({
-                ...prev_state,[event.target.name]:event.target.file[0]}
+                ...prev_state,[event.target.name]:event.target.files[0]}
         ))
     }
 
