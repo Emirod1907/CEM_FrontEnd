@@ -33,12 +33,11 @@ const CreateBodegaForm = () => {
             }
         )
     }
-    const handleChangeImg= (imagen)=>{
+    const handleChangeImg= (event)=>{
         setFormValuesState(
-            (prev_state)=>{
-                return {...prev_state,[imagen.target.name]:imagen.target.file}
-            }
-        )
+            (prev_state)=>({
+                ...prev_state,[event.target.name]:event.target.file[0]}
+        ))
     }
 
   return (
