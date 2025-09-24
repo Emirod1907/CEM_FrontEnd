@@ -24,9 +24,15 @@ const CreateBodegaForm = () => {
     const handleSubmit = async(event) =>{
         event.preventDefault()
         try {
-            if(form_values_state.IMAGEN){
-            await UploadImg(form_values_state.IMAGEN)
+            let imagenUrl = null;
+        // Si hay imagen, subirla a imgBB primero
+        if (form_values_state.IMAGEN) {
+            console.log('📤 Subiendo imagen a imgBB...');
+            imagenUrl = await UploadImg(form_values_state.IMAGEN);
+            console.log('✅ Imagen subida, URL:', imagenUrl);
+            form_values_state.IMAGEN = imagenUrl;
         }
+
         const dataToSend = {
         ...form_values_state,
         aforo: form_values_state.aforo ? parseInt(form_values_state.aforo) : 0,

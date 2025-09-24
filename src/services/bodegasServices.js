@@ -12,7 +12,10 @@ export const getBodega = async()=>{
 }
 export const createBodega = async( bodegaData )=>{
     try {
-        const response = await axios.post(`bodegas/new`,bodegaData)    
+        const dataToSend = {
+            ...bodegaData,
+            imagen: bodegaData.imagen || ''}
+        const response = await axios.post(`bodegas/new`,dataToSend)    
         // res.status('200').msg('Bodega creada con exito')
         console.log(response)
         return response.data

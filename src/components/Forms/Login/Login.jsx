@@ -29,8 +29,9 @@ const Login = () => {
             const response = await loginRequest(form_values_state)
             console.log("Respuesta completa:", response);
             if(response && response.message === "Sesion iniciada con exito"){
+                await new Promise(resolve => setTimeout(resolve, 100));
                 setIsAuthenticated(true)
-                await verifyTokenRequest();
+                // await verifyTokenRequest();
                 console.log("isAutenticated",isAuthenticated)
                 console.log('Sesion iniciada satisfactoriamente!')
                 return
