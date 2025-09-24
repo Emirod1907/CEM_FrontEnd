@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import BodegaCard from '../../Cards/BodegaCard/BodegaCard'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
+import { getBodegas } from '../../../services/bodegasServices'
 //import getBodega from '../../../services/bodegasServices'
 
 const BodegasList = () => {
@@ -13,7 +14,7 @@ const BodegasList = () => {
     setLoading(true)
     setTimeout(
       async () => {
-    const bodegas_list_response = await getBodega()
+    const bodegas_list_response = await getBodegas()
     if(bodegas_list_response){
     setBodegas(bodegas_list_response)
     }

@@ -1,5 +1,5 @@
 const UploadImg = async(imagen) => {
-    const API_KEY_IMGBB = 'f3894bdcb5d6c156e1a964105a9037ef'
+    const API_KEY_IMGBB = 'ff5739b75142784a149468080abf2748'
 
     const form_data = new FormData()    
     form_data.append('image', imagen)

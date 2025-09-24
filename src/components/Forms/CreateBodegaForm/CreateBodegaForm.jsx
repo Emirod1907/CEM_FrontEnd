@@ -4,19 +4,24 @@ import { createBodega } from '../../../services/bodegasServices'
 
 const CreateBodegaForm = () => {
     
-    const fields={
-        NOMBRE: 'nombre',
-        DOMICILIO: 'domicilio',
-        DESCRIPCION: 'descripcion',
-        IMAGEN: 'imagen',
-        AFORO: 'aforo'
-    }
+    // const fields={
+    //     NOMBRE: 'nombre',
+    //     DOMICILIO: 'domicilio',
+    //     DESCRIPCION: 'descripcion',
+    //     IMAGEN: 'imagen',
+    //     AFORO: 'aforo'
+    // }
     const initial_form_state={
-        [fields.NOMBRE]: '',
-        [fields.DOMICILIO]: '',
-        [fields.DESCRIPCION]: '',
-        [fields.IMAGEN]: null,
-        [fields.AFORO]: ''
+        // [fields.NOMBRE]: '',
+        // [fields.DOMICILIO]: '',
+        // [fields.DESCRIPCION]: '',
+        // [fields.IMAGEN]: null,
+        // [fields.AFORO]: ''
+        nombre: '',
+        domicilio: '',
+        descripcion: '',
+        imagen: null,
+        aforo: ''
     }
 
     const [form_values_state, setFormValuesState]= useState(initial_form_state)
@@ -24,41 +29,59 @@ const CreateBodegaForm = () => {
     const handleSubmit = async(event) =>{
         event.preventDefault()
         try {
-            let imagenUrl = null;
-        // Si hay imagen, subirla a imgBB primero
-        if (form_values_state.IMAGEN) {
-            console.log('📤 Subiendo imagen a imgBB...');
-            imagenUrl = await UploadImg(form_values_state.IMAGEN);
-            console.log('✅ Imagen subida, URL:', imagenUrl);
-            form_values_state.IMAGEN = imagenUrl;
-        }
+                let imagenUrl = null;
+                if (form_values_state.imagen) {
+                    try {
+                        console.log('📤 Subiendo imagen a imgBB...');
+                        imagenUrl = await UploadImg(form_values_state.imagen);
+                        console.log('✅ Imagen subida, URL:', imagenUrl);
+                    } catch (error) {
+                        console.warn('⚠️ Error subiendo imagen, continuando sin imagen:', error);
+                        imagenUrl = null;
+                    }
+                }
 
-        const dataToSend = {
-        ...form_values_state,
-        aforo: form_values_state.aforo ? parseInt(form_values_state.aforo) : 0,
-        imagen: form_values_state.IMAGEN ? 'pending' : null
-    }
-    console.log("Datos a enviar",dataToSend)
-    
-    await createBodega(dataToSend)
-    console.log("Datos enviados",dataToSend)
+                const dataToSend = {
+                    nombre: form_values_state.nombre,
+                    domicilio: form_values_state.domicilio,
+                    descripcion: form_values_state.descripcion,
+                    imagen: imagenUrl,
+                    aforo: form_values_state.aforo ? parseInt(form_values_state.aforo) : 0
+                }
+
+                console.log("Datos a enviar", dataToSend);
         } catch (error) {
             console.log("errores:",error);
         }
     }
-    const handleChangeInputValue= (event)=>{
-        setFormValuesState(
-            (prev_state)=>{
-                return {...prev_state,[event.target.name]:event.target.value}
-            }
-        )
+
+    const handleChange = (event) => {
+        const field = event.target.name;
+        if (field === 'imagen') {
+            setFormValuesState(prev_state => ({
+                ...prev_state,
+                imagen: event.target.files[0]
+            }));
+        } else {
+            setFormValuesState(prev_state => ({
+                ...prev_state,
+                [field]: event.target.value
+            }));
+        }
     }
-    const handleChangeImg= (event)=>{
-        setFormValuesState(
-            (prev_state)=>({
-                ...prev_state,[event.target.name]:event.target.files[0]}
-        ))
-    }
+    // const handleChangeInputValue= (event)=>{
+    //     setFormValuesState(
+    //         (prev_state)=>{
+    //             return {...prev_state,[event.target.name]:event.target.value}
+    //         }
+    //     )
+    // }
+    // const handleChangeImg= (event)=>{
+    //     setFormValuesState(
+    //         (prev_state)=>({
+    //             ...prev_state,[event.target.name]:event.target.files[0]}
+    //     ))
+    // }
 
   return (
     <div className='container'>
@@ -75,8 +98,8 @@ const CreateBodegaForm = () => {
                         maxLength={30}
                         id='nombre'
                         name='nombre'
-                        onChange={handleChangeInputValue}
-                        value={form_values_state[fields.NOMBRE]}
+                        onChange={handleChange}
+                        value={form_values_state.nombre}
                     />
                 </div>
                 <div className='form-container-form-fields'>
@@ -87,8 +110,8 @@ const CreateBodegaForm = () => {
                         maxLength={30}
                         id='domicilio'
                         name='domicilio'
-                        onChange={handleChangeInputValue}
-                        value={form_values_state[fields.DOMICILIO]}
+                        onChange={handleChange}
+                        value={form_values_state.domicilio}
                     />
                 </div>
                 <div className='form-container-form-fields'>
@@ -98,8 +121,8 @@ const CreateBodegaForm = () => {
                         placeholder='Ingrese la descripcion de la bodega'
                         id="descripcion"
                         maxLength={150}
-                        onChange={handleChangeInputValue}
-                        value={form_values_state[fields.DESCRIPCION]}
+                        onChange={handleChange}
+                        value={form_values_state.descripcion}
                     >
                         </textarea>
                 </div>
@@ -110,7 +133,8 @@ const CreateBodegaForm = () => {
                         placeholder='Ingrese imagen de la bodega'
                         id='imagen'
                         name='imagen'
-                        onChange={handleChangeImg}
+                        onChange={handleChange}
+                        // value={form_values_state.imagen}
                     />
                 </div>
                 <div className='form-container-form-fields'>
@@ -120,8 +144,8 @@ const CreateBodegaForm = () => {
                         placeholder='ingrese el numero de aforo'
                         id='aforo'
                         name='aforo'
-                        onChange={handleChangeInputValue}
-                        value={form_values_state[fields.AFORO]}
+                        onChange={handleChange}
+                        value={form_values_state.aforo}
                      />
                 </div>
                 <div className='form-input-button'>

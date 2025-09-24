@@ -17,6 +17,7 @@ export const createBodega = async( bodegaData )=>{
             imagen: bodegaData.imagen || ''}
         const response = await axios.post(`bodegas/new`,dataToSend)    
         // res.status('200').msg('Bodega creada con exito')
+        withCredentials: true
         console.log(response)
         return response.data
     } catch (error) {
