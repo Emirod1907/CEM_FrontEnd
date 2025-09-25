@@ -50,6 +50,7 @@ const CreateBodegaForm = () => {
                 }
 
                 console.log("Datos a enviar", dataToSend);
+                await createBodega(dataToSend);
         } catch (error) {
             console.log("errores:",error);
         }
