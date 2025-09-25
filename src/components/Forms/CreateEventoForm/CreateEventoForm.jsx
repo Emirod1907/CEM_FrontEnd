@@ -27,7 +27,7 @@ const CreateEventoForm = () => {
   
     const handleSubmit = async(event)=>{
         event.preventDefault()
-
+        console.log('Bodega en validación:', form_values_state.bodega)
         if (!form_values_state.bodega.id_bodega) {
             alert('Por favor selecciona una bodega')
             return
@@ -178,6 +178,7 @@ const CreateEventoForm = () => {
         <Modal 
             onClose={() => SetOpenModal(false)}
             onSelectBodega={(bodega) => {
+            console.log('Bodega seleccionada:', bodega)
             setFormValuesState(prev => ({...prev,
                 bodega: {
                     id_bodega: bodega.id_bodega,

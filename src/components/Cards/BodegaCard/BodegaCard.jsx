@@ -4,8 +4,9 @@ import '../Cards.css'
 const BodegaCard = ({id_bodega, nombre, domicilio, descripcion, imagen, aforo, onSelect}) => {
     
         const handleClick = () => {
+        console.log('Bodega clickeada:', { id_bodega, nombre })
         if (onSelect) {
-            onSelect({ id:id_bodega, nombre, domicilio, descripcion, imagen, aforo })
+            onSelect({ id_bodega:id_bodega, nombre, domicilio, descripcion, imagen, aforo })
         }
     }
     
