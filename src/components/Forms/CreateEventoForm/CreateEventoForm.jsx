@@ -16,7 +16,7 @@ const CreateEventoForm = () => {
         descripcion:'',
         fecha:'',
         precio:'',
-        cupo_disponible:'',
+        cupo:'',
         bodega:{id_bodega:'',nombre:''},
         imagen: null
     }
@@ -48,9 +48,9 @@ const CreateEventoForm = () => {
                 const dataToSend = {
                     nombre: form_values_state.nombre,
                     descripcion: form_values_state.descripcion,
-                    fecha: form_values_state.fecha,
+                    fecha: form_values_state.fecha.toString(),
                     precio: form_values_state.precio,
-                    cupo_disponible: form_values_state.cupo_disponible,
+                    cupo: form_values_state.cupo,
                     
                     imagen: imagenUrl,
                     bodega_id: form_values_state.bodega.id_bodega,
@@ -137,13 +137,13 @@ const CreateEventoForm = () => {
                     />
                 </div>
                 <div className='form-container-form-fields'>
-                    <label htmlFor="cupo_disponible">Cupo de entradas disponible</label>
+                    <label htmlFor="cupo">Cupo de entradas disponible</label>
                     <input 
                     type="number" 
-                    id='cupo_disponible'
-                    name='cupo_disponible'
+                    id='cupo'
+                    name='cupo'
                     onChange={handleChangeInputValue}
-                    value={form_values_state.cupo_disponible}
+                    value={form_values_state.cupo}
                     />
                 </div>
                 <div className='form-container-form-fields'>
