@@ -29,11 +29,11 @@ export const postEvent = async()=>{
     }
 }
 
-// const eventData = {
-//   ...form_values_state,
-//   bodega_id: form_values_state[fields.BODEGA].id  // Envía el ID al backend
-// };
-// postEvent(eventData);
+const eventData = {
+  ...form_values_state,
+  bodega_id: form_values_state[bodega].id  // Envía el ID al backend
+};
+postEvent(eventData);
 
 export const updateEvent = async()=>{}
 

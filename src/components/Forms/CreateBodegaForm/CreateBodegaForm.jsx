@@ -4,19 +4,7 @@ import { createBodega } from '../../../services/bodegasServices'
 
 const CreateBodegaForm = () => {
     
-    // const fields={
-    //     NOMBRE: 'nombre',
-    //     DOMICILIO: 'domicilio',
-    //     DESCRIPCION: 'descripcion',
-    //     IMAGEN: 'imagen',
-    //     AFORO: 'aforo'
-    // }
     const initial_form_state={
-        // [fields.NOMBRE]: '',
-        // [fields.DOMICILIO]: '',
-        // [fields.DESCRIPCION]: '',
-        // [fields.IMAGEN]: null,
-        // [fields.AFORO]: ''
         nombre: '',
         domicilio: '',
         descripcion: '',
@@ -70,19 +58,6 @@ const CreateBodegaForm = () => {
             }));
         }
     }
-    // const handleChangeInputValue= (event)=>{
-    //     setFormValuesState(
-    //         (prev_state)=>{
-    //             return {...prev_state,[event.target.name]:event.target.value}
-    //         }
-    //     )
-    // }
-    // const handleChangeImg= (event)=>{
-    //     setFormValuesState(
-    //         (prev_state)=>({
-    //             ...prev_state,[event.target.name]:event.target.files[0]}
-    //     ))
-    // }
 
   return (
     <div className='container'>

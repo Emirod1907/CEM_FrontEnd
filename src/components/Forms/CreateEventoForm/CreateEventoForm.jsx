@@ -7,49 +7,65 @@ import { useAuth } from '../../../Contexts/PersonaContextProvider';
 import { useNavigate } from 'react-router-dom';
 
 const CreateEventoForm = () => {
-    const fields={
-        NOMBRE: 'nombre',
-        DESCRIPCION: 'descripcion',
-        FECHA: 'fecha',
-        PRECIO: 'precio',
-        CUPO_DISPONIBLE: 'cupo',
-        BODEGA:'bodega',
-        IMAGEN: 'imagen'
-    }
+
     const initial_form_state={
-        [fields.NOMBRE]:'',
-        [fields.DESCRIPCION]:'',
-        [fields.FECHA]:'',
-        [fields.PRECIO]:'',
-        [fields.CUPO_DISPONIBLE]:'',
-        [fields.BODEGA]:{id_bodega:'',nombre:''},
-        [fields.IMAGEN]: null
+        nombre:'',
+        descripcion:'',
+        fecha:'',
+        precio:'',
+        cupo_disponible:'',
+        bodega:{id_bodega:'',nombre:''},
+        imagen: null
     }
-    const {isAuthenticated} =  useAuth()
-    const navigate = useNavigate()
+    // const {isAuthenticated} =  useAuth()
+    // const navigate = useNavigate()
     const [OpenModal, SetOpenModal]= useState(false)
     const [ form_values_state, setFormValuesState] = useState(initial_form_state)
   
     const handleSubmit = async(event)=>{
         event.preventDefault()
-        await UploadImg(form_values_state.IMAGEN)
-        await postEvent(form_values_state)
-        return res.json(event)
-    }
+
+        try {
+                let imagenUrl = null;
+                if (form_values_state.imagen) {
+                    try {
+                        console.log('📤 Subiendo imagen a imgBB...');
+                        imagenUrl = await UploadImg(form_values_state.imagen);
+                        console.log('✅ Imagen subida, URL:', imagenUrl);
+                    } catch (error) {
+                        console.warn('⚠️ Error subiendo imagen, continuando sin imagen:', error);
+                        imagenUrl = null;
+                    }
+                }
+                const dataToSend = {
+                    nombre: form_values_state.nombre,
+                    descripcion: form_values_state.descripcion,
+                    fecha: form_values_state.fecha,
+                    precio: form_values_state.precio,
+                    cupo_disponible: form_values_state.precio,
+                    
+                    imagen: imagenUrl,
+                }
+                console.log("Datos a enviar", dataToSend);
+                await postEvent(dataToSend)
+        }catch(error){
+            console.log("errores:",error);
+        }
+}
 
     const handleChangeInputValue = (event) =>{
-        setFormValuesState(
-            (prev_state)=>{
-                return { ...prev_state, [event.target.name]: event.target.value}
-            }
-        )
-    }
-        const handleChangeImg = (imagen) =>{
-        setFormValuesState(
-            (prev_state)=>{
-                return { ...prev_state, [imagen.target.name]: imagen.target.file}
-            }
-        )
+        const field = event.target.name;
+        if (field === 'imagen') {
+            setFormValuesState(prev_state => ({
+                ...prev_state,
+                imagen: event.target.files[0]
+            }));
+        } else {
+            setFormValuesState(prev_state => ({
+                ...prev_state,
+                [field]: event.target.value
+            }));
+        }
     }
 
 
@@ -69,7 +85,7 @@ const CreateEventoForm = () => {
                         id='nombre'
                         name='nombre'
                         onChange={handleChangeInputValue}
-                        value={form_values_state[fields.NOMBRE]}
+                        value={form_values_state.nombre}
                     />
                 </div>
                 <div className='form-container-form-fields'>
@@ -80,7 +96,7 @@ const CreateEventoForm = () => {
                         name="descripcion" 
                         id="descripcion"
                         onChange={handleChangeInputValue}
-                        value={form_values_state[fields.DESCRIPCION]}
+                        value={form_values_state.descripcion}
                     >Ingrese la descripcion del Evento:
                     </textarea>
                 </div>
@@ -91,7 +107,7 @@ const CreateEventoForm = () => {
                         id='fecha'
                         name='fecha'
                         onChange={handleChangeInputValue}
-                        value={form_values_state[fields.FECHA]}
+                        value={form_values_state.fecha}
                     />
                 </div>
                 <div className='form-container-form-fields'>
@@ -101,7 +117,7 @@ const CreateEventoForm = () => {
                         id='precio'
                         name='precio'
                         onChange={handleChangeInputValue}
-                        value={form_values_state[fields.PRECIO]}
+                        value={form_values_state.precio}
                     />
                 </div>
                 <div className='form-container-form-fields'>
@@ -111,7 +127,7 @@ const CreateEventoForm = () => {
                     id='cupo'
                     name='cupo'
                     onChange={handleChangeInputValue}
-                    value={form_values_state[fields.CUPO_DISPONIBLE]}
+                    value={form_values_state.cupo_disponible}
                     />
                 </div>
                 <div className='form-container-form-fields'>
@@ -122,7 +138,7 @@ const CreateEventoForm = () => {
                         id='bodega'
                         name='bodega'
                         onChange={handleChangeInputValue}
-                        value={form_values_state[fields.BODEGA].nombre||''}
+                        value={form_values_state.bodega.nombre||''}
                         placeholder='Selecciona una bodega'
                     /> 
                     <span><FaSearch onClick={()=>{SetOpenModal(true)}}>Buscar bodega</FaSearch></span>
@@ -133,7 +149,7 @@ const CreateEventoForm = () => {
                         type="file" 
                         id='imagen'
                         name='imagen'
-                        onChange={handleChangeImg}
+                        onChange={handleChangeInputValue}
                     />
                 </div>
                 <div className='form-input-button'>
