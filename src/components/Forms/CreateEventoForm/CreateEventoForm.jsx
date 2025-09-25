@@ -92,7 +92,7 @@ const CreateEventoForm = () => {
                 <h1>Crear Evento</h1>
             </div>
             <form action="submit" onSubmit={handleSubmit}>
-                <div className='form-container-form-fields' >
+                <div className='form-input' >
                     <label htmlFor="nombre">Nombre del Evento</label>
                     <input 
                         type="text"
@@ -104,7 +104,7 @@ const CreateEventoForm = () => {
                         value={form_values_state.nombre}
                     />
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="descripcion">Descripcion</label>
                     <textarea
                         placeholder='la fiesta sera para todos los empleados de ACME'
@@ -116,7 +116,7 @@ const CreateEventoForm = () => {
                     >Ingrese la descripcion del Evento:
                     </textarea>
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="fecha">Fecha</label>
                     <input 
                         type= "date"
@@ -126,7 +126,7 @@ const CreateEventoForm = () => {
                         value={form_values_state.fecha}
                     />
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="precio">Ingrese el valor de la entrada:</label>
                     <input 
                         type="number" 
@@ -136,7 +136,7 @@ const CreateEventoForm = () => {
                         value={form_values_state.precio}
                     />
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="cupo">Cupo de entradas disponible</label>
                     <input 
                     type="number" 
@@ -146,7 +146,7 @@ const CreateEventoForm = () => {
                     value={form_values_state.cupo}
                     />
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="bodega">Seleccione la Bodega donde va a llevarse a cabo el evento:</label>
                     <input 
                         type="text"
@@ -159,7 +159,7 @@ const CreateEventoForm = () => {
                     /> 
                     <span><FaSearch onClick={()=>{SetOpenModal(true)}}>Buscar bodega</FaSearch></span>
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="imagen">Inserte imagen del evento</label>
                     <input 
                         type="file" 

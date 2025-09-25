@@ -33,7 +33,7 @@ const EventosList = () => {
 
   const events = eventos.map(
   (evento)=>{
-    return <EventoCard {...evento} key={evento.id}/>
+    return <EventoCard {...evento} key={evento.id_evento}/>
             }
   )
 

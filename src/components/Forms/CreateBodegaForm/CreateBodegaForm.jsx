@@ -66,7 +66,7 @@ const CreateBodegaForm = () => {
                 <h1>Crear Bodega</h1>
             </div>
             <form action="submit" onSubmit={handleSubmit}>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="nombre">Nombre</label>
                     <input 
                         type="text" 
@@ -78,7 +78,7 @@ const CreateBodegaForm = () => {
                         value={form_values_state.nombre}
                     />
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="domicilio">Domicilio</label>
                     <input 
                         type="text"
@@ -90,7 +90,7 @@ const CreateBodegaForm = () => {
                         value={form_values_state.domicilio}
                     />
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="descripcion">Descripcion:</label>
                     <textarea 
                         name="descripcion" 
@@ -102,7 +102,7 @@ const CreateBodegaForm = () => {
                     >
                         </textarea>
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="Imagen">Imagen</label>
                     <input 
                         type="file"
@@ -113,7 +113,7 @@ const CreateBodegaForm = () => {
                         // value={form_values_state.imagen}
                     />
                 </div>
-                <div className='form-container-form-fields'>
+                <div className='form-input'>
                     <label htmlFor="aforo">Aforo:</label>
                     <input 
                         type="number"

@@ -5,7 +5,7 @@ const getEvents = async()=>{
     try {
     const response = await axios.get('eventos')
     console.log(response.data)
-    return response.data
+    return response.data.response
     } catch (error) {
         console.error('error al obtener eventos', error)
         return null
