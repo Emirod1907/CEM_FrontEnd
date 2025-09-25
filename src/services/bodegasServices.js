@@ -34,7 +34,7 @@ export const getBodegas = async ()=>{
        const response = await axios.get('bodegas',{
         withCredentials: true
        }) 
-       return response.data
+       return response.data.response
     } catch (error) {
         console.error('Error al obtener bodegas', error)
         throw error;
