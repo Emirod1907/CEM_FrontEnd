@@ -1,11 +1,11 @@
 import React from 'react'
 import '../Cards.css'
 
-const BodegaCard = ({nombre, domicilio, descripcion, imagen, aforo, onSelect}) => {
+const BodegaCard = ({id_bodega, nombre, domicilio, descripcion, imagen, aforo, onSelect}) => {
     
         const handleClick = () => {
         if (onSelect) {
-            onSelect({ id, nombre, domicilio, descripcion, imagen, aforo })
+            onSelect({ id:id_bodega, nombre, domicilio, descripcion, imagen, aforo })
         }
     }
     

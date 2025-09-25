@@ -50,7 +50,7 @@ useEffect(() => {
   const bodegas_componente = filteredBodegas.map(
   (bodega)=>{
     return <BodegaCard {...bodega} 
-    key={bodega.id}
+    key={bodega.id_bodega}
     onSelect={onSelectBodega}
     />
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import BodegasList from '../../Lists/BodegasList/BodegasList'
 
 const BuscarBodegaList = ({onSelectBodega}) => {
+    console.log('onSelectBodega prop:', onSelectBodega)
     const[searchTerm, setSearchTerm]= useState('')
   return (
     <div>

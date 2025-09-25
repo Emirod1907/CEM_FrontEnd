@@ -32,6 +32,7 @@ const CreateEventoForm = () => {
             alert('Por favor selecciona una bodega')
             return
         }
+        console.log('Bodega seleccionada:', form_values_state.bodega) 
         try {
                 let imagenUrl = null;
                 if (form_values_state.imagen) {
@@ -136,7 +137,7 @@ const CreateEventoForm = () => {
                     />
                 </div>
                 <div className='form-container-form-fields'>
-                    <label htmlFor="cupo">Cupo de entradas disponible</label>
+                    <label htmlFor="cupo_disponible">Cupo de entradas disponible</label>
                     <input 
                     type="number" 
                     id='cupo_disponible'
@@ -179,11 +180,11 @@ const CreateEventoForm = () => {
             onSelectBodega={(bodega) => {
             setFormValuesState(prev => ({...prev,
                 bodega: {
-                    id: bodega.id_bodega,
+                    id_bodega: bodega.id_bodega,
                     nombre: bodega.nombre
             }
         }));
-            setIsModalOpen(false);
+            SetOpenModal(false);
             }}
         />
         )}
