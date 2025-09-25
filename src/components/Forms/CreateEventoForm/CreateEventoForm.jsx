@@ -8,6 +8,9 @@ import { useNavigate } from 'react-router-dom';
 
 const CreateEventoForm = () => {
 
+    const fields = {
+      BODEGA: 'bodega'
+    };
     const initial_form_state={
         nombre:'',
         descripcion:'',
@@ -25,6 +28,10 @@ const CreateEventoForm = () => {
     const handleSubmit = async(event)=>{
         event.preventDefault()
 
+        if (!form_values_state.bodega.id_bodega) {
+            alert('Por favor selecciona una bodega')
+            return
+        }
         try {
                 let imagenUrl = null;
                 if (form_values_state.imagen) {
@@ -42,14 +49,22 @@ const CreateEventoForm = () => {
                     descripcion: form_values_state.descripcion,
                     fecha: form_values_state.fecha,
                     precio: form_values_state.precio,
-                    cupo_disponible: form_values_state.precio,
+                    cupo_disponible: form_values_state.cupo_disponible,
                     
                     imagen: imagenUrl,
+                    bodega_id: form_values_state.bodega.id_bodega,
                 }
                 console.log("Datos a enviar", dataToSend);
-                await postEvent(dataToSend)
+                const result = await postEvent(dataToSend)
+
+                if (result) {
+                alert('Evento creado exitosamente!')
+                setFormValuesState(initial_form_state) // Reset form
+            }
+            
         }catch(error){
-            console.log("errores:",error);
+            console.log("Error al crear evento:",error);
+            alert('Error al crear el evento')
         }
 }
 
@@ -124,8 +139,8 @@ const CreateEventoForm = () => {
                     <label htmlFor="cupo">Cupo de entradas disponible</label>
                     <input 
                     type="number" 
-                    id='cupo'
-                    name='cupo'
+                    id='cupo_disponible'
+                    name='cupo_disponible'
                     onChange={handleChangeInputValue}
                     value={form_values_state.cupo_disponible}
                     />
@@ -163,7 +178,7 @@ const CreateEventoForm = () => {
             onClose={() => SetOpenModal(false)}
             onSelectBodega={(bodega) => {
             setFormValuesState(prev => ({...prev,
-                [fields.BODEGA]: {
+                bodega: {
                     id: bodega.id_bodega,
                     nombre: bodega.nombre
             }

@@ -1,8 +1,8 @@
 import axios from "./axios"
 
-export const getBodega = async()=>{
+export const getBodega = async(id)=>{
     try {
-    const response = await axios.get('bodegas/:id',{
+    const response = await axios.get('bodegas/${id}',{
         withCredentials:true
     })
     return response.data
@@ -25,12 +25,13 @@ export const createBodega = async( bodegaData )=>{
         return response.data
     } catch (error) {
         console.error('Error al crear bodega',error)
+        throw error;
     }
 }
 
 export const getBodegas = async ()=>{
     try {
-       const response = axios.get('bodegas',{
+       const response = await axios.get('bodegas',{
         withCredentials: true
        }) 
        return response.data

@@ -4,9 +4,8 @@ import axios from "./axios"
 const getEvents = async()=>{
     try {
     const response = await axios.get('eventos')
-    const data = await response.json()
-    console.log(data)
-    return data
+    console.log(response.data)
+    return response.data
     } catch (error) {
         console.error('error al obtener eventos', error)
         return null
@@ -15,7 +14,7 @@ const getEvents = async()=>{
 
 export default getEvents
 
-export const postEvent = async()=>{
+export const postEvent = async(evento)=>{
     try {
         const response = await axios.post(`eventos/new`, evento, {
       headers: {
@@ -29,11 +28,11 @@ export const postEvent = async()=>{
     }
 }
 
-const eventData = {
-  ...form_values_state,
-  bodega_id: form_values_state[bodega].id  // Envía el ID al backend
-};
-postEvent(eventData);
+// const eventData = {
+//   ...form_values_state,
+//   bodega_id: form_values_state[bodega].id  // Envía el ID al backend
+// };
+// postEvent(eventData);
 
 export const updateEvent = async()=>{}
 

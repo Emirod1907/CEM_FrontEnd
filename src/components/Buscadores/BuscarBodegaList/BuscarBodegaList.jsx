@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import BodegasList from '../../Lists/BodegasList/BodegasList'
 
-const BuscarBodegaList = (onSelectBodega) => {
+const BuscarBodegaList = ({onSelectBodega}) => {
     const[searchTerm, setSearchTerm]= useState('')
   return (
     <div>

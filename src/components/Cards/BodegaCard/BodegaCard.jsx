@@ -1,31 +1,31 @@
 import React from 'react'
 import '../Cards.css'
 
-const BodegaCard = ({nombre, domicilio, descripcion, imagen, aforo}) => {
-        const fields={
-        NOMBRE: nombre,
-        DOMICILIO: domicilio ,
-        DESCRIPCION: descripcion,
-        IMAGEN: imagen,
-        AFORO: aforo
+const BodegaCard = ({nombre, domicilio, descripcion, imagen, aforo, onSelect}) => {
+    
+        const handleClick = () => {
+        if (onSelect) {
+            onSelect({ id, nombre, domicilio, descripcion, imagen, aforo })
+        }
     }
+    
   return (
-    <div className='card-container'>
+    <div className='card-container' onClick={handleClick} style={{ cursor: 'pointer' }}>
         <div className='card-box'>
             <div className='card-fields'>
-                <h1>{fields.NOMBRE}</h1>
+                <h1>{nombre}</h1>
             </div>
             <div className='card-fields'>
-                <img src={fields.IMAGEN} alt={fields.NOMBRE} />
+                <img src={imagen}  alt={nombre} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
             </div>
             {/* <div className='card-fields'>
                 <p>{fields.DESCRIPCION}</p>
             </div> */}
             <div className='card-fields'>
-                {fields.DOMICILIO}
+                {domicilio}
             </div>
             <div className='card-fields'>
-                {fields.AFORO}
+                {aforo}
             </div>
         </div>
     </div>

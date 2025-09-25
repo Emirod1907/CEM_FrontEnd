@@ -4,39 +4,54 @@ import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import { getBodegas } from '../../../services/bodegasServices'
 //import getBodega from '../../../services/bodegasServices'
 
-const BodegasList = () => {
+const BodegasList = ({searchTerm, onSelectBodega}) => {
   const [bodegas, setBodegas] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [filteredBodegas, setFilteredBodegas] = useState([])
+
+useEffect(() => {
+        const fetchBodegas = async () => {
+            setLoading(true)
+            try {
+                console.log('📡 Obteniendo bodegas del backend...')
+                const bodegasData = await getBodegas() // ✅ FINALMENTE se ejecuta getBodegas
+                console.log('✅ Bodegas obtenidas:', bodegasData)
+                
+                if (bodegasData && Array.isArray(bodegasData)) {
+                    setBodegas(bodegasData)
+                    setFilteredBodegas(bodegasData)
+                } else {
+                    setError('No se pudieron cargar las bodegas')
+                }
+            } catch (err) {
+                console.error('❌ Error al obtener bodegas:', err)
+                setError('Error al cargar las bodegas: ' + err.message)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchBodegas()
+    }, [])
 
 
-  const getBodegasList = async ()=>{
-    setLoading(true)
-    setTimeout(
-      async () => {
-    const bodegas_list_response = await getBodegas()
-    if(bodegas_list_response){
-    setBodegas(bodegas_list_response)
-    }
-    else{
-      setError('Error al obtener eventos')
-    }
-    setLoading(false)
-      },
-      2000
-    )
-  }
-  useEffect(
-    ()=>{
-      getBodegasList()
-    },
-    []
-  )
+    useEffect(() => {
+        if (searchTerm) {
+            const filtered = bodegas.filter(bodega =>
+                bodega.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            setFilteredBodegas(filtered)
+        } else {
+            setFilteredBodegas(bodegas)
+        }
+    }, [searchTerm, bodegas])
   
-  const bodegas_componente = bodegas.map(
+  const bodegas_componente = filteredBodegas.map(
   (bodega)=>{
     return <BodegaCard {...bodega} 
     key={bodega.id}
+    onSelect={onSelectBodega}
     />
 
             }
@@ -45,19 +60,21 @@ const BodegasList = () => {
   let content
 
   if(loading){
-    content= <h1>{<TailSpin/>}</h1>
+    content= <h1>{<TailSpin/>} Cargando Bodegas...</h1>
   }
-  else{
-    if(error){
+  else if(error){
       content = <h2>{error}</h2>
     }
+    else if (filteredBodegas.length === 0) {
+        content = <div className="no-results">
+            {searchTerm ? 'No se encontraron bodegas con ese nombre' : 'No hay bodegas disponibles'}
+        </div>}
     else{
       content =(
         <div className='list-grid'>
                  {bodegas_componente}
         </div>
         )
-    }
   }
   return (
     <div>
