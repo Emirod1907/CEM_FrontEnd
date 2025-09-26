@@ -3,6 +3,7 @@ import BodegaCard from '../../Cards/BodegaCard/BodegaCard'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import { getBodegas } from '../../../services/bodegasServices'
 //import getBodega from '../../../services/bodegasServices'
+import '../Lists.css'
 
 const BodegasList = ({searchTerm, onSelectBodega}) => {
   const [bodegas, setBodegas] = useState([])

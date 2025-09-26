@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import EventoCard from '../../Cards/EventoCard/EventoCard'
 import getEvents from '../../../services/eventosServices'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
+import '../Lists.css'
 
 const EventosList = () => {
   const [eventos, setEventos] = useState([])
