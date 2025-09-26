@@ -1,9 +1,60 @@
-.container{
+/* .container{
     display: flex;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    width: 300px;
+    width: 700px;
     height: 300px;
     border-radius: 10px;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-overlay dialog {
+    width: 90%;
+    max-width: 1200px; /* Mismo ancho máximo que tu grid */
+/*    height: 80vh;
+    overflow: auto;
+    border: none;
+    border-radius: 10px;
+    padding: 20px;
+} */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-overlay dialog {
+    width: 90vw !important; /* Forzar ancho */
+    max-width: 1200px !important;
+    height: 80vh;
+    border: none !important;
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    background: white;
+}
+
+/* Resetear estilos por defecto del dialog */
+dialog {
+    max-width: none !important;
+    width: auto !important;
 }
