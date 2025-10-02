@@ -28,7 +28,7 @@ const EventosList = () => {
       element: 'a[href="/eventos/new"]',
       popover: {
         title: 'Crear Evento',
-        description: 'Haz clic aquí para crear un nuevo evento.',
+        description: 'Haz clic aquí para crear un nuevo evento. Para utilizar esta función debes haberte logueado previamente',
         side: "bottom",
         align: 'start'
       }
@@ -37,7 +37,7 @@ const EventosList = () => {
       element: 'a[href="/bodegas/new"]',
       popover: {
         title: 'Crear Bodega',
-        description: 'Haz clic aquí para crear una nueva bodega.',
+        description: 'Haz clic aquí para crear una nueva bodega. Para ello debes estar logueado',
         side: "bottom", 
         align: 'start'
       }
@@ -46,7 +46,7 @@ const EventosList = () => {
       element: 'a[href="/login"]',
       popover: {
         title: 'Login',
-        description: 'Haz clic aquí para Iniciar sesión.',
+        description: 'Haz clic aquí para Iniciar sesión. Para iniciar sesión, debes haberte registrado previamente',
         side: "bottom", 
         align: 'start'
       }
@@ -119,7 +119,7 @@ const EventosList = () => {
           padding: '10px 15px',
           borderRadius: '5px',
           cursor: 'pointer',
-          margin: '50px 20px'
+          margin: '80px 20px 20px 20px'
         }}
       >
         🎓 Iniciar Tutorial
