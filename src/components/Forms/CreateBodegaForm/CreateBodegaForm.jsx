@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import UploadImg from '../../../services/uploadimg'
 import { createBodega } from '../../../services/bodegasServices'
+import { useTour } from '../../../hooks/useTour';
+
 
 const CreateBodegaForm = () => {
     
@@ -59,9 +61,75 @@ const CreateBodegaForm = () => {
         }
     }
 
+    const { startTour } = useTour();
+
+  const crearBodegaTour = [
+    {
+      element: 'form',
+      popover: {
+        title: 'Formulario de Bodega',
+        description: 'Completa este formulario para crear una nueva bodega.',
+        side: "bottom",
+        align: 'start'
+      }
+    },
+    {
+      element: 'input:first-of-type',
+      popover: {
+        title: 'Nombre de Bodega',
+        description: 'Ingresa el nombre de la bodega.',
+        side: "bottom",
+        align: 'start'
+      }
+    },
+    {
+      element: 'input[name=domicilio]',
+      popover: {
+        title: 'domicilio',
+        description: 'Ingresa el domicilio de la bodega.',
+        side: "top",
+        align: 'start'
+      }
+    },
+        {
+      element: 'input[name=imagen]',
+      popover: {
+        title: 'Imagen',
+        description: 'Sube una imagen de la bodega.',
+        side: "top",
+        align: 'start'
+      }
+    },
+    {
+      element: 'button[type="submit"]',
+      popover: {
+        title: 'Guardar',
+        description: 'Guarda la bodega cuando termines.',
+        side: "top",
+        align: 'start'
+      }
+    }
+  ];
+
+
+
   return (
     <div className='container'>
         <div className='form-container'>
+            <button 
+                onClick={() => startTour(crearBodegaTour)}
+                style={{
+                background: '#007bff',
+                color: 'white',
+                border: 'none',
+                padding: '10px 15px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                margin: '50px 20px'
+                }}
+            >
+                🎓 Tutorial Crear Bodega
+            </button>
             <div className='form-title'>
                 <h1>Crear Bodega</h1>
             </div>

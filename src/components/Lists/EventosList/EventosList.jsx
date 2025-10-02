@@ -25,7 +25,7 @@ const EventosList = () => {
       }
     },
     {
-      element: 'a[href="/crear-evento"]',
+      element: 'a[href="/eventos/new"]',
       popover: {
         title: 'Crear Evento',
         description: 'Haz clic aquí para crear un nuevo evento.',
@@ -34,7 +34,7 @@ const EventosList = () => {
       }
     },
     {
-      element: 'a[href="/crear-bodega"]',
+      element: 'a[href="/bodegas/new"]',
       popover: {
         title: 'Crear Bodega',
         description: 'Haz clic aquí para crear una nueva bodega.',

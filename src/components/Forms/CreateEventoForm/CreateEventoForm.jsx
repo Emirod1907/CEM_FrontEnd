@@ -5,8 +5,59 @@ import Modal from '../../Modals/Modal/Modal'
 import { FaSearch } from "react-icons/fa";
 import { useAuth } from '../../../Contexts/PersonaContextProvider';
 import { useNavigate } from 'react-router-dom';
+import { useTour } from '../../../hooks/useTour';
 
 const CreateEventoForm = () => {
+
+    const {startTour} = useTour();
+
+    const crearEventoTour = [
+    {
+        element: 'form',
+        popover: {
+        title: 'Formulario de Evento',
+        description: 'Completa este formulario para crear un nuevo evento.',
+        side: "bottom",
+        align: 'start'
+        }
+    },
+    {
+        element: 'input[name="nombre"]',
+        popover: {
+        title: 'Nombre del Evento',
+        description: 'Ingresa el nombre del evento aquí.',
+        side: "bottom",
+        align: 'start'
+        }
+    },
+    {
+        element: 'textarea',
+        popover: {
+        title: 'Descripción',
+        description: 'Describe los detalles del evento.',
+        side: "top",
+        align: 'start'
+        }
+    },
+        {
+        element: 'span',
+        popover: {
+        title: 'bodega',
+        description: 'pulse para buscar y seleccionar bodega.',
+        side: "top",
+        align: 'start'
+        }
+    },
+    {
+        element: 'button[type="submit"]',
+        popover: {
+        title: 'Guardar',
+        description: 'Guarda el evento cuando termines.',
+        side: "top",
+        align: 'start'
+        }
+    }
+    ];
 
     const fields = {
       BODEGA: 'bodega'
@@ -88,6 +139,20 @@ const CreateEventoForm = () => {
     return (
     <div className='container'>
         <div className='form-container'>
+            <button 
+        onClick={() => startTour(crearEventoTour)}
+        style={{
+          background: '#007bff',
+          color: 'white',
+          border: 'none',
+          padding: '10px 15px',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          margin: '60px 20px'
+        }}
+      >
+        🎓 Tutorial Crear Evento
+      </button>
             <div className='form-title'>
                 <h1>Crear Evento</h1>
             </div>
