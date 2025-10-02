@@ -3,11 +3,65 @@ import EventoCard from '../../Cards/EventoCard/EventoCard'
 import getEvents from '../../../services/eventosServices'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import '../Lists.css'
+import { useTour } from '../../../hooks/useTour'
+
 
 const EventosList = () => {
+  
   const [eventos, setEventos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+
+  const { startTour } = useTour();
+
+  const eventListTour = [
+    {
+      element: '#event-list',
+      popover: {
+        title: 'Lista de Eventos',
+        description: 'Aquí verás todos tus eventos creados.',
+        side: "bottom",
+        align: 'start'
+      }
+    },
+    {
+      element: 'a[href="/crear-evento"]',
+      popover: {
+        title: 'Crear Evento',
+        description: 'Haz clic aquí para crear un nuevo evento.',
+        side: "bottom",
+        align: 'start'
+      }
+    },
+    {
+      element: 'a[href="/crear-bodega"]',
+      popover: {
+        title: 'Crear Bodega',
+        description: 'Haz clic aquí para crear una nueva bodega.',
+        side: "bottom", 
+        align: 'start'
+      }
+    },    
+    {
+      element: 'a[href="/login"]',
+      popover: {
+        title: 'Login',
+        description: 'Haz clic aquí para Iniciar sesión.',
+        side: "bottom", 
+        align: 'start'
+      }
+    },
+        {
+      element: 'a[href="/register"]',
+      popover: {
+        title: 'Registrate',
+        description: 'Haz clic aquí para registrarte.',
+        side: "bottom", 
+        align: 'start'
+      }
+    }
+  ];
+
 
   const getEventList = async ()=>{
     setLoading(true)
@@ -56,6 +110,20 @@ const EventosList = () => {
   }
   return (
     <div>
+      <button 
+        onClick={() => startTour(eventListTour)}
+        style={{
+          background: '#007bff',
+          color: 'white',
+          border: 'none',
+          padding: '10px 15px',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          margin: '50px 20px'
+        }}
+      >
+        🎓 Iniciar Tutorial
+      </button>
       {content}
     </div>
   )

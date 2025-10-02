@@ -21,6 +21,7 @@ export const createBodega = async( bodegaData )=>{
             withCredentials:true
         })
         console.log('Respuesta del backend', response.data);
+        alert("Bodega creada con éxito!")
         // res.status('200').msg('Bodega creada con exito')
         return response.data
     } catch (error) {

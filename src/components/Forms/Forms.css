@@ -6,12 +6,19 @@
     overflow-y: auto;
 }
 .form-container{
-    background-color: beige;
+    /* background-color: beige;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     border: 2px solid black;
     padding: 50px;
     border-radius: 10px;
+    max-height: 90vh;
+    overflow-y: auto; */
+    background: 
+    linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), /* Capa blanca semitransparente */
+    url('https://ibb.co/qMgJMrCH') center/cover no-repeat;
+    border-radius: 10px;
+    padding: 20px;
     max-height: 90vh;
     overflow-y: auto;
 }
