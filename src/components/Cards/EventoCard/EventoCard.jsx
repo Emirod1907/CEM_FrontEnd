@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import '../Cards.css'
+import BuyButton from '../../Buttons/BuyButton/BuyButton'
 
 /* const [ Comprado, setComprado] = useState(false)*/
 /* const [ entradas, setEntradas] = useState(entradas)*/
@@ -43,10 +44,7 @@ const EventoCard = ({nombre, descripcion, fecha, precio, cupo, bodega, imagen}) 
                 <span>${fields.PRECIO}</span>
             </div>
             <div className='card-fields'>
-                {/* <button 
-                className='btn' 
-                onClick={handleClickBuyButton}
-                >Comprar entrada</button> */}
+                <BuyButton/>
             </div>
         </div>
     </div>
