@@ -1,0 +1,814 @@
+/* ═══════════════════════════════════════════════════════
+   CalendarioReservas — layout dos paneles
+   ═══════════════════════════════════════════════════════ */
+
+.cr-wrapper {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+/* ── Panel izquierdo ─────────────────────────────────── */
+.cr-panel {
+    width: 340px;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 700px;
+}
+
+.cr-panel-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: 0.92rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+}
+
+.cr-total {
+    margin-left: auto;
+    background: #770981;
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.cr-lista {
+    overflow-y: auto;
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cr-lista::-webkit-scrollbar         { width: 4px; }
+.cr-lista::-webkit-scrollbar-thumb   { background: rgba(255,255,255,0.18); border-radius: 4px; }
+.cr-lista::-webkit-scrollbar-track   { background: transparent; }
+
+.cr-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px 16px;
+    color: rgba(255, 255, 255, 0.35);
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+}
+.cr-vacio p { margin: 0; }
+
+/* ── Cards de reserva ────────────────────────────────── */
+.cr-item {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 11px 12px;
+    transition: background 0.15s;
+}
+.cr-item:hover                { background: rgba(255,255,255,0.11); }
+.cr-item.cancelada            { opacity: 0.5; }
+
+.cr-item-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 7px;
+    flex-wrap: wrap;
+}
+
+.cr-nombre {
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+
+.cr-badge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.estado-pendiente { background: rgba(255,200,0,0.18);  color: #ffd600; border: 1px solid rgba(255,200,0,0.3);  }
+.estado-sena      { background: rgba(0,180,100,0.18);  color: #00c864; border: 1px solid rgba(0,180,100,0.3);  }
+.estado-confirmada{ background: rgba(30,140,255,0.18); color: #4db6ff; border: 1px solid rgba(30,140,255,0.3); }
+.estado-cancelada { background: rgba(200,50,50,0.18);  color: #ff6b6b; border: 1px solid rgba(200,50,50,0.3);  }
+
+.cr-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.cr-info-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(255,255,255,0.62);
+    font-size: 0.78rem;
+    font-family: 'Poppins', sans-serif;
+}
+.cr-info-row svg { flex-shrink: 0; color: rgba(255,255,255,0.38); }
+
+.cr-sena { color: #ffd600; }
+
+/* Countdown compacto */
+.cr-countdown {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 7px;
+    font-size: 0.76rem;
+    margin-bottom: 8px;
+    background: rgba(255,200,0,0.1);
+    color: #ffd600;
+    border: 1px solid rgba(255,200,0,0.22);
+    font-family: 'Poppins', sans-serif;
+}
+.cr-countdown.urgente {
+    background: rgba(255,80,0,0.12);
+    color: #ff7043;
+    border-color: rgba(255,80,0,0.3);
+    animation: cr-parpadeo 1.5s ease-in-out infinite;
+}
+.cr-countdown.vencida {
+    background: rgba(200,50,50,0.12);
+    color: #ff6b6b;
+    border-color: rgba(200,50,50,0.25);
+}
+@keyframes cr-parpadeo {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.6; }
+}
+
+/* Botones de acción */
+.cr-item-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+}
+
+.cr-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 9px;
+    font-size: 0.76rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    line-height: 1;
+}
+.cr-btn:active { transform: scale(0.96); }
+
+.cr-btn-detalle {
+    background: rgba(255,255,255,0.09);
+    color: rgba(255,255,255,0.72);
+    border: 1px solid rgba(255,255,255,0.16);
+}
+.cr-btn-detalle:hover { background: rgba(255,255,255,0.15); color: white; }
+
+.cr-btn-pagar {
+    background: #770981;
+    color: white;
+}
+.cr-btn-pagar:hover { background: #5e0668; }
+
+.cr-btn-carrito {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.22);
+}
+.cr-btn-carrito:hover { background: rgba(255,255,255,0.18); }
+
+.cr-btn-reiterar {
+    background: rgba(119,9,129,0.18);
+    color: #c084fc;
+    border: 1px solid rgba(119,9,129,0.4);
+}
+.cr-btn-reiterar:hover { background: rgba(119,9,129,0.32); color: white; }
+
+.cr-btn-guardar {
+    background: rgba(119,9,129,0.12);
+    color: #c084fc;
+    border: 1px solid rgba(119,9,129,0.32);
+}
+.cr-btn-guardar:hover { background: rgba(119,9,129,0.26); color: white; }
+
+.cr-btn-cancelar {
+    background: transparent;
+    color: rgba(255,100,100,0.8);
+    border: 1px solid rgba(255,100,100,0.32);
+    margin-left: auto;
+}
+.cr-btn-cancelar:hover:not(:disabled) { background: rgba(255,100,100,0.1); }
+.cr-btn-cancelar:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.cr-aviso-sena {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.76rem;
+    color: #00c864;
+    padding: 4px 8px;
+    background: rgba(0,180,100,0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(0,180,100,0.22);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── Panel derecho: calendario ───────────────────────── */
+.cr-calendario {
+    flex: 1;
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px 22px;
+    overflow: hidden;
+}
+
+.cr-cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cr-cal-hint {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.38);
+    font-family: 'Poppins', sans-serif;
+    font-style: italic;
+}
+
+.cr-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: white;
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.83rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    transition: background 0.15s;
+}
+.cr-volver:hover { background: rgba(255,255,255,0.15); }
+
+.cr-anio-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cr-anio {
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    min-width: 58px;
+    text-align: center;
+}
+
+.cr-nav-btn {
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(255,255,255,0.65);
+    transition: background 0.15s, color 0.15s;
+}
+.cr-nav-btn:hover { background: rgba(255,255,255,0.18); color: white; }
+
+/* ── Vista anual ────────────────────────────────────── */
+@keyframes cr-entrada-anual {
+    from { opacity: 0; transform: scale(1.06); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.cr-vista-anual {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    animation: cr-entrada-anual 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Mini mes ────────────────────────────────────────── */
+.mm-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 8px 7px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.2s cubic-bezier(0.22,1,0.36,1), border-color 0.15s, box-shadow 0.2s;
+    text-align: left;
+    font-family: inherit;
+    width: 100%;
+    overflow: hidden;
+}
+.mm-card:hover {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-3px) scale(1.03);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+.mm-card.mm-con-reservas {
+    border-color: rgba(119, 9, 129, 0.55);
+    background: rgba(119, 9, 129, 0.12);
+}
+.mm-card.mm-con-reservas:hover {
+    background: rgba(119, 9, 129, 0.2);
+    border-color: rgba(119, 9, 129, 0.8);
+}
+
+.mm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.mm-nombre {
+    color: rgba(255,255,255,0.85);
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.mm-badge {
+    background: #770981;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 1px 5px;
+    line-height: 1.5;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mm-dias-semana {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 2px;
+}
+
+.mm-dia-nombre {
+    text-align: center;
+    font-size: 0.52rem;
+    color: rgba(255,255,255,0.35);
+    font-family: 'Poppins', sans-serif;
+}
+
+.mm-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1.5px;
+}
+
+.mm-cel {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+}
+.mm-cel.mm-vacio    { background: transparent; }
+.mm-cel.mm-reservada{ background: #9333ea; }
+.mm-cel.mm-hoy      { outline: 1.5px solid rgba(255,255,255,0.6); outline-offset: -1px; }
+
+/* ── Vista mensual ───────────────────────────────────── */
+@keyframes cr-zoom-in-mes {
+    from { opacity: 0; transform: scale(0.55); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.cr-vista-mes {
+    animation: cr-zoom-in-mes 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: var(--zoom-origin, center center);
+}
+
+.cr-mes-titulo {
+    margin: 0 0 16px;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.cr-full-semana {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 6px;
+}
+
+.cr-full-dia-nombre {
+    text-align: center;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.45);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    padding: 4px 0;
+}
+
+.cr-full-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+/* Celdas del mes completo */
+.cf-dia {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    gap: 2px;
+}
+
+.cf-vacio      { background: transparent; }
+.cf-libre      { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7); }
+.cf-pasada     { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.22); }
+.cf-con-reserva{
+    background: rgba(119, 9, 129, 0.28);
+    border: 1px solid rgba(147, 51, 234, 0.55);
+    color: white;
+    font-weight: 600;
+}
+.cf-hoy {
+    outline: 2px solid rgba(255,255,255,0.5);
+    outline-offset: -2px;
+}
+
+.cf-num { line-height: 1; }
+
+.cf-punto {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #c084fc;
+    flex-shrink: 0;
+}
+
+/* ── Tooltip de reserva en celda libre ───────────────── */
+.cf-dia { position: relative; }
+
+.cf-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a0a2e;
+    border: 1px solid rgba(168, 85, 247, 0.5);
+    border-radius: 10px;
+    padding: 8px 12px;
+    z-index: 50;
+    width: max-content;
+    max-width: 180px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    animation: cf-tip-in 0.18s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes cf-tip-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.cf-tooltip-fecha {
+    margin: 0 0 7px;
+    color: rgba(255,255,255,0.6);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.cf-tooltip-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    background: #770981;
+    border: none;
+    border-radius: 7px;
+    padding: 6px 10px;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+.cf-tooltip-btn:hover { background: #5e0668; }
+
+/* Leyenda */
+.cr-leyenda {
+    display: flex;
+    gap: 18px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.cr-leg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Poppins', sans-serif;
+}
+
+.cr-leg-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+.cr-leg-dot.reservada { background: rgba(119,9,129,0.45); border: 1px solid rgba(147,51,234,0.6); }
+.cr-leg-dot.libre     { background: rgba(255,255,255,0.1); }
+.cr-leg-dot.pasada    { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); }
+
+/* ── Filtros y archivo ───────────────────────────────── */
+.cr-filtros {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.cr-select {
+    flex: 1;
+    min-width: 0;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 7px;
+    color: rgba(255,255,255,0.85);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.76rem;
+    padding: 5px 8px;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.45)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 26px;
+    transition: border-color 0.15s;
+}
+.cr-select:hover  { border-color: rgba(255,255,255,0.28); }
+.cr-select:focus  { border-color: rgba(119,9,129,0.7); }
+.cr-select option { background: #1a0a1e; color: white; }
+
+.cr-btn-archivo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 7px;
+    color: rgba(255,255,255,0.7);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 500;
+    padding: 5px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+}
+.cr-btn-archivo:hover { background: rgba(255,255,255,0.13); color: white; }
+
+.cr-archivo-badge {
+    background: #c0392b;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 1px 5px;
+    line-height: 1.5;
+    font-family: 'Poppins', sans-serif;
+}
+
+.cr-filtro-activo {
+    width: 100%;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    font-family: 'Poppins', sans-serif;
+    font-style: italic;
+    padding: 0 2px;
+}
+
+/* ── Modal de archivo ────────────────────────────────── */
+.cr-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.cr-modal {
+    background: linear-gradient(135deg, #1a0a2e 0%, #0d0d1e 100%);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    animation: cr-modal-in 0.25s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes cr-modal-in {
+    from { opacity: 0; transform: scale(0.92) translateY(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.cr-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+    gap: 12px;
+}
+
+.cr-modal-header h2,
+.cr-modal-header h3 {
+    margin: 0;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.cr-modal-sub {
+    margin: 3px 0 0;
+    color: rgba(255,255,255,0.45);
+    font-size: 0.78rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.cr-modal-cerrar {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(255,255,255,0.6);
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+}
+.cr-modal-cerrar:hover { background: rgba(255,255,255,0.15); color: white; }
+
+.cr-modal-lista {
+    overflow-y: auto;
+    flex: 1;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.cr-modal-lista::-webkit-scrollbar       { width: 4px; }
+.cr-modal-lista::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 4px; }
+.cr-modal-lista::-webkit-scrollbar-track { background: transparent; }
+
+.cr-archivo-item {
+    background: rgba(200,50,50,0.07);
+    border: 1px solid rgba(200,50,50,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cr-archivo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+}
+
+.cr-archivo-nombre {
+    color: rgba(255,255,255,0.85);
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cr-archivo-fecha {
+    color: rgba(255,255,255,0.45);
+    font-size: 0.76rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.cr-archivo-acciones {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.cr-vacio-texto {
+    color: rgba(255,255,255,0.35);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 32px 16px;
+    margin: 0;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .cr-vista-anual {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 820px) {
+    .cr-wrapper {
+        flex-direction: column;
+    }
+    .cr-panel {
+        width: 100%;
+        max-height: 300px;
+    }
+    .cr-vista-anual {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .cr-vista-anual {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .cr-calendario {
+        padding: 14px;
+    }
+}

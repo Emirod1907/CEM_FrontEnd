@@ -1,54 +1,57 @@
-import React, { useState } from 'react'
+import React from 'react'
 import '../Cards.css'
-import BuyButton from '../../Buttons/BuyButton/BuyButton'
+import AddToCartButton from '../../Buttons/AddToCartButton/AddToCartButton'
+import { FiColumns, FiCheck } from 'react-icons/fi'
+import { useCompare } from '../../../Contexts/CompareContextProvider'
 
-/* const [ Comprado, setComprado] = useState(false)*/
-/* const [ entradas, setEntradas] = useState(entradas)*/
-// const handleClickBuyButton = ()=>{
-//     setComprado(true)
-//     alert('Gracias por su compra!!')
-//     setEntradas(entradas-1)
-// }
-const EventoCard = ({nombre, descripcion, fecha, precio, cupo, bodega, imagen}) => {
-        const fields={
-        NOMBRE: nombre,
-        DESCRIPCION: descripcion,
-        FECHA: fecha,
-        PRECIO: precio,
-        CUPO_DISPONIBLE: cupo,
-        BODEGA: bodega,
-        IMAGEN: imagen
+const EventoCard = ({ id_evento, nombre, descripcion, fecha, precio, cupo, salon, imagen, es_publico, datos_evento }) => {
+    const { agregarEventoComparar, quitarEventoComparar, enEventosComparar, MAX, eventosComparar } = useCompare()
+    const enComparacion = enEventosComparar(id_evento)
+    const evento = { id_evento, nombre, descripcion, fecha, precio, cupo, salon, imagen, es_publico, datos_evento }
+    const lleno = !enComparacion && eventosComparar.length >= MAX
+
+    const handleComparar = () => {
+        if (enComparacion) quitarEventoComparar(id_evento)
+        else agregarEventoComparar(evento)
     }
-  return (
-    <div className='card-container'>
-        <div className='card-box'>
-            <div className='card-fields'>
-                <h1>{fields.NOMBRE}</h1>
-            </div>
-            {/* <div className='card-fields'>
-                <p>{fields.DESCRIPCION}</p>
-            </div> */}
-            <div className='card-fields'>
-                <img src={fields.IMAGEN} alt={fields.NOMBRE} />
-            </div>
-            <div className='card-fields'>
-                <h3>Cantidad de entradas disponibles:</h3>
-                <h3>{fields.CUPO_DISPONIBLE}</h3>
-            </div>
-            <div className='card-fields'>
-                <h2>Fecha del Evento</h2>
-                <h2>{fields.FECHA}</h2>
-            </div>
-            <div className='card-fields'>
-                <h2>Precio de la entrada</h2>
-                <span>${fields.PRECIO}</span>
-            </div>
-            <div className='card-fields'>
-                <BuyButton/>
+
+    return (
+        <div className='card-container'>
+            <div className='card-box'>
+                <div className='card-fields'>
+                    <h1>{nombre}</h1>
+                </div>
+                <div className='card-fields'>
+                    <img src={imagen} alt={nombre} />
+                </div>
+                <div className='card-fields'>
+                    <h3>Entradas disponibles:</h3>
+                    <h3>{cupo}</h3>
+                </div>
+                <div className='card-fields'>
+                    <h2>Fecha del Evento</h2>
+                    <h2>{fecha}</h2>
+                </div>
+                <div className='card-fields'>
+                    <h2>Precio de la entrada</h2>
+                    <span>${precio}</span>
+                </div>
+                <div className='card-fields'>
+                    <AddToCartButton evento={{ id_evento, nombre, descripcion, precio, imagen }} />
+                </div>
+                <div className='salon-card-footer'>
+                    <button
+                        className={`salon-comparar-btn ${enComparacion ? 'salon-comparar-btn--activo' : ''}`}
+                        onClick={handleComparar}
+                        disabled={lleno}
+                        title={lleno ? `Máximo ${MAX} eventos` : enComparacion ? 'Quitar de comparación' : 'Agregar a comparación'}
+                    >
+                        {enComparacion ? <><FiCheck size={13}/> En comparación</> : <><FiColumns size={13}/> Comparar</>}
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default EventoCard

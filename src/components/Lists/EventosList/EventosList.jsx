@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import EventoCard from '../../Cards/EventoCard/EventoCard'
 import getEvents from '../../../services/eventosServices'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
+import CompareBar from '../../CompareBar/CompareBar'
 import '../Lists.css'
 import { useTour } from '../../../hooks/useTour'
 
@@ -34,11 +35,11 @@ const EventosList = () => {
       }
     },
     {
-      element: 'a[href="/bodegas/new"]',
+      element: 'a[href="/salones/new"]',
       popover: {
-        title: 'Crear Bodega',
-        description: 'Haz clic aquí para crear una nueva bodega. Para ello debes estar logueado',
-        side: "bottom", 
+        title: 'Crear Salón',
+        description: 'Haz clic aquí para crear un nuevo salón. Para ello debes estar logueado',
+        side: "bottom",
         align: 'start'
       }
     },    
@@ -110,7 +111,7 @@ const EventosList = () => {
   }
   return (
     <div>
-      <button 
+      <button
         onClick={() => startTour(eventListTour)}
         style={{
           background: '#007bff',
@@ -125,6 +126,7 @@ const EventosList = () => {
         🎓 Iniciar Tutorial
       </button>
       {content}
+      <CompareBar tipo='eventos' />
     </div>
   )
 }

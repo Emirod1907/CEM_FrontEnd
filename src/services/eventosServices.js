@@ -30,7 +30,7 @@ export const postEvent = async(evento)=>{
 
 // const eventData = {
 //   ...form_values_state,
-//   bodega_id: form_values_state[bodega].id  // Envía el ID al backend
+//   bodega_id: form_values_state[salon].id  // Envía el ID al backend
 // };
 // postEvent(eventData);
 
