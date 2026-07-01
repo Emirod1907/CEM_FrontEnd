@@ -1,0 +1,437 @@
+/**
+ * ServiciosPicker — modal self-contained para elegir servicios adicionales
+ * dentro del form de evento (antes de crear la reserva).
+ *
+ * Props:
+ *  - fechaEvento  string  "YYYY-MM-DD"
+ *  - cupo         number  cupo de invitados del evento (para tipo por_persona)
+ *  - seleccionados  array  [{ id_servicio, nombre, precio, tipo_precio, ... }]
+ *  - onChange     fn(nuevaLista)
+ *  - onClose      fn()
+ */
+import React, { useEffect, useState } from 'react'
+import { getServicios, getDisponibilidadServicios } from '../../services/servicioServices'
+import { calcularPrecioServicio, TIPO_DIA_LABEL, TIPO_DIA_COLOR } from '../../utils/preciosUtils'
+import { FiX, FiPlus, FiMinus, FiCheck, FiClock, FiRepeat, FiUsers, FiPackage, FiStar } from 'react-icons/fi'
+import './ServiciosPicker.css'
+
+const CATEGORIAS_LABEL = {
+    catering: 'Catering', decoracion: 'Decoración', audio_video: 'Audio y Video',
+    seguridad: 'Seguridad', mobiliario: 'Mobiliario', entretenimiento: 'Entretenimiento', otro: 'Otros'
+}
+
+const parsePreciosConfig = (v) => {
+    if (!v) return null
+    try { const p = typeof v === 'string' ? JSON.parse(v) : v; return Array.isArray(p) ? null : p } catch { return null }
+}
+
+const getOpcionesTurno = (servicio) => {
+    const cfg = parsePreciosConfig(servicio.precios_tramos)
+    return Array.isArray(cfg?.opciones_turno) && cfg.opciones_turno.length > 0 ? cfg.opciones_turno : null
+}
+
+// Solo entretenimiento se consume DURANTE el evento (el usuario elige el
+// horario dentro del evento). Todo lo demás (música, decoración, proyector,
+// tortas, etc.) se ENTREGA 2-3 horas antes de comenzar el evento.
+// Catering: entrega sugerida 2h antes, pero editable — la comida caliente
+// puede requerirse a un horario determinado.
+export const CATEGORIAS_HORA_EDITABLE = ['entretenimiento', 'catering']
+
+export const HORAS_ANTES = {
+    decoracion:      3,
+    mobiliario:      3,
+    audio_video:     2,
+    seguridad:       2,
+    catering:        2,
+    otro:            2,
+}
+
+const sumarMinutos = (horaStr, deltaMins) => {
+    const [h, m] = horaStr.split(':').map(Number)
+    const total  = ((h * 60 + m + deltaMins) + 24 * 60) % (24 * 60)
+    return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
+}
+
+// Devuelve la hora de entrega/inicio para un servicio.
+// entretenimientoIdx: cuántos entretenimientos ya hay seleccionados (para escalonar 2h c/u).
+export const sugerirHoraServicio = (categoria, horaEvento, entretenimientoIdx = 0) => {
+    if (!horaEvento) return ''
+    if (categoria === 'entretenimiento') {
+        return sumarMinutos(horaEvento, entretenimientoIdx * 120)
+    }
+    const antesMin = (HORAS_ANTES[categoria] ?? 2) * 60
+    return sumarMinutos(horaEvento, -antesMin)
+}
+
+const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, seleccionados = [], onChange, onClose }) => {
+    const [servicios, setServicios] = useState([])
+    const [cargando, setCargando] = useState(true)
+    const [disponibilidad, setDisponibilidad] = useState({})
+    const [tabTipo, setTabTipo] = useState('producto')
+    const [categoriaActiva, setCategoriaActiva] = useState('todos')
+    // controles locales de unidades por servicio
+    const [horasPor, setHorasPor]       = useState({})
+    const [turnosPor, setTurnosPor]     = useState({})
+    const [horaPor, setHoraPor]         = useState({})
+    const [opcionTurnoPor, setOpcionTurnoPor] = useState({})
+
+    useEffect(() => {
+        getServicios().then(d => { setServicios(d || []); setCargando(false) })
+    }, [])
+
+    useEffect(() => {
+        if (!fechaEvento) return
+        getDisponibilidadServicios(fechaEvento, cupo || 0).then(lista => {
+            const mapa = {}
+            for (const it of lista) mapa[it.id_servicio] = it
+            setDisponibilidad(mapa)
+        })
+    }, [fechaEvento, cupo])
+
+    const serviciosPorTipo = servicios.filter(s => (s.tipo_item || 'producto') === tabTipo)
+    const categorias = ['todos', ...new Set(serviciosPorTipo.map(s => s.categoria))]
+    const filtrados = categoriaActiva === 'todos' ? serviciosPorTipo : serviciosPorTipo.filter(s => s.categoria === categoriaActiva)
+
+    const selMap = Object.fromEntries(seleccionados.map(s => [s.id_servicio, s]))
+
+    const getPrecioUnitario = (servicio) => {
+        const opciones = getOpcionesTurno(servicio)
+        if (opciones && servicio.tipo_precio === 'por_turno') {
+            const idx = opcionTurnoPor[servicio.id_servicio] ?? 0
+            const op = opciones[idx] || opciones[0]
+            return Number(op?.precio ?? servicio.precio) || 0
+        }
+        const info = calcularPrecioServicio(servicio.precio, servicio.precios_tramos, fechaEvento || '', servicio.tipo_precio, 1)
+        return info.precioUnitario
+    }
+
+    const calcTotal = (servicio) => {
+        const id = servicio.id_servicio
+        const tp = servicio.tipo_precio
+        const base = getPrecioUnitario(servicio)
+        if (tp === 'por_persona') return base * Math.max(1, Number(cupo) || 1)
+        if (tp === 'por_hora')   return base * Math.max(1, Number(horasPor[id]) || 1)
+        if (tp === 'por_turno')  return base * Math.max(1, Number(turnosPor[id]) || 1)
+        return base
+    }
+
+    const toggleServicio = (servicio) => {
+        const id = servicio.id_servicio
+        if (selMap[id]) {
+            onChange(seleccionados.filter(s => s.id_servicio !== id))
+        } else {
+            const tp = servicio.tipo_precio
+            const opciones = getOpcionesTurno(servicio)
+            const opIdx = opcionTurnoPor[id] ?? 0
+            const opSel = opciones ? (opciones[opIdx] || opciones[0]) : null
+            const horas  = opSel?.horas ?? (Number(horasPor[id]) || 1)
+            const turnos = Number(turnosPor[id]) || 1
+            // Entretenimiento y catering: el usuario puede elegir el horario
+            // (entretenimiento durante el evento; catering p.ej. comida caliente).
+            // Resto: entrega automática 2-3h antes del evento, no editable.
+            const horaEditable = CATEGORIAS_HORA_EDITABLE.includes(servicio.categoria)
+            const entretenimientoYa = seleccionados.filter(s => s.categoria === 'entretenimiento').length
+            const horaAutoSugerida = sugerirHoraServicio(servicio.categoria, horaEvento || '', entretenimientoYa)
+            const horaManual = horaEditable ? (horaPor[id] || null) : null
+            const horaFinal = horaManual || horaAutoSugerida || null
+            onChange([...seleccionados, {
+                id_servicio:  servicio.id_servicio,
+                nombre:       servicio.nombre,
+                descripcion:  servicio.descripcion,
+                precio:       getPrecioUnitario(servicio),
+                categoria:    servicio.categoria,
+                tipo_precio:  tp,
+                tipo_item:    servicio.tipo_item || 'producto',
+                imagen:       servicio.imagen || null,
+                cantidad:     1,
+                horas:  tp === 'por_hora'  ? horas  : null,
+                turnos: tp === 'por_turno' ? turnos : null,
+                hora_inicio: horaFinal,
+                hora_manual: !!horaManual,
+                _opcionTurno: opSel || null,
+            }])
+        }
+    }
+
+    const updateCantidad = (id, delta) => {
+        onChange(seleccionados.map(s => s.id_servicio === id
+            ? { ...s, cantidad: Math.max(1, s.cantidad + delta) }
+            : s
+        ))
+    }
+
+    const nProductos = servicios.filter(s => (s.tipo_item || 'producto') === 'producto').length
+    const nServicios = servicios.filter(s => s.tipo_item === 'servicio').length
+
+    return (
+        <div className='spk-overlay' onClick={onClose}>
+            <div className='spk-modal' onClick={e => e.stopPropagation()}>
+
+                {/* Header */}
+                <div className='spk-header'>
+                    <div>
+                        <h2>Servicios adicionales</h2>
+                        <span className='spk-header-hint'>
+                            {fechaEvento
+                                ? `Para el ${new Date(fechaEvento + 'T12:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: '2-digit', month: 'long' })}`
+                                : 'Seleccioná una fecha primero para ver precios ajustados'
+                            }
+                            {horaEvento && (
+                                <span style={{ display: 'block', fontSize: '0.75rem', color: '#a78bfa', marginTop: '2px' }}>
+                                    <FiClock size={11}/> Evento a las {horaEvento} — los horarios de entrega se sugieren automáticamente
+                                </span>
+                            )}
+                        </span>
+                    </div>
+                    <button className='spk-cerrar' onClick={onClose}><FiX size={21}/></button>
+                </div>
+
+                {/* Tabs tipo */}
+                <div className='spk-tipo-tabs'>
+                    <button className={`spk-tipo-tab ${tabTipo === 'producto' ? 'active' : ''}`} onClick={() => { setTabTipo('producto'); setCategoriaActiva('todos') }}>
+                        <FiPackage size={13}/> Productos {nProductos > 0 && <span className='spk-tipo-count'>{nProductos}</span>}
+                    </button>
+                    <button className={`spk-tipo-tab ${tabTipo === 'servicio' ? 'active' : ''}`} onClick={() => { setTabTipo('servicio'); setCategoriaActiva('todos') }}>
+                        <FiStar size={13}/> Servicios {nServicios > 0 && <span className='spk-tipo-count'>{nServicios}</span>}
+                    </button>
+                </div>
+
+                {/* Categorías */}
+                <div className='spk-categorias'>
+                    {categorias.map(cat => (
+                        <button
+                            key={cat}
+                            className={`spk-cat-btn ${categoriaActiva === cat ? 'activa' : ''}`}
+                            onClick={() => setCategoriaActiva(cat)}
+                        >
+                            {cat === 'todos' ? 'Todos' : CATEGORIAS_LABEL[cat] || cat}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Lista */}
+                <div className='spk-lista'>
+                    {cargando ? (
+                        <p className='spk-cargando'>Cargando servicios...</p>
+                    ) : filtrados.length === 0 ? (
+                        <div className='spk-vacio'>
+                            {tabTipo === 'producto' ? <FiPackage size={36}/> : <FiStar size={36}/>}
+                            <p>No hay {tabTipo === 'producto' ? 'productos' : 'servicios'} en esta categoría.</p>
+                        </div>
+                    ) : filtrados.map(servicio => {
+                        const id   = servicio.id_servicio
+                        const tp   = servicio.tipo_precio
+                        const disp = disponibilidad[id]
+                        const bloqueado  = disp && !disp.disponible
+                        const enSel      = !!selMap[id]
+                        const opciones   = getOpcionesTurno(servicio)
+                        const opIdx      = opcionTurnoPor[id] ?? 0
+                        const opSel      = opciones ? (opciones[opIdx] || opciones[0]) : null
+                        const precioUnit = getPrecioUnitario(servicio)
+                        const total      = calcTotal(servicio)
+                        const horaInicio = horaPor[id] || ''
+
+                        const calcFin = (inicio, h) => {
+                            if (!inicio) return null
+                            const [hh, mm] = inicio.split(':').map(Number)
+                            const t = hh * 60 + mm + (Number(h) || 1) * 60
+                            return `${String(Math.floor(t/60)%24).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`
+                        }
+
+                        return (
+                            <div key={id} className={`spk-card ${enSel ? 'spk-card--sel' : ''} ${bloqueado ? 'spk-card--bloqueado' : ''}`}>
+                                {servicio.imagen && <img src={servicio.imagen} alt={servicio.nombre} className='spk-card-img'/>}
+                                <div className='spk-card-body'>
+                                    <span className='spk-cat-label'>{CATEGORIAS_LABEL[servicio.categoria] || servicio.categoria}</span>
+                                    <h4>{servicio.nombre}</h4>
+                                    <p className='spk-desc'>{servicio.descripcion}</p>
+
+                                    {bloqueado && <div className='spk-no-disp'>🚫 {disp.motivo}</div>}
+
+                                    {/* Badge tipo de día */}
+                                    {fechaEvento && (() => {
+                                        const info = calcularPrecioServicio(servicio.precio, servicio.precios_tramos, fechaEvento, tp, 1)
+                                        if (info.tipo === 'comun') return null
+                                        return (
+                                            <div className='spk-dia-badge' style={{ borderColor: TIPO_DIA_COLOR[info.tipo], color: TIPO_DIA_COLOR[info.tipo] }}>
+                                                {TIPO_DIA_LABEL[info.tipo]}
+                                                {info.precioUnitario !== Number(servicio.precio) && (
+                                                    <span> · ${info.precioUnitario.toLocaleString('es-AR')}</span>
+                                                )}
+                                            </div>
+                                        )
+                                    })()}
+
+                                    {/* Opciones de turno */}
+                                    {opciones && tp === 'por_turno' && (
+                                        <div className='spk-turno-opciones'>
+                                            <span className='spk-turno-opciones-label'>Elegí el turno:</span>
+                                            <div className='spk-turno-grid'>
+                                                {opciones.map((op, i) => (
+                                                    <button
+                                                        key={i}
+                                                        type='button'
+                                                        className={`spk-turno-btn ${opIdx === i ? 'spk-turno-btn--active' : ''}`}
+                                                        onClick={() => setOpcionTurnoPor(prev => ({ ...prev, [id]: i }))}
+                                                    >
+                                                        <FiClock size={11}/> {op.horas ?? '?'}h
+                                                        <strong>${Number(op.precio ?? servicio.precio).toLocaleString('es-AR')}</strong>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Horario: entretenimiento (durante el evento) y catering
+                                        (p.ej. comida caliente) se eligen; el resto se entrega
+                                        2-3h antes automáticamente */}
+                                    {servicio.categoria === 'entretenimiento' ? (
+                                        <div className='spk-hora-row'>
+                                            <FiClock size={12}/>
+                                            <label>Hora de inicio (durante el evento):</label>
+                                            <input
+                                                type='time'
+                                                value={horaInicio}
+                                                onChange={e => setHoraPor(prev => ({ ...prev, [id]: e.target.value }))}
+                                                className='spk-hora-input'
+                                                min={horaEvento || servicio.horario_inicio || undefined}
+                                                max={horaFinEvento || servicio.horario_fin || undefined}
+                                            />
+                                            {tp === 'por_hora' && horaInicio && (
+                                                <span className='spk-hora-fin'>
+                                                    → {calcFin(horaInicio, horasPor[id] || 1)}
+                                                </span>
+                                            )}
+                                        </div>
+                                    ) : servicio.categoria === 'catering' ? (
+                                        <div className='spk-hora-row'>
+                                            <FiClock size={12}/>
+                                            <label>Hora de entrega:</label>
+                                            <input
+                                                type='time'
+                                                value={horaInicio}
+                                                onChange={e => setHoraPor(prev => ({ ...prev, [id]: e.target.value }))}
+                                                className='spk-hora-input'
+                                                min={servicio.horario_inicio || undefined}
+                                                max={horaFinEvento || servicio.horario_fin || undefined}
+                                            />
+                                            <span className='spk-entrega-auto'>
+                                                {horaEvento && !horaInicio
+                                                    ? <>Sugerida: <strong>{sugerirHoraServicio('catering', horaEvento)}</strong> — comida caliente puede pedirse a horario exacto</>
+                                                    : <>Comida caliente puede pedirse a horario exacto</>
+                                                }
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className='spk-hora-row spk-hora-row--auto'>
+                                            <FiClock size={12}/>
+                                            <span className='spk-entrega-auto'>
+                                                {horaEvento
+                                                    ? <>Entrega: <strong>{sugerirHoraServicio(servicio.categoria, horaEvento)}</strong> ({HORAS_ANTES[servicio.categoria] ?? 2}h antes del evento)</>
+                                                    : <>Se entrega {HORAS_ANTES[servicio.categoria] ?? 2}h antes de comenzar el evento</>
+                                                }
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Precio y controles de unidades */}
+                                    <div className='spk-precio-bloque'>
+                                        {tp === 'por_persona' && (
+                                            <span className='spk-precio-unit'>
+                                                ${precioUnit.toLocaleString('es-AR')}<span className='spk-por'>/persona</span>
+                                                {Number(cupo) > 0 && <> × {cupo} = <strong>${total.toLocaleString('es-AR')}</strong></>}
+                                            </span>
+                                        )}
+                                        {tp === 'por_hora' && (
+                                            <div className='spk-unidades-row'>
+                                                <span className='spk-precio-unit'>${precioUnit.toLocaleString('es-AR')}<span className='spk-por'>/h</span></span>
+                                                <span>×</span>
+                                                <input
+                                                    type='number' min='1'
+                                                    value={horasPor[id] ?? 1}
+                                                    onChange={e => setHorasPor(prev => ({ ...prev, [id]: e.target.value }))}
+                                                    className='spk-num-input'
+                                                />
+                                                <span>h =</span>
+                                                <strong>${total.toLocaleString('es-AR')}</strong>
+                                            </div>
+                                        )}
+                                        {tp === 'por_turno' && !opciones && (
+                                            <div className='spk-unidades-row'>
+                                                <span className='spk-precio-unit'>${precioUnit.toLocaleString('es-AR')}<span className='spk-por'>/turno</span></span>
+                                                <span>×</span>
+                                                <input
+                                                    type='number' min='1'
+                                                    value={turnosPor[id] ?? 1}
+                                                    onChange={e => setTurnosPor(prev => ({ ...prev, [id]: e.target.value }))}
+                                                    className='spk-num-input'
+                                                />
+                                                <span>=</span>
+                                                <strong>${total.toLocaleString('es-AR')}</strong>
+                                            </div>
+                                        )}
+                                        {tp === 'por_turno' && opciones && opSel && (
+                                            <div className='spk-unidades-row'>
+                                                <strong>${Number(opSel.precio ?? servicio.precio).toLocaleString('es-AR')}</strong>
+                                                <span className='spk-por'>/ turno de {opSel.horas}h</span>
+                                                <span>×</span>
+                                                <input
+                                                    type='number' min='1'
+                                                    value={turnosPor[id] ?? 1}
+                                                    onChange={e => setTurnosPor(prev => ({ ...prev, [id]: e.target.value }))}
+                                                    className='spk-num-input'
+                                                />
+                                                <span>=</span>
+                                                <strong>${(Number(opSel.precio ?? servicio.precio) * (Number(turnosPor[id]) || 1)).toLocaleString('es-AR')}</strong>
+                                            </div>
+                                        )}
+                                        {tp === 'fijo' && (
+                                            <strong className='spk-precio-fijo'>${precioUnit.toLocaleString('es-AR')}</strong>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Botón agregar / quitar + cantidad si está seleccionado */}
+                                <div className='spk-card-actions'>
+                                    {enSel ? (
+                                        <div className='spk-cant-row'>
+                                            <button type='button' className='spk-cant-btn' onClick={() => updateCantidad(id, -1)}><FiMinus size={13}/></button>
+                                            <span className='spk-cant-val'>{selMap[id].cantidad}</span>
+                                            <button type='button' className='spk-cant-btn' onClick={() => updateCantidad(id, +1)}><FiPlus size={13}/></button>
+                                            <button type='button' className='spk-btn-quitar' onClick={() => toggleServicio(servicio)}><FiX size={13}/> Quitar</button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            type='button'
+                                            className='spk-btn-agregar'
+                                            disabled={bloqueado}
+                                            onClick={() => !bloqueado && toggleServicio(servicio)}
+                                        >
+                                            <FiPlus size={14}/> Agregar
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+
+                {/* Footer con resumen */}
+                <div className='spk-footer'>
+                    {seleccionados.length > 0 ? (
+                        <span className='spk-footer-resumen'>
+                            {seleccionados.length} servicio{seleccionados.length !== 1 ? 's' : ''} seleccionado{seleccionados.length !== 1 ? 's' : ''}
+                        </span>
+                    ) : (
+                        <span className='spk-footer-hint'>Ningún servicio agregado aún</span>
+                    )}
+                    <button type='button' className='spk-btn-listo' onClick={onClose}>
+                        <FiCheck size={15}/> Listo
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default ServiciosPicker
