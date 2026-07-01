@@ -4,6 +4,7 @@ import { useAuth } from '../../Contexts/PersonaContextProvider'
 import { useCarrito } from '../../Contexts/CarritoContextProvider'
 import { FiShoppingCart, FiLogOut } from 'react-icons/fi'
 import axios from '../../services/axios'
+import { EMAILS_FULL_ACCESS } from '../../config/fullAccessEmails'
 import './NavBar.css'
 
 const NavBar = () => {
@@ -13,7 +14,6 @@ const NavBar = () => {
 
     const rol = persona?.rol || null
     const esAdmin = isAuthenticated && rol === 'admin'
-    const EMAILS_FULL_ACCESS = ['emi.electro2012@gmail.com', 'emi.rodri1907guez@gmail.com']
     const esFullAccess = isAuthenticated && EMAILS_FULL_ACCESS.includes(persona?.email)
 
     const cambiarRolBtn = esFullAccess ? (
