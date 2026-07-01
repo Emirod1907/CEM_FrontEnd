@@ -1,0 +1,318 @@
+/* ── Base panel ── */
+.pcp-panel {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.pcp-section {
+    padding: 14px 16px;
+}
+.pcp-section + .pcp-section {
+    border-top: 1px solid;
+}
+
+/* ── Dark variant (MiSalonScreen) ── */
+.pcp-dark {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.pcp-dark .pcp-section + .pcp-section {
+    border-top-color: rgba(255,255,255,0.07);
+}
+.pcp-dark .pcp-section-title { color: rgba(255,255,255,0.55); }
+.pcp-dark .pcp-section-hint  { color: rgba(255,255,255,0.3); }
+.pcp-dark .pcp-label         { color: rgba(255,255,255,0.75); }
+.pcp-dark .pcp-sublabel      { color: rgba(255,255,255,0.35); }
+.pcp-dark .pcp-signo         { color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+.pcp-dark .pcp-input         { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); color: white; }
+.pcp-dark .pcp-input:focus   { border-color: rgba(168,85,247,0.6); background: rgba(255,255,255,0.1); }
+.pcp-dark .pcp-input::placeholder { color: rgba(255,255,255,0.25); }
+.pcp-dark .pcp-input-suffix  { color: rgba(255,255,255,0.4); }
+.pcp-dark .pcp-hora-toggle-label { color: rgba(255,255,255,0.85); }
+.pcp-dark .pcp-hora-toggle-sub   { color: rgba(255,255,255,0.4); }
+
+/* ── Light variant (MisServiciosScreen form modal) ── */
+.pcp-light {
+    background: #fafafa;
+    border: 1px solid #e8e4f5;
+}
+.pcp-light .pcp-section + .pcp-section {
+    border-top-color: #eee;
+}
+.pcp-light .pcp-section-title { color: #888; }
+.pcp-light .pcp-section-hint  { color: #bbb; }
+.pcp-light .pcp-label         { color: #555; }
+.pcp-light .pcp-sublabel      { color: #aaa; }
+.pcp-light .pcp-signo         { color: #666; background: #f0ecfc; border-color: #d1c4f5; }
+.pcp-light .pcp-input         { background: white; border-color: #ddd4f8; color: #333; }
+.pcp-light .pcp-input:focus   { border-color: #a78bfa; }
+.pcp-light .pcp-input::placeholder { color: #ccc; }
+.pcp-light .pcp-input-suffix  { color: #999; }
+.pcp-light .pcp-hora-toggle-label { color: #444; }
+.pcp-light .pcp-hora-toggle-sub   { color: #aaa; }
+
+/* ── Section title row ── */
+.pcp-section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+}
+.pcp-section-hint {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.72rem;
+    margin-left: auto;
+}
+
+/* ── Grids ── */
+.pcp-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.pcp-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+/* ── Field ── */
+.pcp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.pcp-label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.78rem;
+    font-weight: 600;
+    gap: 1px;
+}
+.pcp-sublabel {
+    font-size: 0.68rem;
+    font-weight: 400;
+}
+
+/* ── Input row ── */
+.pcp-input-row {
+    display: flex;
+    align-items: center;
+    border-radius: 7px;
+    overflow: hidden;
+    border: 1px solid;
+}
+.pcp-signo {
+    padding: 0 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    border-right: 1px solid transparent;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+}
+.pcp-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 0.85rem;
+    padding: 7px 8px;
+    font-family: 'Poppins', sans-serif;
+    min-width: 0;
+}
+/* Remove spin buttons */
+.pcp-input::-webkit-inner-spin-button,
+.pcp-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.pcp-input[type=number] { -moz-appearance: textfield; }
+
+/* Total resultante al usar % de incremento */
+.pcp-total-pct {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.74rem;
+    color: rgba(255,255,255,0.55);
+}
+.pcp-total-pct strong {
+    color: #4ade80;
+    font-size: 0.82rem;
+}
+.pcp-total-pct small {
+    opacity: 0.75;
+}
+.pcp-light .pcp-total-pct { color: #888; }
+.pcp-light .pcp-total-pct strong { color: #16a34a; }
+
+/* Botón para alternar entre monto fijo y % de incremento */
+.pcp-modo-btn {
+    background: none;
+    border: none;
+    padding: 3px 0 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #a78bfa;
+    cursor: pointer;
+    text-align: left;
+    text-decoration: underline;
+    font-family: 'Poppins', sans-serif;
+}
+.pcp-modo-btn:hover { color: #8b5cf6; }
+.pcp-light .pcp-modo-btn { color: #7c3aed; }
+
+/* Inputs de hora (apertura / cierre del salón) */
+.pcp-input--time {
+    cursor: pointer;
+    padding-left: 10px;
+}
+.pcp-dark .pcp-input--time::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.pcp-input-suffix {
+    padding: 0 8px 0 4px;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* ── Hora toggle ── */
+.pcp-hora-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.pcp-hora-toggle-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+.pcp-hora-toggle-info > svg {
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+.pcp-hora-toggle-label {
+    display: block;
+    font-size: 0.83rem;
+    font-weight: 600;
+}
+.pcp-hora-toggle-sub {
+    display: block;
+    font-size: 0.72rem;
+}
+
+.pcp-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(100,100,100,0.15);
+    border: 1.5px solid rgba(100,100,100,0.25);
+    border-radius: 20px;
+    padding: 4px 12px 4px 5px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+}
+.pcp-toggle-btn--on {
+    background: rgba(168,85,247,0.2);
+    border-color: rgba(168,85,247,0.5);
+}
+.pcp-toggle-knob {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(150,150,150,0.5);
+    display: block;
+    transition: background 0.2s;
+}
+.pcp-toggle-btn--on .pcp-toggle-knob {
+    background: #a855f7;
+}
+.pcp-toggle-txt {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(150,150,150,0.9);
+    letter-spacing: 0.03em;
+}
+.pcp-toggle-btn--on .pcp-toggle-txt {
+    color: #a855f7;
+}
+
+/* ── Turno options editor ── */
+.pcp-turno-option-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.pcp-turno-option-num {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.pcp-dark  .pcp-turno-option-num { background: rgba(168,85,247,0.25); color: #c084fc; }
+.pcp-light .pcp-turno-option-num { background: #ede9fe; color: #7c3aed; }
+
+.pcp-field--compact { flex: 1; }
+
+.pcp-turno-option-del {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    border: 1.5px solid;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px;
+    transition: background 0.15s, border-color 0.15s;
+}
+.pcp-dark  .pcp-turno-option-del { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.45); }
+.pcp-light .pcp-turno-option-del { border-color: #e0d5f8; color: #aaa; }
+.pcp-turno-option-del:hover { border-color: #f87171 !important; color: #f87171 !important; background: rgba(248,113,113,0.1) !important; }
+
+.pcp-turno-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 7px;
+    border: 1.5px dashed;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.15s, border-color 0.15s;
+    margin-top: 4px;
+}
+.pcp-dark  .pcp-turno-add-btn { border-color: rgba(168,85,247,0.35); color: #c084fc; }
+.pcp-light .pcp-turno-add-btn { border-color: #c4b5fd; color: #7c3aed; }
+.pcp-dark  .pcp-turno-add-btn:hover { background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.6); }
+.pcp-light .pcp-turno-add-btn:hover { background: #ede9fe; border-color: #a78bfa; }
+
+/* ── Responsive ── */
+@media (max-width: 500px) {
+    .pcp-grid-2 { grid-template-columns: 1fr; }
+    .pcp-grid-3 { grid-template-columns: 1fr 1fr; }
+    .pcp-turno-option-row { flex-wrap: wrap; }
+}

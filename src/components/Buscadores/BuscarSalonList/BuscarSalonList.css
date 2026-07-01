@@ -1,0 +1,289 @@
+.buscar-salon-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Separar el aviso del resto del layout */
+.buscar-salon-aviso-fecha {
+    padding: 10px 16px;
+    background: rgba(119, 9, 129, 0.14);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.28);
+    color: rgba(192, 132, 252, 0.9);
+    font-size: 0.83rem;
+    font-family: 'Poppins', sans-serif;
+    flex-shrink: 0;
+}
+.buscar-salon-aviso-fecha strong { color: white; }
+
+.buscar-salon-aviso-cupo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: rgba(16, 185, 129, 0.1);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.25);
+    color: rgba(52, 211, 153, 0.95);
+    font-size: 0.83rem;
+    font-family: 'Poppins', sans-serif;
+    flex-shrink: 0;
+}
+.buscar-salon-aviso-cupo strong { color: #fff; }
+.buscar-salon-aviso-excluidos {
+    color: rgba(252, 165, 165, 0.85);
+    margin-left: 2px;
+}
+
+.buscar-salon-inner {
+    display: flex;
+    gap: 20px;
+}
+
+/* Override sticky del aside dentro del modal */
+.buscar-salon-layout .filtros-aside {
+    position: static;
+    flex-shrink: 0;
+    width: 200px;
+    min-width: 180px;
+}
+
+/* Grid de salones dentro del modal: exactamente 3 por fila */
+.buscar-salon-layout .list-grid {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 8px 0;
+    max-width: 100%;
+    margin: 0;
+    gap: 12px;
+}
+
+.buscar-salon-contenido {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.buscar-salon-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #333;
+    outline: none;
+}
+
+.buscar-salon-input:focus {
+    border-color: #1882da;
+    box-shadow: 0 0 0 2px rgba(24, 130, 218, 0.15);
+}
+
+.buscar-salon-lista-wrapper {
+    width: 100%;
+}
+
+/* ── Modal detalle de salón ── */
+.salon-detalle-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.salon-detalle-modal {
+    background: white;
+    border-radius: 12px;
+    width: min(520px, 95vw);
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+}
+
+.salon-detalle-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+}
+
+.salon-detalle-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #222;
+}
+
+.salon-detalle-cerrar {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color 0.15s;
+}
+.salon-detalle-cerrar:hover { color: #333; }
+
+.salon-detalle-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.salon-detalle-body {
+    padding: 16px 20px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.salon-detalle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.salon-detalle-info span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.salon-detalle-precio {
+    font-size: 1.2rem !important;
+    font-weight: 700;
+    background: linear-gradient(135deg, #770981, #1882da);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.salon-detalle-precio small {
+    font-size: 0.72rem;
+    font-weight: 400;
+    -webkit-text-fill-color: #888;
+    margin-left: 2px;
+}
+
+.salon-detalle-seccion h4 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #888;
+    margin: 0 0 8px 0;
+}
+
+.salon-detalle-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.salon-detalle-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 20px;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+}
+
+.salon-detalle-cancelar {
+    background: none;
+    border: 1px solid #ddd;
+    color: #666;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+.salon-detalle-cancelar:hover { border-color: #aaa; }
+
+.salon-detalle-seleccionar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.salon-detalle-seleccionar:hover { opacity: 0.88; }
+
+.salon-detalle-mapa {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(24, 130, 218, 0.12);
+    border: 1px solid rgba(24, 130, 218, 0.4);
+    color: #1882da;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+.salon-detalle-mapa:hover { background: rgba(24, 130, 218, 0.22); color: #0f5fa0; }
+
+.salon-detalle-comparar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.35);
+    color: #7c3aed;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: 'Poppins', sans-serif;
+}
+.salon-detalle-comparar:hover { background: rgba(124, 58, 237, 0.2); }
+.salon-detalle-comparar--activo {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+    border-color: transparent;
+}
+.salon-detalle-comparar--activo:hover { opacity: 0.85; }
+
+/* Responsive: filtros arriba en móvil */
+@media (max-width: 768px) {
+    .buscar-salon-layout {
+        flex-direction: column;
+        overflow: auto;
+    }
+
+    .buscar-salon-layout .filtros-aside {
+        height: auto;
+        overflow-y: visible;
+    }
+
+    .buscar-salon-lista-wrapper {
+        overflow-y: visible;
+    }
+}

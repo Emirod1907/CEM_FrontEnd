@@ -1,0 +1,159 @@
+.ms-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.ms-modal {
+    background: #1a0a2e;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 680px;
+    height: min(580px, 90vh);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+    animation: ms-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+    overflow: hidden;
+}
+
+@keyframes ms-in {
+    from { opacity: 0; transform: scale(0.92) translateY(14px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+/* Header */
+.ms-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    gap: 12px;
+}
+
+.ms-header-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: white;
+    min-width: 0;
+}
+.ms-header-info > svg { flex-shrink: 0; margin-top: 3px; color: #a855f7; }
+
+.ms-header-info h2 {
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ms-direccion {
+    margin: 3px 0 0;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.78rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.ms-cerrar {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+}
+.ms-cerrar:hover { background: rgba(255, 255, 255, 0.15); color: white; }
+
+/* Mapa */
+.ms-mapa {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+/* Estados de carga / error / sin coords */
+.ms-loading,
+.ms-error,
+.ms-sin-coords {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    text-align: center;
+    padding: 24px;
+}
+
+.ms-spinner {
+    width: 30px;
+    height: 30px;
+    border: 2.5px solid rgba(168, 85, 247, 0.25);
+    border-top-color: #a855f7;
+    border-radius: 50%;
+    animation: ms-spin 0.75s linear infinite;
+}
+@keyframes ms-spin { to { transform: rotate(360deg); } }
+
+.ms-error { color: #ff6b6b; }
+.ms-sin-coords svg { color: rgba(255,255,255,0.3); }
+.ms-sin-coords p   { margin: 0; }
+.ms-sin-coords-dir {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+}
+
+/* Footer */
+.ms-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.ms-btn-gmaps {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(24, 130, 218, 0.14);
+    border: 1px solid rgba(24, 130, 218, 0.38);
+    border-radius: 8px;
+    padding: 7px 14px;
+    color: #4db6ff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+.ms-btn-gmaps:hover { background: rgba(24, 130, 218, 0.26); color: white; }
+
+/* Responsive */
+@media (max-width: 540px) {
+    .ms-modal  { border-radius: 14px; }
+    .ms-header { padding: 12px 14px; }
+    .ms-footer { padding: 10px 14px; }
+}

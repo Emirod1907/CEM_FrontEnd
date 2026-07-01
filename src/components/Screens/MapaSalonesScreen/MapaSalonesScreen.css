@@ -1,0 +1,328 @@
+.mapa-screen {
+    position: fixed;
+    top: 95px; /* altura del navbar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* Contenedor del mapa — ocupa todo el espacio */
+.mapa-contenedor {
+    width: 100%;
+    height: 100%;
+    position: relative; /* ancla el panel flotante */
+}
+
+/* Panel flotante SOBRE el mapa */
+.mapa-panel {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 300px;
+    max-height: calc(100% - 32px);
+    background: rgba(255, 255, 255, 0.93);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    gap: 4px;
+    z-index: 10;
+}
+
+.mapa-titulo {
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #3a0a4a;
+    margin: 0 0 8px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(119, 9, 129, 0.3);
+}
+
+.mapa-seccion {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Botón de ubicación */
+.mapa-btn {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #770981;
+    border-radius: 8px;
+    background: transparent;
+    color: #770981;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.mapa-btn:hover:not(:disabled) {
+    background: #770981;
+    color: white;
+}
+
+.mapa-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.mapa-btn-activo {
+    background: #770981;
+    color: white;
+}
+
+.mapa-coords {
+    font-size: 0.75rem;
+    color: #666;
+    margin: 6px 0 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Filtro distancia */
+.mapa-label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.mapa-label input[type='checkbox'] {
+    accent-color: #770981;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.mapa-hint {
+    font-size: 0.75rem;
+    color: #888;
+    margin: 4px 0 0;
+    font-style: italic;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mapa-slider-container {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mapa-slider {
+    width: 100%;
+    accent-color: #770981;
+    cursor: pointer;
+}
+
+.mapa-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: #888;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Resultados */
+.mapa-resultados {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #440055;
+    margin: 0;
+}
+
+/* Lista lateral */
+.mapa-lista {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px;
+}
+
+.mapa-lista-item {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.mapa-lista-item:hover {
+    border-color: #770981;
+    box-shadow: 0 2px 8px rgba(119, 9, 129, 0.15);
+    transform: translateY(-1px);
+}
+
+.mapa-lista-item-activo {
+    border-color: #770981;
+    background: rgba(119, 9, 129, 0.06);
+}
+
+.mapa-lista-nombre {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #333;
+    margin: 0 0 2px;
+}
+
+.mapa-lista-domicilio {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.78rem;
+    color: #666;
+    margin: 0 0 2px;
+}
+
+.mapa-lista-distancia {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #770981;
+    margin: 4px 0 0;
+}
+
+/* InfoWindow */
+.mapa-infowindow {
+    max-width: 220px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mapa-infowindow h3 {
+    font-family: 'Raleway', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #3a0a4a;
+    margin: 0 0 6px;
+}
+
+.mapa-infowindow p {
+    font-size: 0.82rem;
+    color: #444;
+    margin: 2px 0;
+}
+
+.mapa-infowindow-img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.mapa-infowindow-dist {
+    font-weight: 600;
+    color: #770981;
+}
+
+.mapa-btn-reservar {
+    margin-top: 8px;
+    width: 100%;
+    padding: 7px 12px;
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.mapa-btn-reservar:hover {
+    opacity: 0.88;
+}
+
+.mapa-rango-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.mapa-rango-input {
+    width: 58px;
+    padding: 4px 6px;
+    border: 1px solid rgba(119, 9, 129, 0.4);
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #3a0a4a;
+    text-align: center;
+    outline: none;
+}
+
+.mapa-rango-input:focus {
+    border-color: #770981;
+    box-shadow: 0 0 0 2px rgba(119, 9, 129, 0.15);
+}
+
+.mapa-rango-input::-webkit-outer-spin-button,
+.mapa-rango-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.mapa-rango-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Estados globales */
+.mapa-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 95px);
+    gap: 12px;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+.mapa-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 95px);
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    font-size: 1rem;
+}
+
+.mapa-error-msg {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    color: #c0392b;
+    margin: 4px 0 0;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .mapa-panel {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-height: 40vh;
+    }
+}
