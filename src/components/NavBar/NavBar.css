@@ -1,85 +1,182 @@
-.container{
-    padding-top: 60px;
+/* ── Navbar wrapper ── */
+.container {
+    padding-top: 56px;
 }
-header{
+
+header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
+    height: 56px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    height: 95px;
-    border-radius: 10px;
-    background: rgba(250, 244, 244, 0.61) url("https://i.ibb.co/vCQYx2Cd/brindis.jpg")500px center/contain no-repeat;
-    background-blend-mode: overlay;
+    justify-content: space-between;
+    padding: 0 18px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(24, 130, 218, 0.15);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-.logo{
-    height: 90px;
-    width: 90px;
-    display: flex;
+/* ── Logo (a la izquierda) ── */
+.logo {
+    height: 40px;
+    flex-shrink: 0;
+    /* Esquinas redondeadas: el fondo oscuro del logo queda como pastilla limpia */
+    border-radius: 10px;
     overflow: hidden;
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 20px;
 }
 
-.logo img{
-    display: block;
+.logo img {
     height: 100%;
-    width: 100%;
+    width: auto;
     object-fit: contain;
+    display: block;
 }
 
-.nav{
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.link, .link-seleccionado {
-    display: inline-block;
-    padding: 12px 25px;
-    border-radius: 10px;
+/* ── Brand name (centrado en el espacio entre logo y nav) ── */
+.navbar-brand {
+    flex: 1;
     text-align: center;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, #770981, #1882da);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+    margin: 0;
+    min-width: 0;
+}
+
+/* ── Nav links ── */
+nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: nowrap;
+}
+
+.link,
+.link-seleccionado {
+    display: inline-block;
+    padding: 5px 11px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
     text-decoration: none;
-    color: black;
-    min-width: 80px;
-    transition: all 0.3s ease;
+    white-space: nowrap;
+    transition: background 0.18s ease, color 0.18s ease;
 }
 
 .link {
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    margin: 0 5px
-}   
+    color: #444;
+    background: transparent;
+}
+
+.link:hover {
+    background: rgba(24, 130, 218, 0.09);
+    color: #1882da;
+}
 
 .link-seleccionado {
-    background-color: #1882da;
+    background: linear-gradient(135deg, #770981, #1882da);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
 }
 
-.link:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+/* ── Admin link ── */
+.link-admin {
+    color: #770981;
+    border: 1px solid rgba(119, 9, 129, 0.3);
 }
 
-/* 
-.link{
-    color: black;
-    text-decoration: none;
-    padding: 5px 10px;
-    transition: color 0.3s ease;
+.link-admin:hover {
+    background: rgba(119, 9, 129, 0.09);
+    color: #770981;
 }
-.link-seleccionado{
-    color: red;
-    text-decoration: solid underline 1px;
-    font-weight: bold;
+
+.link-seleccionado.link-admin {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+    border: none;
 }
-.link:hover {
-    color: #555;
-} */
+
+/* ── Logout link-button ── */
+.link-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    padding: 5px 11px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #770981;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.18s ease;
+}
+
+.link-logout:hover {
+    background: rgba(119, 9, 129, 0.09);
+}
+
+/* ── Rol badge ── */
+.navbar-rol-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(119,9,129,0.10), rgba(24,130,218,0.10));
+    color: #770981;
+    border: 1px solid rgba(119,9,129,0.2);
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+}
+
+/* ── Carrito ── */
+.carrito-nav-btn {
+    position: relative;
+    background: transparent;
+    border: 1px solid rgba(24, 130, 218, 0.3);
+    border-radius: 6px;
+    padding: 5px 9px;
+    cursor: pointer;
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.carrito-nav-btn:hover {
+    background: rgba(24, 130, 218, 0.09);
+    color: #1882da;
+    border-color: #1882da;
+}
+
+.carrito-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 17px;
+    height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

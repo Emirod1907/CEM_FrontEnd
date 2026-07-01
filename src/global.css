@@ -54,3 +54,8 @@ nav {
     justify-content: center;
     padding: 20px;
 }
+
+/* Google Places autocomplete dropdown — debe quedar por encima de cualquier modal */
+.pac-container {
+    z-index: 10000 !important;
+}
