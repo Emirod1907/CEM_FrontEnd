@@ -46,3 +46,44 @@
         padding: 15px;
     }
 }
+
+/* ── Barra de orden salones ── */
+.salones-orden-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: white;
+    border-bottom: 1px solid #eee;
+    font-family: 'Poppins', sans-serif;
+}
+
+.salones-orden-bar label {
+    font-size: 0.85rem;
+    color: #555;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.salones-orden-select {
+    padding: 7px 12px;
+    border: 1px solid #d0bce8;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background: white;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.salones-orden-select:focus {
+    border-color: #770981;
+}
+
+.salones-orden-count {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: #aaa;
+}

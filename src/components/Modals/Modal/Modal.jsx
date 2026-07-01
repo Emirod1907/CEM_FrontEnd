@@ -1,12 +1,17 @@
 import React from 'react'
-import BuscarBodegaList from '../../Buscadores/BuscarBodegaList/BuscarBodegaList'
+import BuscarSalonList from '../../Buscadores/BuscarSalonList/BuscarSalonList'
+import '../modal.css'
 
-const Modal = ({onClose, onSelectBodega}) => {
+const Modal = ({onClose, onSelectSalon, fechaFiltro, cupoFiltro}) => {
   return (
     <div className='modal-overlay' onClick={onClose}>
         <dialog open onClick={(e) => e.stopPropagation()}>
-            <BuscarBodegaList onSelectBodega={onSelectBodega} />
-            <button onClick={onClose}>Cerrar</button>
+            <div className='modal-scroll-body'>
+                <BuscarSalonList onSelectSalon={onSelectSalon} fechaFiltro={fechaFiltro} cupoFiltro={cupoFiltro} />
+            </div>
+            <div className='modal-close-btn'>
+                <button onClick={onClose}>Cerrar</button>
+            </div>
         </dialog>
     </div>
   )

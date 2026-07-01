@@ -115,3 +115,123 @@ h3{
     object-fit: cover;
     border-radius: 4px;
 }
+
+.salon-card-precio {
+    display: inline-block;
+    background: linear-gradient(135deg, #770981, #1882da);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-family: 'Raleway', sans-serif;
+}
+
+.salon-card-precio small {
+    font-size: 0.7rem;
+    font-weight: 400;
+    -webkit-text-fill-color: #888;
+    margin-left: 2px;
+}
+
+.salon-card-precio-nd {
+    font-size: 0.82rem;
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Tags de tipos de evento y servicios en la card */
+.salon-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.salon-tag {
+    display: inline-block;
+    border-radius: 12px;
+    padding: 2px 9px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    line-height: 1.6;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.salon-tag--tipo {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+}
+
+.salon-tag--servicio {
+    background: #e8f4fd;
+    color: #1882da;
+    border: 1px solid #b3d9f5;
+}
+
+/* Pie de la card con botón ojo */
+.salon-card-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 4px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.salon-ver-detalle-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: 1px solid #1882da;
+    color: #1882da;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.salon-ver-detalle-btn:hover {
+    background: #1882da;
+    color: white;
+}
+
+/* ── Botón comparar en cards ── */
+.salon-comparar-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: 1px solid #c4b5fd;
+    color: #7c3aed;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Poppins', sans-serif;
+}
+.salon-comparar-btn:hover:not(:disabled) {
+    background: #ede9fe;
+    border-color: #7c3aed;
+}
+.salon-comparar-btn--activo {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+    border-color: transparent;
+}
+.salon-comparar-btn--activo:hover:not(:disabled) {
+    opacity: 0.85;
+}
+.salon-comparar-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.salon-card-footer {
+    gap: 6px;
+}

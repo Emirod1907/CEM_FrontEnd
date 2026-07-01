@@ -1,19 +1,10 @@
-/* .container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-    width: 700px;
-    height: 300px;
-    border-radius: 10px;
-}
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -21,40 +12,33 @@
 }
 
 .modal-overlay dialog {
-    width: 90%;
-    max-width: 1200px; /* Mismo ancho máximo que tu grid */
-/*    height: 80vh;
-    overflow: auto;
+    width: min(95vw, 1100px);
+    max-height: 80vh;
     border: none;
     border-radius: 10px;
-    padding: 20px;
-} */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-overlay dialog {
-    width: 90vw !important; /* Forzar ancho */
-    max-width: 1200px !important;
-    height: 80vh;
-    border: none !important;
-    border-radius: 10px;
-    padding: 20px;
+    padding: 0;
     position: relative;
     background: white;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-scroll-body {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    flex: 1;
+    padding: 20px;
+}
+
+.modal-close-btn {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    border-top: 1px solid #eee;
+    text-align: right;
 }
 
 /* Resetear estilos por defecto del dialog */
 dialog {
-    max-width: none !important;
-    width: auto !important;
+    max-width: none;
 }
