@@ -1,0 +1,565 @@
+.rsvp-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #770981 0%, #1882da 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.rsvp-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+}
+
+.rsvp-card-error,
+.rsvp-card-success {
+    padding: 48px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.rsvp-card-error h2,
+.rsvp-card-success h2 {
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.4rem;
+    color: #333;
+}
+
+.rsvp-card-error p,
+.rsvp-card-success p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.rsvp-icon-error { color: #cc0000; }
+.rsvp-icon-success { color: #00a650; }
+
+/* Header */
+.rsvp-header {
+    background: linear-gradient(135deg, #770981, #1882da);
+    padding: 28px 24px;
+    text-align: center;
+    color: white;
+}
+
+.rsvp-header h1 {
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    color: white;
+}
+
+.rsvp-header p {
+    margin: 4px 0 0;
+    font-size: 0.8rem;
+    opacity: 0.85;
+    color: white;
+}
+
+/* Evento info */
+.rsvp-evento-info {
+    padding: 24px 28px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rsvp-evento-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.rsvp-evento-badge {
+    display: inline-block;
+    background: #f0e6ff;
+    color: #770981;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    align-self: flex-start;
+}
+
+.rsvp-evento-nombre {
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.3rem;
+    color: #222;
+}
+
+.rsvp-evento-fecha {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.rsvp-evento-desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Divider */
+.rsvp-divider {
+    height: 1px;
+    background: #eee;
+    margin: 0 28px;
+}
+
+/* Form */
+.rsvp-form-section {
+    padding: 20px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rsvp-form-section h3 {
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.05rem;
+    color: #333;
+}
+
+.rsvp-form-hint {
+    margin: 0;
+    font-size: 0.82rem;
+    color: #888;
+    line-height: 1.5;
+}
+
+.rsvp-error-msg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff0f0;
+    border: 1px solid #f5c2c2;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    color: #cc0000;
+}
+
+.rsvp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.rsvp-input-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.rsvp-input-grupo label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.rsvp-input-grupo input {
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.rsvp-input-grupo input:focus {
+    border-color: #1882da;
+    box-shadow: 0 0 0 3px rgba(24, 130, 218, 0.12);
+}
+
+.rsvp-input-grupo input:disabled {
+    background: #f9f9f9;
+    color: #aaa;
+}
+
+.rsvp-btn-confirmar {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+    border: none;
+    padding: 13px;
+    border-radius: 10px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 4px;
+}
+
+.rsvp-btn-confirmar:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.rsvp-btn-confirmar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Success state */
+.rsvp-mensaje-ok {
+    color: #444;
+    font-size: 0.9rem;
+    max-width: 320px;
+}
+
+.rsvp-qr-nota {
+    background: #f0f7ff;
+    border: 1px solid #c5ddf5;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.83rem;
+    color: #1882da;
+    max-width: 340px;
+    text-align: center;
+}
+
+.rsvp-btn-home {
+    background: none;
+    border: 2px solid #1882da;
+    color: #1882da;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 8px;
+    transition: all 0.2s;
+}
+
+.rsvp-btn-home:hover {
+    background: #1882da;
+    color: white;
+}
+
+/* Loading */
+.rsvp-cargando {
+    padding: 60px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: #888;
+}
+
+.rsvp-spinner {
+    width: 42px;
+    height: 42px;
+    border: 4px solid #e0d0f0;
+    border-top-color: #770981;
+    border-radius: 50%;
+    animation: rsvp-spin 0.8s linear infinite;
+}
+
+@keyframes rsvp-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Wide card for invitados step */
+.rsvp-card-wide {
+    max-width: 560px;
+}
+
+/* Extras / precio */
+.rsvp-evento-precio {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #444;
+}
+
+.rsvp-invitados-asignados {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.85rem;
+    color: #770981;
+    font-weight: 500;
+}
+
+.rsvp-invitado-saludo {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #333;
+}
+
+/* Auth inline */
+.rsvp-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.rsvp-auth-tabs {
+    display: flex;
+    gap: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.rsvp-auth-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 9px 12px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: background 0.15s, color 0.15s;
+}
+
+.rsvp-auth-tab--active {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: #fff;
+}
+
+.rsvp-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rsvp-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* Invitados list */
+.rsvp-invitados-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.rsvp-invitado-fila {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rsvp-invitado-fila--extra {
+    background: #fffbeb;
+    border-color: #fde68a;
+    position: relative;
+}
+
+.rsvp-invitado-num {
+    font-size: 0.77rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.rsvp-invitado-fila--extra .rsvp-invitado-num {
+    color: #b45309;
+}
+
+.rsvp-invitado-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.rsvp-invitado-campos input {
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 0.86rem;
+    outline: none;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.15s;
+}
+
+.rsvp-invitado-campos input:focus {
+    border-color: #1882da;
+}
+
+.rsvp-invitado-remove {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+}
+.rsvp-invitado-remove:hover { color: #dc2626; }
+
+.rsvp-btn-agregar-extra {
+    background: none;
+    border: 1px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 0.84rem;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    margin-bottom: 4px;
+}
+.rsvp-btn-agregar-extra:hover {
+    border-color: #1882da;
+    color: #1882da;
+    background: #f0f7ff;
+}
+
+.rsvp-resumen-pago {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.rsvp-resumen-pago strong {
+    color: #111;
+}
+
+.rsvp-btn-pagar {
+    background: #009ee3;
+    color: #fff;
+    border: none;
+    padding: 13px 24px;
+    border-radius: 10px;
+    font-size: 0.98rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    transition: opacity 0.2s, transform 0.1s;
+    width: 100%;
+    max-width: 300px;
+}
+.rsvp-btn-pagar:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.rsvp-btn-pagar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.rsvp-btn-volver {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 4px 0;
+    text-align: left;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Payment options (seña vs total) */
+.rsvp-pago-opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 380px;
+}
+
+.rsvp-pago-opcion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #fafafa;
+    transition: background 0.15s;
+}
+.rsvp-pago-opcion:hover { background: #f3f4f6; }
+
+.rsvp-pago-opcion-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.rsvp-pago-opcion-titulo {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.rsvp-pago-opcion-desc {
+    font-size: 0.76rem;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.rsvp-pago-separador {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #9ca3af;
+    padding: 4px 0;
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.rsvp-btn-pagar--sena {
+    background: linear-gradient(135deg, #770981, #c026d3) !important;
+}
+
+@media (max-width: 480px) {
+    .rsvp-invitado-campos { grid-template-columns: 1fr; }
+    .rsvp-form-row { grid-template-columns: 1fr; }
+    .rsvp-pago-opcion { flex-direction: column; align-items: flex-start; }
+}
