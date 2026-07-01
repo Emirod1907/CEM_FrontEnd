@@ -1,0 +1,120 @@
+.role-selection-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f0ff 0%, #e8f4fd 100%);
+    padding: 24px 16px;
+}
+
+.role-selection-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(119, 9, 129, 0.12);
+    padding: 40px 36px;
+    max-width: 760px;
+    width: 100%;
+}
+
+.role-selection-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.role-selection-header h1 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #770981, #1882da);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.role-selection-header p {
+    color: #666;
+    font-size: 0.95rem;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 14px;
+    border: 2px solid rgba(119, 9, 129, 0.15);
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.role-card:hover {
+    border-color: #1882da;
+    background: rgba(24, 130, 218, 0.04);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(24, 130, 218, 0.12);
+}
+
+.role-card--selected {
+    border-color: #770981;
+    background: linear-gradient(135deg, rgba(119, 9, 129, 0.06), rgba(24, 130, 218, 0.06));
+    box-shadow: 0 4px 20px rgba(119, 9, 129, 0.18);
+}
+
+.role-icon {
+    font-size: 2rem;
+}
+
+.role-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #222;
+}
+
+.role-desc {
+    font-size: 0.78rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.role-error {
+    color: #dc3545;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.role-confirm-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.18s ease;
+}
+
+.role-confirm-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.role-confirm-btn:not(:disabled):hover {
+    opacity: 0.9;
+}

@@ -52,4 +52,18 @@ try {
 };
 
 export const verifyTokenRequest = ()=> axios.get('auth/verify',{withCredentials: true})
+
+export const selectRoleRequest = async (rol) => {
+  const response = await axios.post('auth/select-role', { rol }, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+  return response.data;
+};
+
+export const completeProfileRequest = async (datos) => {
+  const response = await axios.post('auth/complete-profile', datos, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+  return response.data;
+};
   

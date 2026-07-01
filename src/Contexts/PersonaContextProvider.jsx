@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
-import Cookies from 'js-cookie'
 import { verifyTokenRequest } from '../services/personasServices'
 
 const PersonaContext = createContext()
@@ -16,23 +15,18 @@ const PersonaContextProvider = ({children}) => {
 
 const [persona, setPersona] = useState(null)
 const [isAuthenticated, setIsAuthenticated] = useState(false)
-const [ loading, setLoading]= useState(true)
+const [loading, setLoading] = useState(true)
 
 const hasChecked = useRef(false)
 useEffect(()=>{
   if (hasChecked.current) return;
   hasChecked.current = true;
   async function CheckLogin(){
-      const cookies = Cookies.get()
-  if(!cookies.token){
-    setIsAuthenticated(false)
-    setLoading(false)
-    return}
+    // La cookie de sesión es httpOnly: JS no puede leerla. Siempre preguntar
+    // al backend, que la lee y devuelve la persona si la sesión sigue viva.
     try {
-      const res = await verifyTokenRequest(cookies.token)
-      console.log("Token recibido:", cookies.token)
-      console.log(res);
-      if(!res.data) 
+      const res = await verifyTokenRequest()
+      if(!res.data)
       {
         setIsAuthenticated(false)
         setLoading(false)
@@ -42,7 +36,6 @@ useEffect(()=>{
       setIsAuthenticated(true)
       setLoading(false)
     } catch (error) {
-      console.log(error)
       setIsAuthenticated(false)
       setLoading(false)
     }
@@ -50,18 +43,13 @@ useEffect(()=>{
 
   return (
     <PersonaContext.Provider
-        value={
-            {
-                // id_persona,
-                // persona_rol,
-                // token,
-                loading,
-                isAuthenticated,
-                setIsAuthenticated,
-                persona,
-                setPersona
-            }
-        }
+        value={{
+            loading,
+            isAuthenticated,
+            setIsAuthenticated,
+            persona,
+            setPersona
+        }}
         >
         {children}
     </PersonaContext.Provider>
