@@ -1,0 +1,178 @@
+.pozo-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pozo-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 36px 16px;
+    color: #888;
+    text-align: center;
+}
+.pozo-error { color: #cc0000; }
+.pozo-girando { animation: pozo-girar 1s linear infinite; }
+@keyframes pozo-girar { to { transform: rotate(360deg); } }
+
+/* ── Resumen ── */
+.pozo-resumen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+}
+.pozo-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    background: #fafafa;
+}
+.pozo-card strong { font-size: 1.05rem; }
+.pozo-card-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; opacity: 0.75; }
+.pozo-card--recaudado { color: #00a650; background: #f0faf4; border-color: #c9ecd8; }
+.pozo-card--costos    { color: #b45309; background: #fdf7ef; border-color: #f3e0c2; }
+.pozo-card--retirado  { color: #6d28d9; background: #f7f3fe; border-color: #e2d6f9; }
+.pozo-card--saldo     { color: #770981; background: linear-gradient(135deg, #faf0fc, #f3e3f7); border-color: #e3bfe9; }
+
+.pozo-costo-info {
+    font-size: 0.82rem;
+    color: #666;
+    background: #f6f6f9;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+/* ── Acciones ── */
+.pozo-acciones { display: flex; gap: 10px; flex-wrap: wrap; }
+.pozo-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    border: none;
+    border-radius: 9px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+.pozo-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.pozo-btn--costo  { background: #fff4e5; color: #b45309; border: 1px solid #f3d9ad; }
+.pozo-btn--costo:hover:not(:disabled)  { background: #fdebd0; }
+.pozo-btn--retiro { background: #f3ebfd; color: #6d28d9; border: 1px solid #ddc9f6; }
+.pozo-btn--retiro:hover:not(:disabled) { background: #eadcfb; }
+.pozo-btn--confirmar {
+    background: linear-gradient(135deg, #770981, #a31bb5);
+    color: white;
+    justify-content: center;
+}
+
+/* ── Form de egreso ── */
+.pozo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    background: #faf7fc;
+    border: 1px solid #e8d9ee;
+    border-radius: 12px;
+    padding: 14px;
+}
+.pozo-form-titulo { font-size: 0.85rem; font-weight: 700; color: #5b21b6; }
+.pozo-form-row { display: flex; align-items: center; gap: 8px; }
+.pozo-form-row label { font-size: 0.82rem; font-weight: 600; color: #555; }
+.pozo-form-row input {
+    flex: 1;
+    border: 1px solid #d9c8e3;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+}
+.pozo-form-row input:focus { border-color: #770981; }
+.pozo-btn-max {
+    border: 1px solid #d9c8e3;
+    background: white;
+    border-radius: 7px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #770981;
+    cursor: pointer;
+}
+.pozo-form-desc {
+    border: 1px solid #d9c8e3;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.83rem;
+    outline: none;
+}
+.pozo-form-desc:focus { border-color: #770981; }
+
+.pozo-feedback {
+    background: #f0faf4;
+    border: 1px solid #c9ecd8;
+    color: #057a3b;
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-size: 0.83rem;
+    font-weight: 600;
+}
+
+/* ── Secciones ── */
+.pozo-seccion h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    color: #3a0a4a;
+}
+.pozo-hint { font-size: 0.8rem; color: #999; margin: 0; }
+
+/* ── Invitaciones ── */
+.pozo-invitaciones { display: flex; flex-direction: column; gap: 6px; }
+.pozo-inv {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 0.82rem;
+}
+.pozo-inv--pagada    { background: #f0faf4; color: #057a3b; }
+.pozo-inv--pendiente { background: #fdf7ef; color: #b45309; }
+.pozo-inv-nombre  { font-weight: 700; }
+.pozo-inv-detalle { flex: 1; opacity: 0.8; font-size: 0.76rem; }
+.pozo-inv-monto   { font-size: 0.85rem; }
+
+/* ── Movimientos ── */
+.pozo-movs { display: flex; flex-direction: column; gap: 6px; }
+.pozo-mov {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    border: 1px solid #eee;
+    background: #fff;
+}
+.pozo-mov--ingreso { border-left: 3px solid #00a650; }
+.pozo-mov--costo   { border-left: 3px solid #b45309; }
+.pozo-mov--retiro  { border-left: 3px solid #6d28d9; }
+.pozo-mov--ingreso svg { color: #00a650; }
+.pozo-mov--costo svg   { color: #b45309; }
+.pozo-mov--retiro svg  { color: #6d28d9; }
+.pozo-mov-info  { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.pozo-mov-tipo  { font-size: 0.8rem; font-weight: 700; color: #333; }
+.pozo-mov-desc  { font-size: 0.76rem; color: #777; }
+.pozo-mov-fecha { font-size: 0.7rem; color: #aaa; }
+.pozo-mov-monto { font-size: 0.88rem; color: #333; }
+.pozo-mov--ingreso .pozo-mov-monto { color: #00a650; }
