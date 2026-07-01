@@ -1,0 +1,26 @@
+.add-to-cart-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    width: 100%;
+}
+
+.add-to-cart-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.add-to-cart-btn.agregado {
+    background: linear-gradient(135deg, #00a650, #00c45a);
+}

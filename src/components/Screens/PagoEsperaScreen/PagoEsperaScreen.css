@@ -1,0 +1,119 @@
+.espera-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 20px;
+}
+
+.espera-card {
+    background: white;
+    border-radius: 16px;
+    padding: 48px 40px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border-top: 6px solid #770981;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.espera-icono {
+    position: relative;
+    color: #770981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.espera-spinner {
+    position: absolute;
+    width: 84px;
+    height: 84px;
+    border: 3px solid rgba(119, 9, 129, 0.15);
+    border-top-color: #770981;
+    border-radius: 50%;
+    animation: espera-girar 1.2s linear infinite;
+}
+
+@keyframes espera-girar {
+    to { transform: rotate(360deg); }
+}
+
+.espera-titulo {
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.8rem;
+    margin: 0;
+    color: #222;
+}
+
+.espera-mensaje {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.espera-nota {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #999;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.espera-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 12px;
+}
+
+.espera-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.espera-btn-verificar {
+    background: linear-gradient(135deg, #770981, #a31bb5);
+    color: white;
+}
+
+.espera-btn-verificar:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(119, 9, 129, 0.35);
+}
+
+.espera-btn-verificar:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.espera-btn-cancelar {
+    background: #f1f1f4;
+    color: #555;
+}
+
+.espera-btn-cancelar:hover {
+    background: #e4e4ea;
+}
+
+.espera-girando {
+    animation: espera-girar 1s linear infinite;
+}
