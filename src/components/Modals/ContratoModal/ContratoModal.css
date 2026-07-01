@@ -1,0 +1,156 @@
+.contrato-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.contrato-dialog {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.contrato-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, #770981, #1882da);
+    border-radius: 12px 12px 0 0;
+}
+
+.contrato-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.contrato-close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+}
+.contrato-close-btn:hover { opacity: 1; }
+
+.contrato-body {
+    overflow-y: auto;
+    padding: 20px;
+    flex: 1;
+}
+
+.contrato-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: #f5f5f5;
+    border-radius: 6px;
+}
+
+.contrato-texto {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: #333;
+    background: #fafafa;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    padding: 16px;
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.contrato-loading {
+    text-align: center;
+    color: #888;
+    padding: 40px 0;
+}
+
+.contrato-error {
+    color: #c0392b;
+    background: #fdf0ee;
+    border: 1px solid #f5c6cb;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    margin-top: 12px;
+}
+
+.contrato-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.contrato-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #333;
+}
+.contrato-checkbox-label input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #1882da;
+}
+
+.contrato-footer-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.contrato-btn {
+    padding: 9px 20px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.15s, background 0.15s;
+}
+.contrato-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.contrato-btn--cancel {
+    background: #f0f0f0;
+    color: #555;
+}
+.contrato-btn--cancel:hover:not(:disabled) { background: #e0e0e0; }
+
+.contrato-btn--accept {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: #fff;
+}
+.contrato-btn--accept:hover:not(:disabled) { opacity: 0.88; }
