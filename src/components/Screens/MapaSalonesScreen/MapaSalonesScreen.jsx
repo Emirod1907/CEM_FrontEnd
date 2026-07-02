@@ -45,7 +45,37 @@ const MapaSalonesScreen = () => {
     const [filtrarPorDistancia, setFiltrarPorDistancia] = useState(false)
 
     const [salonSeleccionado, setSalonSeleccionado] = useState(null)
+    const [poiSeleccionado, setPoiSeleccionado] = useState(null)
     const [centroPantalla, setCentroPantalla] = useState(CENTRO_DEFAULT)
+
+    // Click en un punto de interés (POI) de Google: prevenimos el popup nativo
+    // (que compite con nuestro InfoWindow) y mostramos su detalle en el nuestro.
+    // Un click en el mapa vacío cierra cualquier card abierta.
+    const onMapClick = useCallback((e) => {
+        if (e.placeId && mapRef.current && window.google?.maps?.places) {
+            e.stop() // evita el InfoWindow nativo del POI
+            setSalonSeleccionado(null)
+            const service = new window.google.maps.places.PlacesService(mapRef.current)
+            service.getDetails(
+                { placeId: e.placeId, fields: ['name', 'formatted_address', 'geometry', 'rating', 'formatted_phone_number'] },
+                (place, status) => {
+                    if (status === window.google.maps.places.PlacesServiceStatus.OK && place?.geometry) {
+                        setPoiSeleccionado({
+                            nombre: place.name,
+                            direccion: place.formatted_address,
+                            rating: place.rating,
+                            telefono: place.formatted_phone_number,
+                            lat: place.geometry.location.lat(),
+                            lng: place.geometry.location.lng(),
+                        })
+                    }
+                }
+            )
+        } else {
+            setSalonSeleccionado(null)
+            setPoiSeleccionado(null)
+        }
+    }, [])
 
     useEffect(() => {
         const fetchSalones = async () => {
@@ -186,6 +216,7 @@ const MapaSalonesScreen = () => {
                     zoom={11}
                     onLoad={onMapLoad}
                     onUnmount={onMapUnmount}
+                    onClick={onMapClick}
                     options={{
                         streetViewControl: false,
                         mapTypeControl: false,
@@ -220,7 +251,7 @@ const MapaSalonesScreen = () => {
                                 key={salon.id_bodega}
                                 position={{ lat: salon.latitud, lng: salon.longitud }}
                                 title={salon.nombre}
-                                onClick={() => setSalonSeleccionado(salon)}
+                                onClick={() => { setPoiSeleccionado(null); setSalonSeleccionado(salon) }}
                                 zIndex={activo ? 1000 : 1}
                                 icon={{
                                     path: window.google.maps.SymbolPath.CIRCLE,
@@ -276,6 +307,22 @@ const MapaSalonesScreen = () => {
                                 >
                                     Reservar salón
                                 </button>
+                            </div>
+                        </InfoWindow>
+                    )}
+
+                    {/* InfoWindow de un punto de interés (POI) de Google */}
+                    {poiSeleccionado && (
+                        <InfoWindow
+                            position={{ lat: poiSeleccionado.lat, lng: poiSeleccionado.lng }}
+                            onCloseClick={() => setPoiSeleccionado(null)}
+                            options={{ pixelOffset: new window.google.maps.Size(0, -14) }}
+                        >
+                            <div className="mapa-infowindow">
+                                <h3>{poiSeleccionado.nombre}</h3>
+                                {poiSeleccionado.direccion && <p>📍 {poiSeleccionado.direccion}</p>}
+                                {poiSeleccionado.rating != null && <p>⭐ {poiSeleccionado.rating}</p>}
+                                {poiSeleccionado.telefono && <p>📞 {poiSeleccionado.telefono}</p>}
                             </div>
                         </InfoWindow>
                     )}
