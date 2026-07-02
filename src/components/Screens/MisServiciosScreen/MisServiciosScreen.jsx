@@ -1078,7 +1078,7 @@ const MisServiciosScreen = () => {
         setForm({
             nombre: s.nombre,
             descripcion: s.descripcion,
-            precio: s.precio,
+            precio: s.precio_base ?? s.precio ?? '',
             categoria: s.categoria,
             tipo_precio: s.tipo_precio || 'fijo',
             tipo_item: tipoItem,
@@ -1300,10 +1300,10 @@ const MisServiciosScreen = () => {
                                                 </div>
                                             )}
 
-                                            {/* Precio base */}
+                                            {/* Precio base (lo que cobra el proveedor) */}
                                             <div className='tienda-card-precio'>
                                                 <span className='precio-base-label'>Base:</span>
-                                                <strong>${Number(s.precio).toLocaleString('es-AR')}</strong>
+                                                <strong>${Number(s.precio_base ?? s.precio ?? 0).toLocaleString('es-AR')}</strong>
                                                 {sufijo && <span className='precio-sufijo-label'> {sufijo}</span>}
                                             </div>
 
