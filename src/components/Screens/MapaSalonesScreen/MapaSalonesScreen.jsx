@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { GoogleMap, InfoWindow, OverlayView, useLoadScript } from '@react-google-maps/api'
+import { GoogleMap, InfoWindow, Marker, useLoadScript } from '@react-google-maps/api'
 import { useNavigate } from 'react-router-dom'
 import { getSalones } from '../../../services/salonesServices'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
@@ -190,48 +190,49 @@ const MapaSalonesScreen = () => {
                         streetViewControl: false,
                         mapTypeControl: false,
                         fullscreenControl: true,
+                        // Evita que los puntos de interés de Google (POIs) capturen
+                        // el click y abran su propio popup, interfiriendo con los pines
+                        clickableIcons: false,
                     }}
                 >
                     {/* Marcador del usuario */}
                     {ubicacionUsuario && (
-                        <OverlayView
+                        <Marker
                             position={ubicacionUsuario}
-                            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                        >
-                            <div title="Tu ubicación" style={{
-                                width: 18, height: 18,
-                                background: '#4285F4',
-                                border: '3px solid white',
-                                borderRadius: '50%',
-                                boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                                transform: 'translate(-50%,-50%)',
-                                zIndex: 999,
-                            }} />
-                        </OverlayView>
+                            title="Tu ubicación"
+                            zIndex={999}
+                            icon={{
+                                path: window.google.maps.SymbolPath.CIRCLE,
+                                scale: 7,
+                                fillColor: '#4285F4',
+                                fillOpacity: 1,
+                                strokeColor: '#ffffff',
+                                strokeWeight: 3,
+                            }}
+                        />
                     )}
 
                     {/* Marcadores de salones */}
-                    {salonesConCoordenadas.map((salon) => (
-                        <OverlayView
-                            key={salon.id_bodega}
-                            position={{ lat: salon.latitud, lng: salon.longitud }}
-                            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                        >
-                            <div
+                    {salonesConCoordenadas.map((salon) => {
+                        const activo = salonSeleccionado?.id_bodega === salon.id_bodega
+                        return (
+                            <Marker
+                                key={salon.id_bodega}
+                                position={{ lat: salon.latitud, lng: salon.longitud }}
                                 title={salon.nombre}
                                 onClick={() => setSalonSeleccionado(salon)}
-                                style={{
-                                    width: 22, height: 22,
-                                    background: 'linear-gradient(135deg,#770981,#1882da)',
-                                    border: '3px solid white',
-                                    borderRadius: '50%',
-                                    boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                                    transform: 'translate(-50%,-50%)',
-                                    cursor: 'pointer',
+                                zIndex={activo ? 1000 : 1}
+                                icon={{
+                                    path: window.google.maps.SymbolPath.CIRCLE,
+                                    scale: activo ? 12 : 9,
+                                    fillColor: activo ? '#1882da' : '#770981',
+                                    fillOpacity: 1,
+                                    strokeColor: '#ffffff',
+                                    strokeWeight: 3,
                                 }}
                             />
-                        </OverlayView>
-                    ))}
+                        )
+                    })}
 
                     {/* InfoWindow de salón seleccionado */}
                     {salonSeleccionado && salonSeleccionado.latitud != null && (
@@ -241,6 +242,7 @@ const MapaSalonesScreen = () => {
                                 lng: salonSeleccionado.longitud,
                             }}
                             onCloseClick={() => setSalonSeleccionado(null)}
+                            options={{ pixelOffset: new window.google.maps.Size(0, -14) }}
                         >
                             <div className="mapa-infowindow">
                                 {salonSeleccionado.imagen && (
