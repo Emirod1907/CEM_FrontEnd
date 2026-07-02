@@ -3,6 +3,7 @@ import './global.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import NavBar from './components/NavBar/NavBar.jsx'
+import ProgresoEvento from './components/ProgresoEvento/ProgresoEvento.jsx'
 import PersonaContextProvider from './Contexts/PersonaContextProvider.jsx'
 import CarritoContextProvider from './Contexts/CarritoContextProvider.jsx'
 import CarritoDrawer from './components/Carrito/CarritoDrawer.jsx'
@@ -16,6 +17,7 @@ createRoot(document.getElementById('root')).render(
             <CarritoContextProvider>
                 <CompareContextProvider>
                     <NavBar/>
+                    <ProgresoEvento/>
                     <CarritoDrawer/>
                     <ComparacionModal/>
                     <div className='main-container'>

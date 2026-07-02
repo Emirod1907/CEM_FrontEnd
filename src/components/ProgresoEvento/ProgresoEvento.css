@@ -1,0 +1,96 @@
+/* Sub-barra delgada de progreso: fija debajo de la navbar (56px), flotando
+   por encima de forms y pantallas, con los pasos centrados */
+.prog-evento {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    z-index: 900; /* debajo de la navbar (1000), encima del contenido */
+    height: 34px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(119, 9, 129, 0.12);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prog-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.prog-inner::-webkit-scrollbar { display: none; }
+
+/* ── Paso ── */
+.prog-paso {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    padding: 3px 7px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    color: #9a94a8;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.prog-paso:hover:not(:disabled) { background: rgba(119, 9, 129, 0.06); }
+.prog-paso:disabled { cursor: not-allowed; opacity: 0.5; }
+
+.prog-circulo {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e2ec;
+    color: #9a94a8;
+    font-size: 0.68rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.prog-label {
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+/* ── Estados ── */
+.prog-done { color: #0a8f4a; }
+.prog-done .prog-circulo { background: #00a650; color: #fff; }
+
+.prog-actual { color: #770981; }
+.prog-actual .prog-circulo {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: #fff;
+}
+
+/* ── Línea conectora ── */
+.prog-linea {
+    width: 20px;
+    height: 2px;
+    background: #ddd9e4;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.prog-linea-done { background: #00a650; }
+
+/* ── Responsivo: en pantallas chicas, solo los círculos numerados ── */
+@media (max-width: 640px) {
+    .prog-label { display: none; }
+    .prog-linea { width: 12px; }
+}
