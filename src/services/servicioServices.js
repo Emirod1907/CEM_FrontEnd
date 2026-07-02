@@ -62,6 +62,41 @@ export const getMisReservasProveedor = async () => {
     }
 }
 
+// ── Importación masiva desde Excel ────────────────────────────────────────────
+
+// GET /api/servicios/plantilla-excel — descarga la planilla de ejemplo (.xlsx)
+export const descargarPlantillaExcel = async () => {
+    const response = await axios.get('servicios/plantilla-excel', { responseType: 'blob' })
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'plantilla_productos.xlsx'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    window.URL.revokeObjectURL(url)
+}
+
+// POST /api/servicios/importar-excel/preview — valida el archivo sin guardar
+export const previewImportarExcel = async (archivo) => {
+    const fd = new FormData()
+    fd.append('archivo', archivo)
+    const response = await axios.post('servicios/importar-excel/preview', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return response.data
+}
+
+// POST /api/servicios/importar-excel/confirmar — crea los productos del archivo
+export const confirmarImportarExcel = async (archivo) => {
+    const fd = new FormData()
+    fd.append('archivo', archivo)
+    const response = await axios.post('servicios/importar-excel/confirmar', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return response.data
+}
+
 // GET /api/servicios/mi-agenda — bloqueos manuales y confirmaciones del proveedor
 export const getMiAgenda = async () => {
     try {

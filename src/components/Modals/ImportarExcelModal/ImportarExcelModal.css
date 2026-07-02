@@ -1,0 +1,185 @@
+.imx-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+.imx-modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+.imx-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: #fff;
+}
+.imx-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    margin: 0;
+}
+.imx-cerrar {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.imx-cerrar:hover { background: rgba(255, 255, 255, 0.32); }
+
+.imx-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Pasos */
+.imx-paso {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f4;
+}
+.imx-paso-num {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.imx-paso-body strong { font-size: 0.92rem; color: #2d2a33; }
+.imx-hint { font-size: 0.8rem; color: #888; margin: 3px 0 8px; }
+
+.imx-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: 9px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+}
+.imx-btn-outline {
+    background: #fff;
+    border: 1.5px solid #cbb6d6;
+    color: #770981;
+}
+.imx-btn-outline:hover { background: #faf4fc; }
+.imx-btn-primary {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: #fff;
+    justify-content: center;
+}
+.imx-btn-primary:disabled { opacity: 0.6; cursor: wait; }
+
+.imx-error {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #fdf2f2;
+    border: 1px solid #f5c6c6;
+    color: #c0392b;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 0.82rem;
+    margin-top: 12px;
+}
+.imx-cargando { margin-top: 12px; }
+
+/* Preview */
+.imx-preview { margin-top: 14px; }
+.imx-preview-resumen {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.imx-badge {
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+.imx-badge-ok  { background: #e7f8ee; color: #0a8f4a; }
+.imx-badge-err { background: #fdecec; color: #c0392b; }
+
+.imx-tabla-wrap {
+    max-height: 260px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 10px;
+}
+.imx-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+.imx-tabla th {
+    text-align: left;
+    background: #f6f1fa;
+    color: #770981;
+    padding: 8px 10px;
+    position: sticky;
+    top: 0;
+    font-size: 0.76rem;
+}
+.imx-tabla td {
+    padding: 8px 10px;
+    border-top: 1px solid #f0f0f4;
+    vertical-align: top;
+}
+.imx-desc { font-size: 0.72rem; color: #999; margin-top: 2px; }
+
+.imx-errores {
+    margin-top: 12px;
+    background: #fdf8ef;
+    border: 1px solid #f3e0c2;
+    border-radius: 9px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    color: #a15c00;
+}
+.imx-errores ul { margin: 6px 0 0; padding-left: 18px; }
+.imx-errores li { margin-bottom: 3px; }
+
+.imx-importar { width: 100%; margin-top: 14px; padding: 11px; }
+
+/* Resultado */
+.imx-resultado {
+    text-align: center;
+    padding: 20px 10px;
+}
+.imx-ok-icon { color: #00a650; margin-bottom: 10px; }
+.imx-resultado h3 { margin: 0 0 8px; color: #2d2a33; }
+.imx-resultado .imx-btn { margin-top: 14px; width: 100%; }

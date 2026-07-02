@@ -481,6 +481,30 @@
     transform: translateY(-1px);
 }
 
+.mis-servicios-acciones {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.btn-importar-excel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    white-space: nowrap;
+    transition: background 0.18s;
+}
+.btn-importar-excel:hover { background: rgba(255, 255, 255, 0.28); }
+
 /* ── States ── */
 .mis-servicios-loading {
     text-align: center;
@@ -547,6 +571,57 @@
     width: 100%;
     height: 160px;
     object-fit: cover;
+    display: block;
+}
+.tienda-card-img-wrap {
+    position: relative;
+}
+.tienda-card-foto-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.tienda-card-foto-btn:hover { background: rgba(0, 0, 0, 0.75); }
+
+.tienda-card-foto-placeholder {
+    width: 100%;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: repeating-linear-gradient(45deg, #f5f2f8, #f5f2f8 10px, #efeaf3 10px, #efeaf3 20px);
+    color: #9a8caa;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background 0.15s, color 0.15s;
+}
+.tienda-card-foto-placeholder:hover { color: #770981; }
+
+.tienda-card-descuento {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #b45309;
+    background: #fdf4e7;
+    border: 1px solid #f3ddb8;
+    border-radius: 8px;
+    padding: 3px 9px;
+    width: fit-content;
 }
 
 .tienda-card-body {

@@ -148,6 +148,8 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                 turnos: tp === 'por_turno' ? turnos : null,
                 hora_inicio: horaFinal,
                 hora_manual: !!horaManual,
+                descuento_cantidad_min: servicio.descuento_cantidad_min ?? null,
+                descuento_porcentaje:   servicio.descuento_porcentaje ?? null,
                 _opcionTurno: opSel || null,
             }])
         }

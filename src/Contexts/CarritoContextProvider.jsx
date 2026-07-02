@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { actualizarServiciosReserva, getReservaDetalle } from '../services/reservaServices'
+import { precioUnitarioConDescuento } from '../utils/preciosUtils'
 import { useAuth } from './PersonaContextProvider'
 
 const CarritoContext = createContext()
@@ -151,7 +152,8 @@ const CarritoContextProvider = ({ children }) => {
         if (s.tipo_precio === 'por_persona') multiplicador = invitadosEfectivos > 0 ? invitadosEfectivos : 1
         else if (s.tipo_precio === 'por_hora')   multiplicador = Number(s.horas)  > 0 ? Number(s.horas)  : 1
         else if (s.tipo_precio === 'por_turno')  multiplicador = Number(s.turnos) > 0 ? Number(s.turnos) : 1
-        return acc + Number(s.precio) * s.cantidad * multiplicador
+        // Aplica descuento por cantidad (productos) según las unidades del ítem
+        return acc + precioUnitarioConDescuento(s) * s.cantidad * multiplicador
     }, 0)
 
     const montoAlquiler = reservaOrganizador ? Number(reservaOrganizador.monto_alquiler) : 0

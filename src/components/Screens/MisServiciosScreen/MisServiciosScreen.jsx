@@ -14,14 +14,18 @@ import {
 } from '../../../services/servicioServices'
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiCheck, FiPackage,
          FiCalendar, FiChevronLeft, FiChevronRight, FiSlash, FiMapPin, FiMinus,
-         FiClock, FiStar } from 'react-icons/fi'
+         FiClock, FiStar, FiUploadCloud, FiCamera } from 'react-icons/fi'
 import PreciosConfigPanel from '../../PreciosConfigPanel/PreciosConfigPanel'
+import ImportarExcelModal from '../../Modals/ImportarExcelModal/ImportarExcelModal'
+import UploadImg from '../../../services/uploadimg'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MisServiciosScreen.css'
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
 const CATEGORIAS_PRODUCTO = [
+    { value: 'bebidas',     label: 'Bebidas' },
+    { value: 'comida',      label: 'Comida' },
     { value: 'catering',    label: 'Catering' },
     { value: 'mobiliario',  label: 'Mobiliario' },
     { value: 'otro',        label: 'Otro' }
@@ -1035,6 +1039,8 @@ const MisServiciosScreen = () => {
     const [guardando, setGuardando] = useState(false)
     const [error, setError] = useState(null)
     const [confirmDelete, setConfirmDelete] = useState(null)
+    const [mostrarImportar, setMostrarImportar] = useState(false)
+    const [subiendoFotoId, setSubiendoFotoId] = useState(null)
 
     const cargar = async () => {
         setCargando(true)
@@ -1043,6 +1049,23 @@ const MisServiciosScreen = () => {
         setReservas(res)
         setAgenda(ag || [])
         setCargando(false)
+    }
+
+    // Subir foto directo a un producto (ágil, para los importados sin imagen)
+    const subirFotoProducto = async (servicio, file) => {
+        if (!file) return
+        setSubiendoFotoId(servicio.id_servicio)
+        try {
+            const url = await UploadImg(file)
+            if (url) {
+                await updateServicioProveedor(servicio.id_servicio, { ...servicio, imagen: url })
+                await cargar()
+            }
+        } catch (err) {
+            console.error('Error al subir foto del producto', err)
+        } finally {
+            setSubiendoFotoId(null)
+        }
     }
 
     useEffect(() => { cargar() }, [])
@@ -1161,11 +1184,23 @@ const MisServiciosScreen = () => {
                     </div>
                 </div>
                 {tabActiva === 'tiendita' && (
-                    <button className='btn-nuevo-servicio' onClick={abrirNuevo}>
-                        <FiPlus size={18} /> Agregar ítem
-                    </button>
+                    <div className='mis-servicios-acciones'>
+                        <button className='btn-importar-excel' onClick={() => setMostrarImportar(true)}>
+                            <FiUploadCloud size={17} /> Importar Excel
+                        </button>
+                        <button className='btn-nuevo-servicio' onClick={abrirNuevo}>
+                            <FiPlus size={18} /> Agregar ítem
+                        </button>
+                    </div>
                 )}
             </div>
+
+            {mostrarImportar && (
+                <ImportarExcelModal
+                    onClose={() => setMostrarImportar(false)}
+                    onImportado={cargar}
+                />
+            )}
 
             {/* Tabs principales */}
             <div className='sv-tabs'>
@@ -1219,7 +1254,24 @@ const MisServiciosScreen = () => {
                                 const sufijo = sufijoPrecio(s.tipo_precio)
                                 return (
                                     <div key={s.id_servicio} className={`tienda-card tienda-card--${tipoItem} ${!s.disponible ? 'inactivo' : ''}`}>
-                                        {s.imagen && <img src={s.imagen} alt={s.nombre} className='tienda-card-img' />}
+                                        {s.imagen ? (
+                                            <div className='tienda-card-img-wrap'>
+                                                <img src={s.imagen} alt={s.nombre} className='tienda-card-img' />
+                                                <label className='tienda-card-foto-btn' title='Cambiar foto'>
+                                                    <FiCamera size={14} />
+                                                    <input type='file' accept='image/*' style={{ display: 'none' }}
+                                                        onChange={(e) => subirFotoProducto(s, e.target.files?.[0])} />
+                                                </label>
+                                            </div>
+                                        ) : (
+                                            <label className='tienda-card-foto-placeholder'>
+                                                {subiendoFotoId === s.id_servicio
+                                                    ? <span>Subiendo…</span>
+                                                    : <><FiCamera size={22} /><span>Agregar foto</span></>}
+                                                <input type='file' accept='image/*' style={{ display: 'none' }}
+                                                    onChange={(e) => subirFotoProducto(s, e.target.files?.[0])} />
+                                            </label>
+                                        )}
                                         <div className='tienda-card-body'>
                                             <div className='tienda-card-tags'>
                                                 <span className={`tag-tipo-item tag-ti--${tipoItem}`}>
@@ -1254,6 +1306,13 @@ const MisServiciosScreen = () => {
                                                 <strong>${Number(s.precio).toLocaleString('es-AR')}</strong>
                                                 {sufijo && <span className='precio-sufijo-label'> {sufijo}</span>}
                                             </div>
+
+                                            {/* Descuento por cantidad */}
+                                            {s.descuento_cantidad_min && s.descuento_porcentaje && (
+                                                <div className='tienda-card-descuento'>
+                                                    🏷️ {s.descuento_porcentaje}% desde {s.descuento_cantidad_min} u
+                                                </div>
+                                            )}
 
                                             {/* Opciones de turno */}
                                             {s.tipo_precio === 'por_turno' && cfgPrecios?.opciones_turno?.length > 0 && (

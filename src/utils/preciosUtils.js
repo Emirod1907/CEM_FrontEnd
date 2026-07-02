@@ -93,6 +93,17 @@ export const PRECIOS_CONFIG_DEFAULT = {
     precio_hora_feriado: null,
 }
 
+// Precio unitario de un producto aplicando su descuento por cantidad, si la
+// cantidad alcanza el umbral (descuento_cantidad_min → descuento_porcentaje %).
+export const precioUnitarioConDescuento = (item) => {
+    const base = Number(item?.precio) || 0
+    const min  = Number(item?.descuento_cantidad_min) || 0
+    const pct  = Number(item?.descuento_porcentaje) || 0
+    const cant = Number(item?.cantidad) || 1
+    if (min > 1 && pct > 0 && cant >= min) return +(base * (1 - pct / 100)).toFixed(2)
+    return base
+}
+
 export const parsePreciosConfig = (val) => {
     if (!val) return null
     try {

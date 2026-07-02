@@ -5,6 +5,7 @@ import { useCarrito } from '../../../Contexts/CarritoContextProvider'
 import ServiciosModal from '../ServiciosModal/ServiciosModal'
 import { InvitacionesPanel } from '../InvitacionesModal/InvitacionesModal'
 import PozoPanel from '../PozoPanel/PozoPanel'
+import { precioUnitarioConDescuento } from '../../../utils/preciosUtils'
 import {
     FiX, FiCalendar, FiMapPin, FiUsers, FiDollarSign,
     FiClock, FiFileText, FiCheckCircle, FiXCircle,
@@ -49,7 +50,7 @@ const calcSubtotal = (s, invitados = 0) => {
     if      (s.tipo_precio === 'por_persona') multiplicador = invitados > 0 ? invitados : 1
     else if (s.tipo_precio === 'por_hora')    multiplicador = Number(s.horas)  > 0 ? Number(s.horas)  : 1
     else if (s.tipo_precio === 'por_turno')   multiplicador = Number(s.turnos) > 0 ? Number(s.turnos) : 1
-    return Number(s.precio) * (Number(s.cantidad) || 1) * multiplicador
+    return precioUnitarioConDescuento(s) * (Number(s.cantidad) || 1) * multiplicador
 }
 
 const fmt     = (n) => Number(n).toLocaleString('es-AR')
