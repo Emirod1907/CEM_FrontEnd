@@ -190,9 +190,9 @@ const MapaSalonesScreen = () => {
                         streetViewControl: false,
                         mapTypeControl: false,
                         fullscreenControl: true,
-                        // Evita que los puntos de interés de Google (POIs) capturen
-                        // el click y abran su propio popup, interfiriendo con los pines
-                        clickableIcons: false,
+                        // Los POIs de Google siguen siendo clickeables (se puede ver su
+                        // detalle); los pines de salón usan Marker nativo, así que
+                        // conservan prioridad: tocar un pin siempre abre su card.
                     }}
                 >
                     {/* Marcador del usuario */}
