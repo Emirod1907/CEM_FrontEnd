@@ -10,6 +10,19 @@ const MAPA_ESTILO = { width: '100%', height: '100%' }
 
 const CENTRO_DEFAULT = { lat: -32.8908, lng: -68.8272 } // Mendoza, Argentina
 
+// Color del pin según el tipo de salón
+const COLOR_POR_TIPO = {
+    'Salón':    '#1e88e5', // azul
+    'Quincho':  '#2e9e5b', // verde
+    'Quinta':   '#7cb342', // verde lima
+    'Finca':    '#b5651d', // terracota
+    'Bodega':   '#8e24aa', // violeta
+    'Terraza':  '#fb8c00', // naranja
+    'Pelotero': '#26c6da', // celeste
+}
+const COLOR_SIN_TIPO = '#757575' // gris (salón sin tipo definido)
+const colorDeSalon = (salon) => COLOR_POR_TIPO[salon?.tipo_salon] || COLOR_SIN_TIPO
+
 function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
     const R = 6371
     const dLat = ((lat2 - lat1) * Math.PI) / 180
@@ -43,6 +56,7 @@ const MapaSalonesScreen = () => {
 
     const [rangoKm, setRangoKm] = useState(50)
     const [filtrarPorDistancia, setFiltrarPorDistancia] = useState(false)
+    const [tiposFiltro, setTiposFiltro] = useState([]) // tipos de salón activos (vacío = todos)
 
     const [salonSeleccionado, setSalonSeleccionado] = useState(null)
     const [poiSeleccionado, setPoiSeleccionado] = useState(null)
@@ -182,12 +196,26 @@ const MapaSalonesScreen = () => {
         }
     }, [salonesFiltrados, filtrarPorDistancia, rangoKm, ubicacionUsuario, isLoaded])
 
-    const salonesConCoordenadas = salonesFiltrados.filter(
+    // Filtro por tipo de salón (además del filtro por distancia)
+    const salonesVisibles = tiposFiltro.length > 0
+        ? salonesFiltrados.filter((b) => tiposFiltro.includes(b.tipo_salon))
+        : salonesFiltrados
+
+    // Tipos presentes en los salones cargados (para armar el filtro y la leyenda)
+    const tiposDisponibles = [...new Set(salones.map((b) => b.tipo_salon).filter(Boolean))].sort()
+
+    const salonesConCoordenadas = salonesVisibles.filter(
         (b) => b.latitud != null && b.longitud != null
     )
-    const salonesSinCoordenadas = salonesFiltrados.filter(
+    const salonesSinCoordenadas = salonesVisibles.filter(
         (b) => b.latitud == null || b.longitud == null
     )
+
+    const toggleTipo = (tipo) => {
+        setTiposFiltro((prev) =>
+            prev.includes(tipo) ? prev.filter((t) => t !== tipo) : [...prev, tipo]
+        )
+    }
 
     if (loadError) {
         return (
@@ -243,23 +271,23 @@ const MapaSalonesScreen = () => {
                         />
                     )}
 
-                    {/* Marcadores de salones */}
+                    {/* Marcadores de salones (color según tipo, tamaño mayor si está activo) */}
                     {salonesConCoordenadas.map((salon) => {
                         const activo = salonSeleccionado?.id_bodega === salon.id_bodega
                         return (
                             <Marker
                                 key={salon.id_bodega}
                                 position={{ lat: salon.latitud, lng: salon.longitud }}
-                                title={salon.nombre}
+                                title={`${salon.nombre}${salon.tipo_salon ? ` · ${salon.tipo_salon}` : ''}`}
                                 onClick={() => { setPoiSeleccionado(null); setSalonSeleccionado(salon) }}
                                 zIndex={activo ? 1000 : 1}
                                 icon={{
                                     path: window.google.maps.SymbolPath.CIRCLE,
-                                    scale: activo ? 12 : 9,
-                                    fillColor: activo ? '#1882da' : '#770981',
+                                    scale: activo ? 13 : 9,
+                                    fillColor: colorDeSalon(salon),
                                     fillOpacity: 1,
-                                    strokeColor: '#ffffff',
-                                    strokeWeight: 3,
+                                    strokeColor: activo ? '#1a1a2e' : '#ffffff',
+                                    strokeWeight: activo ? 4 : 3,
                                 }}
                             />
                         )
@@ -407,12 +435,43 @@ const MapaSalonesScreen = () => {
                         )}
                     </div>
 
+                    {/* Filtro por tipo de salón (chips de color) */}
+                    {tiposDisponibles.length > 0 && (
+                        <div className="mapa-seccion">
+                            <div className="mapa-tipo-header">
+                                <span className="mapa-label">Tipo de salón</span>
+                                {tiposFiltro.length > 0 && (
+                                    <button className="mapa-tipo-limpiar" onClick={() => setTiposFiltro([])}>
+                                        Ver todos
+                                    </button>
+                                )}
+                            </div>
+                            <div className="mapa-tipo-chips">
+                                {tiposDisponibles.map((tipo) => {
+                                    const activo = tiposFiltro.includes(tipo)
+                                    const color = COLOR_POR_TIPO[tipo] || COLOR_SIN_TIPO
+                                    return (
+                                        <button
+                                            key={tipo}
+                                            className={`mapa-tipo-chip ${activo ? 'mapa-tipo-chip-activo' : ''}`}
+                                            onClick={() => toggleTipo(tipo)}
+                                            style={activo ? { background: color, borderColor: color, color: '#fff' } : { borderColor: color }}
+                                        >
+                                            <span className="mapa-tipo-dot" style={{ background: color }} />
+                                            {tipo}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Resultados */}
                     <div className="mapa-seccion">
                         <p className="mapa-resultados">
                             {filtrarPorDistancia && ubicacionUsuario
                                 ? `${salonesConCoordenadas.length} salón(es) dentro de ${rangoKm} km`
-                                : `${salones.length} salón(es) en total`}
+                                : `${salonesVisibles.length} salón(es)${tiposFiltro.length > 0 ? ' del tipo elegido' : ' en total'}`}
                         </p>
                         {salonesSinCoordenadas.length > 0 && (
                             <p className="mapa-hint">
@@ -424,14 +483,16 @@ const MapaSalonesScreen = () => {
                     {/* Lista lateral */}
                     <div className="mapa-lista">
                         {errorSalones && <p className="mapa-error-msg">{errorSalones}</p>}
-                        {salonesFiltrados.length === 0 ? (
+                        {salonesVisibles.length === 0 ? (
                             <p className="mapa-hint">
-                                {filtrarPorDistancia
-                                    ? 'No hay salones en ese rango'
-                                    : 'No hay salones disponibles'}
+                                {tiposFiltro.length > 0
+                                    ? 'No hay salones de ese tipo'
+                                    : filtrarPorDistancia
+                                        ? 'No hay salones en ese rango'
+                                        : 'No hay salones disponibles'}
                             </p>
                         ) : (
-                            salonesFiltrados.map((salon) => {
+                            salonesVisibles.map((salon) => {
                                 const tieneCoordenadas = salon.latitud != null && salon.longitud != null
                                 const distancia =
                                     ubicacionUsuario && tieneCoordenadas
@@ -464,7 +525,11 @@ const MapaSalonesScreen = () => {
                                             }
                                         }}
                                     >
-                                        <p className="mapa-lista-nombre">{salon.nombre}</p>
+                                        <p className="mapa-lista-nombre">
+                                            <span className="mapa-tipo-dot" style={{ background: colorDeSalon(salon) }} />
+                                            {salon.nombre}
+                                            {salon.tipo_salon && <span className="mapa-lista-tipo">{salon.tipo_salon}</span>}
+                                        </p>
                                         <p className="mapa-lista-domicilio">{salon.domicilio}</p>
                                         {distancia && (
                                             <p className="mapa-lista-distancia">{distancia} km</p>
