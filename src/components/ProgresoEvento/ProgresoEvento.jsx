@@ -2,7 +2,6 @@ import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../Contexts/PersonaContextProvider'
 import { useCarrito } from '../../Contexts/CarritoContextProvider'
-import { EMAILS_FULL_ACCESS } from '../../config/fullAccessEmails'
 import { FiCheck } from 'react-icons/fi'
 import './ProgresoEvento.css'
 
@@ -23,7 +22,8 @@ const ProgresoEvento = () => {
     const { reservaOrganizador, serviciosCarrito, setIsCartOpen } = useCarrito()
 
     const path = location.pathname
-    const esOrganizador = persona?.rol === 'organizador' || EMAILS_FULL_ACCESS.includes(persona?.email)
+    // Solo el organizador (rol activo) ve la barra de progreso del flujo de evento
+    const esOrganizador = persona?.rol === 'organizador'
 
     // Rutas del flujo (excluye el mapa fullscreen, que ocuparía toda la pantalla)
     const enSalones = path.startsWith('/salones') && !path.startsWith('/salones/mapa')
