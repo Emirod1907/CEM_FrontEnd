@@ -278,6 +278,33 @@
     padding: 6px 10px;
 }
 
+/* Footer: confirmar cambios (PATCH explícito) */
+.spk-add-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0 16px 12px;
+}
+.spk-add-pendiente { font-size: 0.75rem; font-weight: 600; color: #b45309; }
+.spk-add-confirmar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 9px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.83rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.spk-add-confirmar.pendiente { background: linear-gradient(135deg, #770981, #1882da); color: #fff; }
+.spk-add-confirmar.pendiente:hover { filter: brightness(1.08); }
+.spk-add-confirmar.guardado { background: #eafaf0; color: #0a8f4a; cursor: default; }
+.spk-add-confirmar:disabled { opacity: 0.75; cursor: default; }
+
 .spk-categorias {
     display: flex;
     gap: 6px;

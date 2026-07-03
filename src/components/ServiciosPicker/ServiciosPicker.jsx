@@ -69,7 +69,7 @@ export const sugerirHoraServicio = (categoria, horaEvento, entretenimientoIdx = 
 
 // embebido: renderiza sin overlay/modal, para usarse dentro de una página.
 // soloTipo ('servicio'|'producto'): fija el tab y oculta el selector de tipo.
-const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, seleccionados = [], onChange, onClose, embebido = false, soloTipo = null }) => {
+const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, seleccionados = [], onChange, onClose, embebido = false, soloTipo = null, sinGuardar = false, guardando = false, onConfirmar = null }) => {
     const [servicios, setServicios] = useState([])
     const [cargando, setCargando] = useState(true)
     const [disponibilidad, setDisponibilidad] = useState({})
@@ -364,6 +364,24 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                         </div>
                                     )
                                 })}
+                            </div>
+                        )}
+
+                        {/* Confirmar cambios (PATCH explícito a la reserva) */}
+                        {onConfirmar && (
+                            <div className='spk-add-footer'>
+                                {sinGuardar && <span className='spk-add-pendiente'>Tenés cambios sin confirmar</span>}
+                                <button
+                                    className={`spk-add-confirmar ${sinGuardar ? 'pendiente' : 'guardado'}`}
+                                    onClick={onConfirmar}
+                                    disabled={!sinGuardar || guardando}
+                                >
+                                    {guardando
+                                        ? 'Guardando...'
+                                        : sinGuardar
+                                            ? <><FiCheck size={14}/> Confirmar cambios</>
+                                            : <><FiCheck size={14}/> Cambios guardados</>}
+                                </button>
                             </div>
                         )}
                     </div>

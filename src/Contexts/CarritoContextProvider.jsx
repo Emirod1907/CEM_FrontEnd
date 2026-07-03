@@ -101,20 +101,33 @@ const CarritoContextProvider = ({ children }) => {
         }))
     }, [reservaOrganizador, serviciosCarrito, precioEntrada, numInvitados])
 
-    // Sincronizar servicios y numInvitados con la reserva en el backend cuando cambian
-    const syncTimeoutRef = useRef(null)
+    // Cambios de servicios/personas NO se guardan solos: el organizador los confirma
+    // explícitamente (PATCH) con "Confirmar cambios". Acá solo marcamos que hay cambios
+    // pendientes (evitando marcar en la carga inicial de una reserva).
+    const [serviciosSinGuardar, setServiciosSinGuardar] = useState(false)
+    const [guardandoServicios, setGuardandoServicios] = useState(false)
+    const cargaInicialServiciosRef = useRef(true)
+
     useEffect(() => {
-        if (!reservaOrganizador?.id_reserva || !isAuthenticated) return
-        clearTimeout(syncTimeoutRef.current)
-        syncTimeoutRef.current = setTimeout(() => {
-            actualizarServiciosReserva(
-                reservaOrganizador.id_reserva,
-                serviciosCarrito,
-                numInvitados || null
-            )
-        }, 800)
-        return () => clearTimeout(syncTimeoutRef.current)
-    }, [serviciosCarrito, numInvitados, reservaOrganizador?.id_reserva, isAuthenticated])
+        if (!reservaOrganizador?.id_reserva) return
+        if (cargaInicialServiciosRef.current) { cargaInicialServiciosRef.current = false; return }
+        setServiciosSinGuardar(true)
+    }, [serviciosCarrito, numInvitados, reservaOrganizador?.id_reserva])
+
+    // Confirma (persiste) los servicios/personas actuales en la reserva. Devuelve true si OK.
+    const guardarCambiosReserva = async () => {
+        if (!reservaOrganizador?.id_reserva || !isAuthenticated) return false
+        setGuardandoServicios(true)
+        try {
+            await actualizarServiciosReserva(reservaOrganizador.id_reserva, serviciosCarrito, numInvitados || null)
+            setServiciosSinGuardar(false)
+            return true
+        } catch {
+            return false
+        } finally {
+            setGuardandoServicios(false)
+        }
+    }
 
     // Sincronizar el monto del alquiler con el backend al montar / cambiar de reserva.
     // El carrito guarda un snapshot en localStorage que puede quedar desactualizado si
@@ -216,6 +229,9 @@ const CarritoContextProvider = ({ children }) => {
         const esMismaReserva = reservaOrganizador?.id_reserva === reserva?.id_reserva
         setReservaOrganizador(reserva)
         if (!esMismaReserva) {
+            // Nueva reserva cargada: su estado arranca "guardado" (sin cambios pendientes)
+            cargaInicialServiciosRef.current = true
+            setServiciosSinGuardar(false)
             // 1. Buscar en el cache en memoria (refleja cambios hechos en esta sesión)
             const cached = serviciosCacheRef.current[reserva?.id_reserva]
             // 2. Fallback: servicios guardados en el backend (datos_evento.servicios)
@@ -361,6 +377,9 @@ const CarritoContextProvider = ({ children }) => {
                 actualizarUnidadesServicio,
                 actualizarPersonasServicio,
                 reemplazarServiciosPorTipo,
+                serviciosSinGuardar,
+                guardandoServicios,
+                guardarCambiosReserva,
                 vaciarCarritoOrganizador,
                 precioEntrada,
                 setPrecioEntrada,

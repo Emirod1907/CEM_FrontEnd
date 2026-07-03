@@ -11,6 +11,7 @@ const EventoServiciosScreen = () => {
     const {
         reservaOrganizador, serviciosCarrito,
         reemplazarServiciosPorTipo,
+        serviciosSinGuardar, guardandoServicios, guardarCambiosReserva,
         setIsCartOpen,
     } = useCarrito()
 
@@ -56,6 +57,9 @@ const EventoServiciosScreen = () => {
                 cupo={cupo}
                 seleccionados={seleccionados}
                 onChange={onChange}
+                sinGuardar={serviciosSinGuardar}
+                guardando={guardandoServicios}
+                onConfirmar={guardarCambiosReserva}
             />
 
             <div className='flujo-nav'>
