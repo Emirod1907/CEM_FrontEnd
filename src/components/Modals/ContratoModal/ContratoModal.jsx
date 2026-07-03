@@ -3,7 +3,7 @@ import { FiX, FiCheck, FiFileText } from 'react-icons/fi'
 import { getTerminosActuales, aceptarContrato } from '../../../services/contratoServices'
 import './ContratoModal.css'
 
-const ContratoModal = ({ onClose, onAceptado }) => {
+const ContratoModal = ({ onClose, onAceptado, ambito = 'salon' }) => {
     const [terminos, setTerminos] = useState(null)
     const [cargando, setCargando] = useState(true)
     const [aceptando, setAceptando] = useState(false)
@@ -22,7 +22,7 @@ const ContratoModal = ({ onClose, onAceptado }) => {
         setAceptando(true)
         setError(null)
         try {
-            await aceptarContrato()
+            await aceptarContrato(ambito)
             onAceptado()
         } catch (err) {
             const msg = err?.response?.data?.message ?? 'Error al registrar la aceptación.'

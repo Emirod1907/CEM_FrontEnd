@@ -5,12 +5,16 @@ export const getTerminosActuales = async () => {
     return response.data
 }
 
-export const aceptarContrato = async () => {
-    const response = await axios.post('contratos/aceptar', { acepto: true }, { withCredentials: true })
+// ambito: 'salon' | 'proveedor'
+export const aceptarContrato = async (ambito = 'salon') => {
+    const response = await axios.post('contratos/aceptar', { acepto: true, ambito }, { withCredentials: true })
     return response.data
 }
 
-export const getMiContrato = async () => {
-    const response = await axios.get('contratos/mi-contrato', { withCredentials: true })
+export const getMiContrato = async (ambito) => {
+    const response = await axios.get('contratos/mi-contrato', {
+        params: ambito ? { ambito } : {},
+        withCredentials: true,
+    })
     return response.data
 }

@@ -17,6 +17,8 @@ import { FiPlus, FiEdit2, FiTrash2, FiX, FiCheck, FiPackage,
          FiClock, FiStar, FiUploadCloud, FiCamera } from 'react-icons/fi'
 import PreciosConfigPanel from '../../PreciosConfigPanel/PreciosConfigPanel'
 import ImportarExcelModal from '../../Modals/ImportarExcelModal/ImportarExcelModal'
+import ContratoModal from '../../Modals/ContratoModal/ContratoModal'
+import { getMiContrato } from '../../../services/contratoServices'
 import UploadImg from '../../../services/uploadimg'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MisServiciosScreen.css'
@@ -1041,6 +1043,14 @@ const MisServiciosScreen = () => {
     const [confirmDelete, setConfirmDelete] = useState(null)
     const [mostrarImportar, setMostrarImportar] = useState(false)
     const [subiendoFotoId, setSubiendoFotoId] = useState(null)
+    const [mostrarContratoProv, setMostrarContratoProv] = useState(false)
+
+    // Al entrar a la tienda, si no hay contrato de proveedor vigente, pedir su aceptación
+    useEffect(() => {
+        getMiContrato('proveedor')
+            .then(d => { if (d?.requiere_nueva_aceptacion) setMostrarContratoProv(true) })
+            .catch(() => {})
+    }, [])
 
     const cargar = async () => {
         setCargando(true)
@@ -1199,6 +1209,14 @@ const MisServiciosScreen = () => {
                 <ImportarExcelModal
                     onClose={() => setMostrarImportar(false)}
                     onImportado={cargar}
+                />
+            )}
+
+            {mostrarContratoProv && (
+                <ContratoModal
+                    ambito='proveedor'
+                    onClose={() => setMostrarContratoProv(false)}
+                    onAceptado={() => { setMostrarContratoProv(false); cargar() }}
                 />
             )}
 

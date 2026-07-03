@@ -3,35 +3,42 @@ import { useAuth } from '../../Contexts/PersonaContextProvider'
 import { getMiContrato } from '../../services/contratoServices'
 import ContratoModal from '../Modals/ContratoModal/ContratoModal'
 
-// Roles que ofrecen algo en la plataforma y por eso requieren aceptar el contrato
-const ROLES_CON_CONTRATO = ['proveedor_servicios', 'proveedor_insumos', 'dueno_salon']
+// Cada rol que ofrece algo tiene su propio ámbito de contrato
+const AMBITO_POR_ROL = {
+    dueno_salon: 'salon',
+    proveedor_servicios: 'proveedor',
+    proveedor_insumos: 'proveedor',
+}
 
-// Al iniciar sesión, si un proveedor o dueño de salón no tiene contrato vigente,
-// se le muestra el contrato para aceptarlo. Al aceptar, sus precios pasan a
-// mostrarse con la comisión (el cálculo del precio público es dinámico).
+// Al iniciar sesión, si el usuario no tiene contrato vigente para el ámbito de su rol,
+// se le muestra el contrato correspondiente. Al aceptar, sus precios pasan a mostrarse
+// con la comisión (el precio público es dinámico).
 const ContratoGuard = () => {
     const { persona, isAuthenticated, loading } = useAuth()
     const [mostrar, setMostrar] = useState(false)
     const chequeadoPara = useRef(null)
 
+    const ambito = AMBITO_POR_ROL[persona?.rol]
+
     useEffect(() => {
         if (loading) return
-        if (!isAuthenticated || !persona || !ROLES_CON_CONTRATO.includes(persona.rol)) {
+        if (!isAuthenticated || !persona || !ambito) {
             setMostrar(false)
             chequeadoPara.current = null
             return
         }
-        // Chequear una sola vez por usuario
-        if (chequeadoPara.current === persona.id_persona) return
-        chequeadoPara.current = persona.id_persona
-        getMiContrato()
+        const clave = `${persona.id_persona}:${ambito}`
+        if (chequeadoPara.current === clave) return
+        chequeadoPara.current = clave
+        getMiContrato(ambito)
             .then((data) => { if (data?.requiere_nueva_aceptacion) setMostrar(true) })
             .catch(() => {})
-    }, [loading, isAuthenticated, persona?.id_persona, persona?.rol])
+    }, [loading, isAuthenticated, persona?.id_persona, ambito])
 
-    if (!mostrar) return null
+    if (!mostrar || !ambito) return null
     return (
         <ContratoModal
+            ambito={ambito}
             onClose={() => setMostrar(false)}
             onAceptado={() => setMostrar(false)}
         />

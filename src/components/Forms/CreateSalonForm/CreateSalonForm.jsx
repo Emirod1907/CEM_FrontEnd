@@ -342,6 +342,7 @@ const CreateSalonForm = () => {
         <div className='container'>
             {mostrarContrato && (
                 <ContratoModal
+                    ambito='salon'
                     onClose={() => { setMostrarContrato(false); enviando.current = false }}
                     onAceptado={handleContratoAceptado}
                 />
