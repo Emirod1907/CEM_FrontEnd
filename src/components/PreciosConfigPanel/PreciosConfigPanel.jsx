@@ -1,5 +1,6 @@
 import React from 'react'
 import { FiCalendar, FiClock, FiPlus, FiX } from 'react-icons/fi'
+import TimePicker24 from '../TimePicker24/TimePicker24'
 import './PreciosConfigPanel.css'
 
 const PreciosConfigPanel = ({
@@ -41,28 +42,22 @@ const PreciosConfigPanel = ({
                                 Desde
                                 <span className='pcp-sublabel'>inicio de atención</span>
                             </label>
-                            <div className='pcp-input-row'>
-                                <input
-                                    type='time'
-                                    className='pcp-input pcp-input--time'
-                                    value={config.horario_apertura ?? ''}
-                                    onChange={e => upd('horario_apertura', e.target.value || null)}
-                                />
-                            </div>
+                            <TimePicker24
+                                value={config.horario_apertura ?? ''}
+                                onChange={v => upd('horario_apertura', v || null)}
+                                className={dark ? 'tp24--dark' : ''}
+                            />
                         </div>
                         <div className='pcp-field'>
                             <label className='pcp-label'>
                                 Hasta
                                 <span className='pcp-sublabel'>fin de atención</span>
                             </label>
-                            <div className='pcp-input-row'>
-                                <input
-                                    type='time'
-                                    className='pcp-input pcp-input--time'
-                                    value={config.horario_cierre ?? ''}
-                                    onChange={e => upd('horario_cierre', e.target.value || null)}
-                                />
-                            </div>
+                            <TimePicker24
+                                value={config.horario_cierre ?? ''}
+                                onChange={v => upd('horario_cierre', v || null)}
+                                className={dark ? 'tp24--dark' : ''}
+                            />
                         </div>
                     </div>
                 </div>
@@ -82,28 +77,22 @@ const PreciosConfigPanel = ({
                                 Apertura
                                 <span className='pcp-sublabel'>primer check-in</span>
                             </label>
-                            <div className='pcp-input-row'>
-                                <input
-                                    type='time'
-                                    className='pcp-input pcp-input--time'
-                                    value={config.checkin_desde ?? ''}
-                                    onChange={e => upd('checkin_desde', e.target.value || null)}
-                                />
-                            </div>
+                            <TimePicker24
+                                value={config.checkin_desde ?? ''}
+                                onChange={v => upd('checkin_desde', v || null)}
+                                className={dark ? 'tp24--dark' : ''}
+                            />
                         </div>
                         <div className='pcp-field'>
                             <label className='pcp-label'>
                                 Cierre
                                 <span className='pcp-sublabel'>último check-in</span>
                             </label>
-                            <div className='pcp-input-row'>
-                                <input
-                                    type='time'
-                                    className='pcp-input pcp-input--time'
-                                    value={config.checkin_hasta ?? ''}
-                                    onChange={e => upd('checkin_hasta', e.target.value || null)}
-                                />
-                            </div>
+                            <TimePicker24
+                                value={config.checkin_hasta ?? ''}
+                                onChange={v => upd('checkin_hasta', v || null)}
+                                className={dark ? 'tp24--dark' : ''}
+                            />
                         </div>
                     </div>
                 </div>

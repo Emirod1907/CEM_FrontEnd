@@ -4,6 +4,7 @@ import { useCarrito } from '../../../Contexts/CarritoContextProvider'
 import { FiX, FiPlus, FiCheck, FiUsers, FiClock, FiRepeat, FiPackage, FiStar } from 'react-icons/fi'
 import { calcularPrecioServicio, TIPO_DIA_LABEL, TIPO_DIA_COLOR } from '../../../utils/preciosUtils'
 import { sugerirHoraServicio, HORAS_ANTES, CATEGORIAS_HORA_EDITABLE } from '../../ServiciosPicker/ServiciosPicker'
+import TimePicker24 from '../../TimePicker24/TimePicker24'
 import './ServiciosModal.css'
 
 const CATEGORIAS_LABEL = {
@@ -309,13 +310,9 @@ const ServiciosModal = ({ onClose }) => {
                                                 <div className='hora-inicio-row'>
                                                     <FiClock size={13}/>
                                                     <label>Hora de inicio (durante el evento):</label>
-                                                    <input
-                                                        type='time'
+                                                    <TimePicker24
                                                         value={horaInicio}
-                                                        onChange={e => setHoraInicioPorServicio(prev => ({ ...prev, [id]: e.target.value }))}
-                                                        className='hora-inicio-input'
-                                                        min={horaEvento || servicio.horario_inicio || undefined}
-                                                        max={horaFinEvento || servicio.horario_fin || undefined}
+                                                        onChange={v => setHoraInicioPorServicio(prev => ({ ...prev, [id]: v }))}
                                                     />
                                                 </div>
                                                 {esServicioPorHora && horaInicio && horaFin && (
@@ -329,13 +326,9 @@ const ServiciosModal = ({ onClose }) => {
                                                 <div className='hora-inicio-row'>
                                                     <FiClock size={13}/>
                                                     <label>Hora de entrega:</label>
-                                                    <input
-                                                        type='time'
+                                                    <TimePicker24
                                                         value={horaInicio}
-                                                        onChange={e => setHoraInicioPorServicio(prev => ({ ...prev, [id]: e.target.value }))}
-                                                        className='hora-inicio-input'
-                                                        min={servicio.horario_inicio || undefined}
-                                                        max={horaFinEvento || servicio.horario_fin || undefined}
+                                                        onChange={v => setHoraInicioPorServicio(prev => ({ ...prev, [id]: v }))}
                                                     />
                                                 </div>
                                                 <div className='hora-rango-preview'>
