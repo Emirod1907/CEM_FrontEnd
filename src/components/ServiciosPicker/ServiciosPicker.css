@@ -10,6 +10,20 @@
     padding: 16px;
 }
 
+/* ── Embebido (dentro de una página, sin overlay) ── */
+.spk-embebido { width: 100%; }
+.spk-panel {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #ece6f2;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(60, 10, 80, 0.06);
+}
+.spk-panel .spk-lista { max-height: 60vh; }
+
 /* ── Modal ── */
 .spk-modal {
     background: #fff;

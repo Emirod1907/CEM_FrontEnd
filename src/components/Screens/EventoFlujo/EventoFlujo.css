@@ -1,0 +1,79 @@
+/* Layout compartido de las pantallas del flujo de organización del evento */
+.flujo-screen {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 18px 60px;
+}
+
+.flujo-header {
+    margin-bottom: 18px;
+}
+.flujo-paso-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, #770981, #1882da);
+    padding: 3px 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+.flujo-header h1 {
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.7rem;
+    color: #2d2a33;
+    margin: 0 0 4px;
+}
+.flujo-header p {
+    color: #777;
+    font-size: 0.92rem;
+    margin: 0;
+}
+
+/* Navegación entre pasos */
+.flujo-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+.flujo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 11px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.16s;
+}
+.flujo-btn--primary {
+    background: linear-gradient(135deg, #770981, #1882da);
+    color: #fff;
+}
+.flujo-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(119, 9, 129, 0.28); }
+.flujo-btn--ghost {
+    background: #fff;
+    color: #555;
+    border: 1.5px solid #d9d4e2;
+}
+.flujo-btn--ghost:hover { background: #f6f4fa; color: #770981; border-color: #cbb6d6; }
+
+/* Estado sin reserva */
+.flujo-vacio {
+    text-align: center;
+    color: #888;
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.flujo-vacio h2 { color: #444; margin: 6px 0 0; }
+.flujo-vacio p { margin: 0 0 8px; }

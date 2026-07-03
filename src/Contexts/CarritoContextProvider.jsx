@@ -207,7 +207,7 @@ const CarritoContextProvider = ({ children }) => {
     const vaciarCarrito = () => setItems([])
 
     // --- Métodos carrito organizador ---
-    const agregarReservaOrganizador = (reserva) => {
+    const agregarReservaOrganizador = (reserva, abrirCarrito = true) => {
         const esMismaReserva = reservaOrganizador?.id_reserva === reserva?.id_reserva
         setReservaOrganizador(reserva)
         if (!esMismaReserva) {
@@ -228,7 +228,7 @@ const CarritoContextProvider = ({ children }) => {
             const cupo = Number(reserva?.datos_evento?.cupo)
             setNumInvitados(cupo > 0 ? String(cupo) : '')
         }
-        setIsCartOpen(true)
+        if (abrirCarrito) setIsCartOpen(true)
     }
 
     const agregarServicioAdicional = (servicio) => {

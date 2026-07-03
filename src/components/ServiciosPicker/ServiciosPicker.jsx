@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react'
 import { getServicios, getDisponibilidadServicios } from '../../services/servicioServices'
 import { calcularPrecioServicio, TIPO_DIA_LABEL, TIPO_DIA_COLOR } from '../../utils/preciosUtils'
 import { FiX, FiPlus, FiMinus, FiCheck, FiClock, FiRepeat, FiUsers, FiPackage, FiStar } from 'react-icons/fi'
+import TimePicker24 from '../TimePicker24/TimePicker24'
 import './ServiciosPicker.css'
 
 const CATEGORIAS_LABEL = {
@@ -63,11 +64,13 @@ export const sugerirHoraServicio = (categoria, horaEvento, entretenimientoIdx = 
     return sumarMinutos(horaEvento, -antesMin)
 }
 
-const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, seleccionados = [], onChange, onClose }) => {
+// embebido: renderiza sin overlay/modal, para usarse dentro de una página.
+// soloTipo ('servicio'|'producto'): fija el tab y oculta el selector de tipo.
+const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, seleccionados = [], onChange, onClose, embebido = false, soloTipo = null }) => {
     const [servicios, setServicios] = useState([])
     const [cargando, setCargando] = useState(true)
     const [disponibilidad, setDisponibilidad] = useState({})
-    const [tabTipo, setTabTipo] = useState('producto')
+    const [tabTipo, setTabTipo] = useState(soloTipo || 'producto')
     const [categoriaActiva, setCategoriaActiva] = useState('todos')
     // controles locales de unidades por servicio
     const [horasPor, setHorasPor]       = useState({})
@@ -166,37 +169,41 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
     const nServicios = servicios.filter(s => s.tipo_item === 'servicio').length
 
     return (
-        <div className='spk-overlay' onClick={onClose}>
-            <div className='spk-modal' onClick={e => e.stopPropagation()}>
+        <div className={embebido ? 'spk-embebido' : 'spk-overlay'} onClick={embebido ? undefined : onClose}>
+            <div className={embebido ? 'spk-panel' : 'spk-modal'} onClick={e => e.stopPropagation()}>
 
-                {/* Header */}
-                <div className='spk-header'>
-                    <div>
-                        <h2>Servicios adicionales</h2>
-                        <span className='spk-header-hint'>
-                            {fechaEvento
-                                ? `Para el ${new Date(fechaEvento + 'T12:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: '2-digit', month: 'long' })}`
-                                : 'Seleccioná una fecha primero para ver precios ajustados'
-                            }
-                            {horaEvento && (
-                                <span style={{ display: 'block', fontSize: '0.75rem', color: '#a78bfa', marginTop: '2px' }}>
-                                    <FiClock size={11}/> Evento a las {horaEvento} — los horarios de entrega se sugieren automáticamente
-                                </span>
-                            )}
-                        </span>
+                {/* Header (solo como modal; en página el header lo pone la pantalla) */}
+                {!embebido && (
+                    <div className='spk-header'>
+                        <div>
+                            <h2>Servicios adicionales</h2>
+                            <span className='spk-header-hint'>
+                                {fechaEvento
+                                    ? `Para el ${new Date(fechaEvento + 'T12:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: '2-digit', month: 'long' })}`
+                                    : 'Seleccioná una fecha primero para ver precios ajustados'
+                                }
+                                {horaEvento && (
+                                    <span style={{ display: 'block', fontSize: '0.75rem', color: '#a78bfa', marginTop: '2px' }}>
+                                        <FiClock size={11}/> Evento a las {horaEvento} — los horarios de entrega se sugieren automáticamente
+                                    </span>
+                                )}
+                            </span>
+                        </div>
+                        <button className='spk-cerrar' onClick={onClose}><FiX size={21}/></button>
                     </div>
-                    <button className='spk-cerrar' onClick={onClose}><FiX size={21}/></button>
-                </div>
+                )}
 
-                {/* Tabs tipo */}
-                <div className='spk-tipo-tabs'>
-                    <button className={`spk-tipo-tab ${tabTipo === 'producto' ? 'active' : ''}`} onClick={() => { setTabTipo('producto'); setCategoriaActiva('todos') }}>
-                        <FiPackage size={13}/> Productos {nProductos > 0 && <span className='spk-tipo-count'>{nProductos}</span>}
-                    </button>
-                    <button className={`spk-tipo-tab ${tabTipo === 'servicio' ? 'active' : ''}`} onClick={() => { setTabTipo('servicio'); setCategoriaActiva('todos') }}>
-                        <FiStar size={13}/> Servicios {nServicios > 0 && <span className='spk-tipo-count'>{nServicios}</span>}
-                    </button>
-                </div>
+                {/* Tabs tipo (se ocultan cuando la página fija un solo tipo) */}
+                {!soloTipo && (
+                    <div className='spk-tipo-tabs'>
+                        <button className={`spk-tipo-tab ${tabTipo === 'producto' ? 'active' : ''}`} onClick={() => { setTabTipo('producto'); setCategoriaActiva('todos') }}>
+                            <FiPackage size={13}/> Productos {nProductos > 0 && <span className='spk-tipo-count'>{nProductos}</span>}
+                        </button>
+                        <button className={`spk-tipo-tab ${tabTipo === 'servicio' ? 'active' : ''}`} onClick={() => { setTabTipo('servicio'); setCategoriaActiva('todos') }}>
+                            <FiStar size={13}/> Servicios {nServicios > 0 && <span className='spk-tipo-count'>{nServicios}</span>}
+                        </button>
+                    </div>
+                )}
 
                 {/* Categorías */}
                 <div className='spk-categorias'>
@@ -291,13 +298,9 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                         <div className='spk-hora-row'>
                                             <FiClock size={12}/>
                                             <label>Hora de inicio (durante el evento):</label>
-                                            <input
-                                                type='time'
+                                            <TimePicker24
                                                 value={horaInicio}
-                                                onChange={e => setHoraPor(prev => ({ ...prev, [id]: e.target.value }))}
-                                                className='spk-hora-input'
-                                                min={horaEvento || servicio.horario_inicio || undefined}
-                                                max={horaFinEvento || servicio.horario_fin || undefined}
+                                                onChange={v => setHoraPor(prev => ({ ...prev, [id]: v }))}
                                             />
                                             {tp === 'por_hora' && horaInicio && (
                                                 <span className='spk-hora-fin'>
@@ -309,13 +312,9 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                         <div className='spk-hora-row'>
                                             <FiClock size={12}/>
                                             <label>Hora de entrega:</label>
-                                            <input
-                                                type='time'
+                                            <TimePicker24
                                                 value={horaInicio}
-                                                onChange={e => setHoraPor(prev => ({ ...prev, [id]: e.target.value }))}
-                                                className='spk-hora-input'
-                                                min={servicio.horario_inicio || undefined}
-                                                max={horaFinEvento || servicio.horario_fin || undefined}
+                                                onChange={v => setHoraPor(prev => ({ ...prev, [id]: v }))}
                                             />
                                             <span className='spk-entrega-auto'>
                                                 {horaEvento && !horaInicio
@@ -418,19 +417,21 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                     })}
                 </div>
 
-                {/* Footer con resumen */}
-                <div className='spk-footer'>
-                    {seleccionados.length > 0 ? (
-                        <span className='spk-footer-resumen'>
-                            {seleccionados.length} servicio{seleccionados.length !== 1 ? 's' : ''} seleccionado{seleccionados.length !== 1 ? 's' : ''}
-                        </span>
-                    ) : (
-                        <span className='spk-footer-hint'>Ningún servicio agregado aún</span>
-                    )}
-                    <button type='button' className='spk-btn-listo' onClick={onClose}>
-                        <FiCheck size={15}/> Listo
-                    </button>
-                </div>
+                {/* Footer con resumen (en página, la navegación la pone la pantalla) */}
+                {!embebido && (
+                    <div className='spk-footer'>
+                        {seleccionados.length > 0 ? (
+                            <span className='spk-footer-resumen'>
+                                {seleccionados.length} servicio{seleccionados.length !== 1 ? 's' : ''} seleccionado{seleccionados.length !== 1 ? 's' : ''}
+                            </span>
+                        ) : (
+                            <span className='spk-footer-hint'>Ningún servicio agregado aún</span>
+                        )}
+                        <button type='button' className='spk-btn-listo' onClick={onClose}>
+                            <FiCheck size={15}/> Listo
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )

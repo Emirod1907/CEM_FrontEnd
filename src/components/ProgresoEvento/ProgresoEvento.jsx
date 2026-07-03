@@ -27,7 +27,8 @@ const ProgresoEvento = () => {
 
     // Rutas del flujo (excluye el mapa fullscreen, que ocuparía toda la pantalla)
     const enSalones = path.startsWith('/salones') && !path.startsWith('/salones/mapa')
-    const enRutaFlujo = enSalones || path.startsWith('/eventos/new') || path.startsWith('/mis-reservas') || path.startsWith('/pago')
+    const enRutaFlujo = enSalones || path.startsWith('/eventos/new') || path.startsWith('/organizar')
+        || path.startsWith('/mis-reservas') || path.startsWith('/pago')
     const enFlujo = enRutaFlujo || !!reservaOrganizador
 
     if (!esOrganizador || !enFlujo) return null
@@ -52,6 +53,9 @@ const ProgresoEvento = () => {
     // Paso actual a resaltar
     let actual
     if (path.startsWith('/pago')) actual = 5
+    else if (path.startsWith('/organizar/servicios')) actual = 2
+    else if (path.startsWith('/organizar/productos')) actual = 3
+    else if (path.startsWith('/organizar/invitados')) actual = 4
     else if (!tieneReserva) actual = 1
     else if (path.startsWith('/eventos/new')) actual = 1
     else actual = [2, 3, 4, 5].find((n) => !completado[n]) || 5
@@ -60,8 +64,8 @@ const ProgresoEvento = () => {
         if (!disponible(n)) return
         switch (n) {
             case 1: navigate('/salones'); break
-            case 2: // servicios y productos se agregan desde el carrito
-            case 3: setIsCartOpen(true); break
+            case 2: navigate('/organizar/servicios'); break
+            case 3: navigate('/organizar/productos'); break
             case 4: navigate('/mis-reservas'); break
             case 5: setIsCartOpen(true); break
             default: break

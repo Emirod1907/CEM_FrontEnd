@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import UploadImg from '../../../services/uploadimg'
 import { solicitarReserva } from '../../../services/reservaServices'
 import { getDisponibilidadSalon } from '../../../services/salonesServices'
@@ -89,6 +89,7 @@ const CreateEventoForm = () => {
     const [tipoManual, setTipoManual]               = useState(false)   // usuario lo eligió a mano
     const [textoGenerado, setTextoGenerado]         = useState(false)   // feedback de generación
     const location = useLocation()
+    const navigate = useNavigate()
 
     const crearEventoTour = [
         {
@@ -317,8 +318,8 @@ const CreateEventoForm = () => {
         }
     }
 
-    const handleSubmit = async (event) => {
-        event.preventDefault()
+    const handleSubmit = async (event, irAServicios = false) => {
+        if (event) event.preventDefault()
         if (!form_values_state.salon.id_bodega) {
             alert('Por favor seleccioná un salón')
             return
@@ -362,23 +363,13 @@ const CreateEventoForm = () => {
                 horas: precioInfo?.horas ?? undefined,
             })
 
-            agregarReservaOrganizador(reserva)
-            // Agregar servicios pre-seleccionados al carrito
-            for (const serv of serviciosSeleccionados) {
-                agregarServicioAdicional(serv)
-                // Si la cantidad es >1 (picker ya la guarda en el item), actualizar en carrito
-                if ((serv.cantidad || 1) > 1) {
-                    actualizarCantidadServicio(serv.id_servicio, serv.cantidad)
-                }
-            }
-            const nServ = serviciosSeleccionados.length
+            // No abrir el carrito automáticamente: el flujo lo maneja el organizador
+            agregarReservaOrganizador(reserva, false)
             setFormValuesState(initial_form_state)
             setServiciosSeleccionados([])
             setImagenUrl('')
-            const msgServ = nServ > 0
-                ? ` También se agregaron ${nServ} servicio(s) adicional(es).`
-                : ' Podés agregar servicios adicionales y proceder al pago.'
-            alert(`¡Reserva agregada al carrito!${msgServ}`)
+            // "Agregar servicios" desliza al paso 2; "Agregar al carrito" termina el proceso
+            navigate(irAServicios ? '/organizar/servicios' : '/mis-reservas')
         } catch (error) {
             console.error('Error al solicitar reserva:', error)
             const msg = error?.response?.data?.message || 'Error al procesar la reserva'
@@ -823,43 +814,9 @@ const CreateEventoForm = () => {
                         )}
                     </div>
                     {/* ── Servicios adicionales ── */}
-                    <div className='cef-servicios-bloque'>
-                        <div className='cef-servicios-header'>
-                            <span className='cef-servicios-titulo'>
-                                <FiShoppingBag size={15}/> Servicios adicionales
-                            </span>
-                            <button
-                                type='button'
-                                className='cef-servicios-btn'
-                                onClick={() => setPickerAbierto(true)}
-                            >
-                                <FiShoppingBag size={13}/>
-                                {serviciosSeleccionados.length > 0
-                                    ? `Editar servicios (${serviciosSeleccionados.length})`
-                                    : 'Agregar servicios'
-                                }
-                            </button>
-                        </div>
-                        {serviciosSeleccionados.length > 0 && (
-                            <ul className='cef-servicios-lista'>
-                                {serviciosSeleccionados.map(s => (
-                                    <li key={s.id_servicio} className='cef-servicios-item'>
-                                        <span className='cef-serv-nombre'>{s.nombre}</span>
-                                        {s.cantidad > 1 && <span className='cef-serv-cant'>×{s.cantidad}</span>}
-                                        <span className='cef-serv-precio'>
-                                            ${(Number(s.precio) * (s.cantidad || 1)).toLocaleString('es-AR')}
-                                        </span>
-                                        <button
-                                            type='button'
-                                            className='cef-serv-quitar'
-                                            onClick={() => setServiciosSeleccionados(prev => prev.filter(x => x.id_servicio !== s.id_servicio))}
-                                        >
-                                            <FiX size={12}/>
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                    <div className='cef-servicios-aviso'>
+                        <FiShoppingBag size={15}/>
+                        <span>Después de reservar vas a poder sumar <strong>servicios</strong> y <strong>productos</strong> en los próximos pasos.</span>
                     </div>
 
                     {/* ── Cronograma del evento ── */}
@@ -944,25 +901,23 @@ const CreateEventoForm = () => {
                             }
                         </button>
 
-                        {/* Agregar al carrito (principal) */}
+                        {/* Agregar servicios: crea la reserva y desliza al paso 2 */}
+                        <button
+                            type='button'
+                            className='cef-btn-servicios-continuar'
+                            onClick={() => handleSubmit(null, true)}
+                            disabled={cargando}
+                        >
+                            <FiShoppingBag size={15}/> {cargando ? 'Procesando...' : 'Agregar servicios'}
+                        </button>
+
+                        {/* Terminar: agrega la reserva al carrito para pagar cuando quiera */}
                         <button type='submit' className='cef-btn-carrito' disabled={cargando}>
                             {cargando ? 'Procesando...' : 'Agregar Reserva al Carrito'}
                         </button>
                     </div>
                 </form>
             </div>
-
-            {pickerAbierto && (
-                <ServiciosPicker
-                    fechaEvento={form_values_state.fecha || null}
-                    horaEvento={form_values_state.hora_inicio || null}
-                    horaFinEvento={form_values_state.hora_fin || null}
-                    cupo={Number(form_values_state.cupo) || 0}
-                    seleccionados={serviciosSeleccionados}
-                    onChange={setServiciosSeleccionados}
-                    onClose={() => setPickerAbierto(false)}
-                />
-            )}
 
             {canvaAbierto && (
                 <InvitacionDesigner

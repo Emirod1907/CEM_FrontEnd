@@ -562,6 +562,29 @@
     cursor: not-allowed;
 }
 
+/* Agregar servicios y continuar al paso 2 — acción destacada (verde) */
+.cef-btn-servicios-continuar {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Poppins', sans-serif;
+    white-space: nowrap;
+    background: linear-gradient(135deg, #00a650, #16a34a);
+    color: white;
+    border: none;
+}
+.cef-btn-servicios-continuar:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+.cef-btn-servicios-continuar:disabled { opacity: 0.5; cursor: not-allowed; }
+
 /* Mensajes de feedback inline */
 .cef-feedback {
     display: flex;
@@ -603,6 +626,18 @@
     padding: 14px 16px;
     margin: 12px 0;
     background: linear-gradient(135deg, rgba(119,9,129,0.03), rgba(24,130,218,0.02));
+}
+.cef-servicios-aviso {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border: 1.5px dashed #d1c4f5;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    background: linear-gradient(135deg, rgba(119,9,129,0.04), rgba(24,130,218,0.03));
+    color: #770981;
+    font-size: 0.86rem;
 }
 .cef-servicios-header {
     display: flex;
