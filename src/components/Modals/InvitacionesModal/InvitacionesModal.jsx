@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { crearInvitacion, getMisInvitaciones } from '../../../services/invitacionServices'
 import { FiX, FiPlus, FiSend, FiUsers, FiPhone, FiCopy, FiCheck, FiCalendar, FiImage, FiBook } from 'react-icons/fi'
@@ -62,6 +62,11 @@ const ContactPickerFlow = ({ eventoId, onDone }) => {
     const [batch, setBatch] = useState([])
     const [progreso, setProgreso] = useState({ actual: 0, total: 0 })
     const [resultados, setResultados] = useState({ ok: 0, err: [] })
+    // El overlay solo cierra si el gesto (mousedown→mouseup) empezó y terminó en él.
+    // Evita que arrastrar para seleccionar texto sobre la lista cierre el modal.
+    const overlayDown = useRef(false)
+    const onOverlayDown = e => { overlayDown.current = e.target === e.currentTarget }
+    const onOverlayClick = (e, fn) => { if (e.target === e.currentTarget && overlayDown.current) fn() }
 
     const iniciar = async () => {
         if (hasNativeContactPicker()) {
@@ -159,7 +164,7 @@ const ContactPickerFlow = ({ eventoId, onDone }) => {
     )
 
     if (fase === 'list') return createPortal(
-        <div className='inv-cp-overlay' onClick={e => e.target === e.currentTarget && cerrar()}>
+        <div className='inv-cp-overlay' onMouseDown={onOverlayDown} onClick={e => onOverlayClick(e, cerrar)}>
             <div className='inv-cp-modal'>
                 <div className='inv-cp-header'>
                     <div>
@@ -643,7 +648,7 @@ export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, evento
                     {eventoPrecio && (
                         <span className='inv-card-preview-precio'>
                             Entrada: <strong>${Number(eventoPrecio).toLocaleString('es-AR')}</strong>
-                            <em className='inv-card-precio-hint'> · El invitado elige pagar seña o total</em>
+                            <em className='inv-card-precio-hint'> · El invitado paga la entrada completa</em>
                         </span>
                     )}
                 </div>

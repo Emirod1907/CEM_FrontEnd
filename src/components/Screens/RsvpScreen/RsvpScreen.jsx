@@ -499,22 +499,6 @@ const RsvpScreen = () => {
                         <div className='rsvp-pago-opciones'>
                             <div className='rsvp-pago-opcion'>
                                 <div className='rsvp-pago-opcion-info'>
-                                    <span className='rsvp-pago-opcion-titulo'>Pagar seña (30%)</span>
-                                    <span className='rsvp-pago-opcion-desc'>
-                                        ${(Number(evento.precio) * (invitados.length || invitacion?.num_invitados || 1) * 0.30).toLocaleString('es-AR')} — restás debiendo el 70% el día del evento
-                                    </span>
-                                </div>
-                                <button className='rsvp-btn-pagar rsvp-btn-pagar--sena'
-                                    onClick={() => handlePagar('seña')}
-                                    disabled={pagando}>
-                                    {pagando && tipoPago === 'seña' ? 'Preparando...' : <><FiCreditCard size={15}/> Pagar seña</>}
-                                </button>
-                            </div>
-
-                            <div className='rsvp-pago-separador'>o</div>
-
-                            <div className='rsvp-pago-opcion'>
-                                <div className='rsvp-pago-opcion-info'>
                                     <span className='rsvp-pago-opcion-titulo'>Pagar entrada completa</span>
                                     <span className='rsvp-pago-opcion-desc'>
                                         ${(Number(evento.precio) * (invitados.length || invitacion?.num_invitados || 1)).toLocaleString('es-AR')} — sin saldo pendiente
