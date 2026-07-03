@@ -58,6 +58,7 @@ const ProgresoEvento = () => {
     // Paso actual a resaltar
     let actual
     if (path.startsWith('/pago')) actual = 5
+    else if (path.startsWith('/organizar/salon')) actual = 1
     else if (path.startsWith('/organizar/servicios')) actual = 2
     else if (path.startsWith('/organizar/productos')) actual = 3
     else if (path.startsWith('/organizar/invitados')) actual = 4
@@ -68,7 +69,11 @@ const ProgresoEvento = () => {
     const irAPaso = (n) => {
         if (!disponible(n)) return
         switch (n) {
-            case 1: navigate('/salones'); break
+            case 1:
+                // Con una reserva en curso, el paso 1 es la página del salón elegido
+                // (dentro del flujo); sin reserva, la lista de salones para elegir.
+                navigate(reservaOrganizador ? '/organizar/salon' : '/salones')
+                break
             case 2: navigate('/organizar/servicios'); break
             case 3: navigate('/organizar/productos'); break
             case 4: navigate('/mis-reservas'); break

@@ -77,3 +77,72 @@
 }
 .flujo-vacio h2 { color: #444; margin: 6px 0 0; }
 .flujo-vacio p { margin: 0 0 8px; }
+
+.flujo-cargando { text-align: center; color: #888; padding: 40px 20px; }
+
+/* ── Detalle del salón (paso 1) en página completa ── */
+.salon-detalle-fs {
+    background: #fff;
+    border: 1px solid #ece8f2;
+    border-radius: 14px;
+    padding: 0 0 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+.salon-detalle-fs-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+.salon-detalle-fs-nombre {
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.5rem;
+    color: #222;
+    margin: 18px 22px 4px;
+}
+.salon-detalle-fs .salon-detalle-info,
+.salon-detalle-fs .salon-detalle-seccion {
+    padding: 0 22px;
+    margin-top: 16px;
+}
+.salon-detalle-fs .salon-detalle-info { margin-top: 8px; }
+
+/* Mini-mapa ampliable */
+.salon-detalle-minimapa {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 460px;
+    padding: 0;
+    border: 1px solid #e5e2ec;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    background: none;
+    transition: box-shadow 0.15s, transform 0.1s;
+}
+.salon-detalle-minimapa:hover {
+    box-shadow: 0 4px 16px rgba(119, 9, 129, 0.2);
+    transform: translateY(-1px);
+}
+.salon-detalle-minimapa img {
+    display: block;
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+}
+.salon-detalle-minimapa-hint {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(119, 9, 129, 0.92);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 7px;
+}

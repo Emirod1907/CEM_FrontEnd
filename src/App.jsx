@@ -13,6 +13,7 @@ import GoogleAuthCallback from './components/Screens/GoogleAuthCallback/GoogleAu
 import MapaSalonesScreen from './components/Screens/MapaSalonesScreen/MapaSalonesScreen'
 import PagoResultadoScreen from './components/Screens/PagoResultadoScreen/PagoResultadoScreen'
 import PagoEsperaScreen from './components/Screens/PagoEsperaScreen/PagoEsperaScreen'
+import EventoSalonScreen from './components/Screens/EventoFlujo/EventoSalonScreen'
 import EventoServiciosScreen from './components/Screens/EventoFlujo/EventoServiciosScreen'
 import EventoProductosScreen from './components/Screens/EventoFlujo/EventoProductosScreen'
 import PagoPendienteWatcher from './components/PagoPendienteWatcher/PagoPendienteWatcher'
@@ -53,6 +54,7 @@ function App() {
                   {/* Organizador */}
                   <Route element={<RoleRoute roles={['organizador']} />}>
                     <Route path='/eventos/new' element={<CreateEventoForm/>} />
+                    <Route path='/organizar/salon' element={<EventoSalonScreen />} />
                     <Route path='/organizar/servicios' element={<EventoServiciosScreen />} />
                     <Route path='/organizar/productos' element={<EventoProductosScreen />} />
                     <Route path='/mis-reservas' element={<MisReservasScreen />} />
