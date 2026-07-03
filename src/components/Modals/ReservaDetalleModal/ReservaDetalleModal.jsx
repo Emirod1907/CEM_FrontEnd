@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { getReservaDetalle } from '../../../services/reservaServices'
-import { useCarrito } from '../../../Contexts/CarritoContextProvider'
-import ServiciosModal from '../ServiciosModal/ServiciosModal'
 import { InvitacionesPanel } from '../InvitacionesModal/InvitacionesModal'
 import PozoPanel from '../PozoPanel/PozoPanel'
 import { precioUnitarioConDescuento } from '../../../utils/preciosUtils'
 import {
     FiX, FiCalendar, FiMapPin, FiUsers, FiDollarSign,
     FiClock, FiFileText, FiCheckCircle, FiXCircle,
-    FiAlertCircle, FiTag, FiPackage, FiHome, FiPlus, FiRefreshCw, FiBookmark
+    FiAlertCircle, FiTag, FiPackage, FiHome, FiPlus, FiRefreshCw, FiBookmark, FiArrowRight
 } from 'react-icons/fi'
 import './ReservaDetalleModal.css'
 
@@ -28,12 +25,20 @@ const ESTADO_ORDEN = {
 }
 
 const CATEGORIA_LABEL = {
-    catering:    'Catering',
-    decoracion:  'Decoración',
-    audio_video: 'Audio y Video',
-    seguridad:   'Seguridad',
-    mobiliario:  'Mobiliario',
-    otro:        'Otro',
+    catering:       'Catering',
+    decoracion:     'Decoración',
+    audio_video:    'Audio y Video',
+    seguridad:      'Seguridad',
+    personal:       'Provisión de Personal',
+    mobiliario:     'Mobiliario',
+    entretenimiento:'Entretenimiento',
+    tortas:         'Elaboración de Tortas',
+    bebidas:        'Bebidas',
+    comida:         'Alimentos',
+    alimentos:      'Alimentos',
+    cotillon:       'Cotillón y Souvenirs',
+    vajilla:        'Vajilla',
+    otro:           'Otro',
 }
 
 const TIPO_PRECIO_LABEL = {
@@ -64,14 +69,11 @@ const fmtFechaHora = (f) => f
 /* ── Componente de tab ── */
 const TABS_BASE = ['Evento', 'Salón', 'Servicios', 'Pagos']
 
-const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar }) => {
+const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onContinuar }) => {
     const [datos, setDatos]         = useState(null)
     const [cargando, setCargando]   = useState(true)
     const [error, setError]         = useState(null)
     const [tabActiva, setTabActiva] = useState('Evento')
-    const [mostrarServiciosModal, setMostrarServiciosModal] = useState(false)
-
-    const { reservaOrganizador, agregarReservaOrganizador } = useCarrito()
 
     const cargarDetalle = () => {
         setCargando(true)
@@ -83,32 +85,11 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar }) => 
 
     useEffect(() => { cargarDetalle() }, [id_reserva])
 
-    const handleAbrirServiciosModal = () => {
-        // Si la reserva no está en el carrito, cargarla primero
-        if (reservaOrganizador?.id_reserva !== id_reserva && datos?.reserva) {
-            const r = datos.reserva
-            agregarReservaOrganizador({
-                id_reserva:                  r.id_reserva,
-                bodega_id:                   r.bodega_id,
-                bodega_nombre:               r.Salon?.nombre || '',
-                bodega_domicilio:            r.Salon?.domicilio || '',
-                fecha:                       r.fecha,
-                estado:                      r.estado,
-                monto_alquiler:              r.monto_alquiler,
-                monto_sena:                  r.monto_sena,
-                porcentaje_sena:             30,
-                comision_cliente_porcentaje: r.comision_cliente_porcentaje ?? 0,
-                fecha_limite_pago:           r.fecha_limite_pago,
-                datos_evento:                r.datos_evento,
-            })
-        }
-        setMostrarServiciosModal(true)
-    }
-
-    const handleCerrarServiciosModal = () => {
-        setMostrarServiciosModal(false)
-        // Recargar para mostrar los servicios recién agregados
-        cargarDetalle()
+    // "Agregar servicios" desde el detalle → vuelve a los 5 pasos (paso 2), no abre un modal.
+    const handleContinuarFlujo = () => {
+        if (!datos?.reserva) return
+        const r = datos.reserva
+        onContinuar?.({ ...r, bodega_id: r.bodega_id ?? r.salon_id })
     }
 
     useEffect(() => {
@@ -181,6 +162,16 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar }) => 
                                     <FiClock size={14} />
                                     Pagar la seña antes del <strong>{fmtFechaHora(reserva.fecha_limite_pago)}</strong>
                                 </div>
+                            )}
+
+                            {/* Continuar con la reserva → vuelve a los 5 pasos (paso 2) */}
+                            {reserva.estado === 'pendiente_pago' && onContinuar && (
+                                <button
+                                    className='rd-btn-continuar'
+                                    onClick={handleContinuarFlujo}
+                                >
+                                    <FiArrowRight size={14} /> Continuar con la reserva
+                                </button>
                             )}
 
                             {/* Guardar reserva (pendiente_pago) */}
@@ -390,7 +381,7 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar }) => 
                                                     <span>Podés agregar catering, decoración, sonido y más.</span>
                                                     <button
                                                         className='rd-btn-agregar-servicios'
-                                                        onClick={handleAbrirServiciosModal}
+                                                        onClick={handleContinuarFlujo}
                                                     >
                                                         <FiPlus size={15} /> Agregar servicios
                                                     </button>
@@ -446,7 +437,7 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar }) => 
                                             {reserva.estado === 'pendiente_pago' && (
                                                 <button
                                                     className='rd-btn-agregar-servicios rd-btn-agregar-mas'
-                                                    onClick={handleAbrirServiciosModal}
+                                                    onClick={handleContinuarFlujo}
                                                 >
                                                     <FiPlus size={14} /> Agregar más servicios
                                                 </button>
@@ -535,12 +526,6 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar }) => 
                     )}
                 </div>
             </div>
-
-            {mostrarServiciosModal && createPortal(
-                <ServiciosModal onClose={handleCerrarServiciosModal} />,
-                document.body
-            )}
-
         </div>
     )
 }

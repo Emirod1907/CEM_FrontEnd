@@ -200,6 +200,12 @@
 }
 .cr-btn-pagar:hover { background: #5e0668; }
 
+.cr-btn-continuar {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+}
+.cr-btn-continuar:hover { filter: brightness(1.08); }
+
 .cr-btn-carrito {
     background: rgba(255,255,255,0.1);
     color: white;

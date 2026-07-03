@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-import { FiCalendar, FiMapPin, FiDollarSign, FiClock, FiCheckCircle, FiAlertCircle, FiEye, FiShoppingCart, FiX, FiRefreshCw, FiPlusCircle, FiBookmark } from 'react-icons/fi'
+import { FiCalendar, FiMapPin, FiDollarSign, FiClock, FiCheckCircle, FiAlertCircle, FiEye, FiShoppingCart, FiX, FiRefreshCw, FiPlusCircle, FiBookmark, FiArrowRight } from 'react-icons/fi'
 import ReiterarReservaModal from '../Modals/ReiterarReservaModal/ReiterarReservaModal'
 import './CalendarioReservas.css'
 
@@ -106,6 +106,7 @@ const CalendarioReservas = ({
     onVerDetalle,
     onPagarSena,
     onCancelar,
+    onContinuar,
     cancelando,
     reservaEnCarrito,
     onVerCarrito,
@@ -354,6 +355,16 @@ const CalendarioReservas = ({
                                         >
                                             <FiEye size={12} /> Ver detalle
                                         </button>
+
+                                        {esPendiente && onContinuar && (
+                                            <button
+                                                className="cr-btn cr-btn-continuar"
+                                                onClick={() => onContinuar(reserva)}
+                                                title="Volver a los pasos para agregar servicios, productos o invitados"
+                                            >
+                                                <FiArrowRight size={12} /> Continuar
+                                            </button>
+                                        )}
 
                                         {esPendiente && (
                                             yaEnCarrito ? (

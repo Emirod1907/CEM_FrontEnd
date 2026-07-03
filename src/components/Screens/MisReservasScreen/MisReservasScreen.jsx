@@ -47,7 +47,8 @@ const MisReservasScreen = () => {
 
     useEffect(() => { cargarReservas() }, [cargarReservas])
 
-    const handlePagarSena = (reserva) => {
+    // Carga una reserva ya existente en el carrito organizador (sin abrir el carrito).
+    const cargarReservaEnCarrito = (reserva) => {
         agregarReservaOrganizador({
             id_reserva:                  reserva.id_reserva,
             bodega_id:                   reserva.bodega_id,
@@ -61,9 +62,19 @@ const MisReservasScreen = () => {
             comision_cliente_porcentaje: reserva.comision_cliente_porcentaje ?? 0,
             fecha_limite_pago:           reserva.fecha_limite_pago,
             datos_evento:                reserva.datos_evento,
-        })
+        }, false)
+    }
+
+    const handlePagarSena = (reserva) => {
+        cargarReservaEnCarrito(reserva)
         navigate('/eventos/new')
         setTimeout(() => setIsCartOpen(true), 100)
+    }
+
+    // "Continuar con la reserva": vuelve a los 5 pasos, arrancando en el paso 2 (servicios).
+    const handleContinuar = (reserva) => {
+        cargarReservaEnCarrito(reserva)
+        navigate('/organizar/servicios')
     }
 
     const handleReiterar = (nuevaReserva, viejoId) => {
@@ -174,6 +185,7 @@ const MisReservasScreen = () => {
                     reservas={reservas}
                     onVerDetalle={setDetalleId}
                     onPagarSena={handlePagarSena}
+                    onContinuar={handleContinuar}
                     onCancelar={handleCancelar}
                     cancelando={cancelando}
                     reservaEnCarrito={reservaOrganizador?.id_reserva}
@@ -189,6 +201,7 @@ const MisReservasScreen = () => {
                     onClose={() => setDetalleId(null)}
                     onReiterar={(r) => { setDetalleId(null); setReservaAReiterar(r) }}
                     onGuardar={() => { setDetalleId(null); setIsCartOpen(true) }}
+                    onContinuar={(r) => { setDetalleId(null); handleContinuar(r) }}
                 />
             )}
 
