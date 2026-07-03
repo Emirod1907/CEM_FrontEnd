@@ -27,9 +27,10 @@ import './MisServiciosScreen.css'
 
 const CATEGORIAS_PRODUCTO = [
     { value: 'bebidas',     label: 'Bebidas' },
-    { value: 'comida',      label: 'Comida' },
+    { value: 'alimentos',   label: 'Alimentos' },
     { value: 'catering',    label: 'Catering' },
-    { value: 'mobiliario',  label: 'Mobiliario' },
+    { value: 'cotillon',    label: 'Cotillón y Souvenirs' },
+    { value: 'vajilla',     label: 'Vajilla (platos, vasos, cubiertos)' },
     { value: 'otro',        label: 'Otro' }
 ]
 
@@ -37,19 +38,39 @@ const CATEGORIAS_SERVICIO = [
     { value: 'decoracion',      label: 'Decoración' },
     { value: 'audio_video',     label: 'Audio y Video' },
     { value: 'seguridad',       label: 'Seguridad' },
+    { value: 'personal',        label: 'Provisión de Personal (mozos y bartenders)' },
+    { value: 'mobiliario',      label: 'Mobiliario' },
     { value: 'entretenimiento', label: 'Entretenimiento' },
+    { value: 'tortas',          label: 'Elaboración de Tortas' },
     { value: 'otro',            label: 'Otro' }
 ]
+
+// Subcategorías por categoría (por ahora, solo alimentos: dulce / salado)
+const SUBCATEGORIAS = {
+    alimentos: [
+        { value: 'dulce',  label: 'Dulces' },
+        { value: 'salado', label: 'Salados' },
+    ],
+}
 
 const TODAS_CATEGORIAS = [
     { value: 'catering',        label: 'Catering' },
     { value: 'decoracion',      label: 'Decoración' },
     { value: 'audio_video',     label: 'Audio y Video' },
     { value: 'seguridad',       label: 'Seguridad' },
+    { value: 'personal',        label: 'Provisión de Personal' },
     { value: 'mobiliario',      label: 'Mobiliario' },
     { value: 'entretenimiento', label: 'Entretenimiento' },
+    { value: 'tortas',          label: 'Elaboración de Tortas' },
+    { value: 'bebidas',         label: 'Bebidas' },
+    { value: 'comida',          label: 'Alimentos' },
+    { value: 'alimentos',       label: 'Alimentos' },
+    { value: 'cotillon',        label: 'Cotillón y Souvenirs' },
+    { value: 'vajilla',         label: 'Vajilla' },
     { value: 'otro',            label: 'Otro' }
 ]
+
+const SUBCATEGORIA_LABEL = { dulce: 'Dulces', salado: 'Salados' }
 
 const TIPOS_PRECIO = [
     { value: 'fijo',        label: 'Precio fijo (monto único)',             sufijo: '' },
@@ -75,7 +96,7 @@ const DIAS_LABEL = { lun:'Lunes', mar:'Martes', mie:'Miércoles', jue:'Jueves', 
 
 const FORM_VACIO = {
     nombre: '', descripcion: '', precio: '',
-    categoria: 'catering', tipo_precio: 'fijo', tipo_item: 'producto',
+    categoria: 'catering', subcategoria: '', tipo_precio: 'fijo', tipo_item: 'producto',
     imagen: '', capacidad_maxima: '', dias_anticipacion: '0',
     dias_disponibles: [], horario_inicio: '', horario_fin: '',
     precios_tramos: {}   // objeto con fin_semana, feriado; ya no es un array
@@ -1090,6 +1111,7 @@ const MisServiciosScreen = () => {
             descripcion: s.descripcion,
             precio: s.precio_base ?? s.precio ?? '',
             categoria: s.categoria,
+            subcategoria: s.subcategoria || '',
             tipo_precio: s.tipo_precio || 'fijo',
             tipo_item: tipoItem,
             imagen: s.imagen || '',
@@ -1103,7 +1125,15 @@ const MisServiciosScreen = () => {
         setError(null); setMostrarForm(true)
     }
     const cerrarForm = () => { setMostrarForm(false); setEditando(null); setForm(FORM_VACIO); setError(null) }
-    const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        // Al cambiar de categoría, resetear la subcategoría (solo aplica a algunas)
+        if (name === 'categoria') {
+            setForm(prev => ({ ...prev, categoria: value, subcategoria: '' }))
+            return
+        }
+        setForm(prev => ({ ...prev, [name]: value }))
+    }
 
     const handleTipoItemChange = (nuevoTipo) => {
         const catDefault = nuevoTipo === 'servicio' ? 'decoracion' : 'catering'
@@ -1112,6 +1142,7 @@ const MisServiciosScreen = () => {
             ...prev,
             tipo_item: nuevoTipo,
             categoria: catDefault,
+            subcategoria: '',
             tipo_precio: tipoPrecioDefault,
             dias_disponibles: [],
             horario_inicio: '',
@@ -1142,6 +1173,7 @@ const MisServiciosScreen = () => {
                 descripcion: form.descripcion.trim(),
                 precio: Number(form.precio),
                 categoria: form.categoria,
+                subcategoria: (SUBCATEGORIAS[form.categoria] ? form.subcategoria : '') || null,
                 tipo_precio: form.tipo_precio,
                 tipo_item: form.tipo_item || 'producto',
                 imagen: form.imagen.trim() || null,
@@ -1296,6 +1328,9 @@ const MisServiciosScreen = () => {
                                                     {tipoItem === 'servicio' ? <><FiStar size={10}/> Servicio</> : <><FiPackage size={10}/> Producto</>}
                                                 </span>
                                                 <span className='tag-categoria'>{categLabel(s.categoria)}</span>
+                                                {s.subcategoria && SUBCATEGORIA_LABEL[s.subcategoria] && (
+                                                    <span className='tag-categoria'>{SUBCATEGORIA_LABEL[s.subcategoria]}</span>
+                                                )}
                                                 <span className={`tag-tipo tp-${s.tipo_precio || 'fijo'}`}>{tipoPrecioLabel(s.tipo_precio)}</span>
                                                 {!s.disponible && <span className='tag-inactivo'>Inactivo</span>}
                                             </div>
@@ -1448,6 +1483,17 @@ const MisServiciosScreen = () => {
                                         {categoriasForm.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                                     </select>
                                 </div>
+                                {SUBCATEGORIAS[form.categoria] && (
+                                    <div className='form-group'>
+                                        <label>Subcategoría</label>
+                                        <select name='subcategoria' value={form.subcategoria} onChange={handleChange}>
+                                            <option value=''>— Elegí —</option>
+                                            {SUBCATEGORIAS[form.categoria].map(s => (
+                                                <option key={s.value} value={s.value}>{s.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
                                 <div className='form-group'>
                                     <label>Tipo de precio *</label>
                                     <select name='tipo_precio' value={form.tipo_precio} onChange={handleChange}>

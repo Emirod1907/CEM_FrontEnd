@@ -18,7 +18,10 @@ import './ServiciosPicker.css'
 
 const CATEGORIAS_LABEL = {
     catering: 'Catering', decoracion: 'Decoración', audio_video: 'Audio y Video',
-    seguridad: 'Seguridad', mobiliario: 'Mobiliario', entretenimiento: 'Entretenimiento', otro: 'Otros'
+    seguridad: 'Seguridad', personal: 'Provisión de Personal', mobiliario: 'Mobiliario',
+    entretenimiento: 'Entretenimiento', tortas: 'Elaboración de Tortas',
+    bebidas: 'Bebidas', comida: 'Alimentos', alimentos: 'Alimentos',
+    cotillon: 'Cotillón y Souvenirs', vajilla: 'Vajilla', otro: 'Otros'
 }
 
 const parsePreciosConfig = (v) => {

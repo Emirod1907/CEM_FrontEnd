@@ -64,11 +64,16 @@ const TimePicker24 = ({ name, value, onChange }) => {
 
 const CATEGORIAS_CRONO_LABEL = {
     catering: 'Catering', decoracion: 'Decoración', audio_video: 'Audio y Video',
-    seguridad: 'Seguridad', mobiliario: 'Mobiliario', entretenimiento: 'Entretenimiento', otro: 'Otros'
+    seguridad: 'Seguridad', personal: 'Provisión de Personal', mobiliario: 'Mobiliario',
+    entretenimiento: 'Entretenimiento', tortas: 'Elaboración de Tortas',
+    bebidas: 'Bebidas', comida: 'Alimentos', alimentos: 'Alimentos',
+    cotillon: 'Cotillón y Souvenirs', vajilla: 'Vajilla', otro: 'Otros'
 }
 const CATEGORIAS_CRONO_EMOJI = {
     catering: '🍽️', decoracion: '🌸', audio_video: '🎵',
-    seguridad: '🔒', mobiliario: '🪑', entretenimiento: '🎤', otro: '📦'
+    seguridad: '🔒', personal: '🤵', mobiliario: '🪑', entretenimiento: '🎤',
+    tortas: '🎂', bebidas: '🥤', comida: '🍔', alimentos: '🍔',
+    cotillon: '🎉', vajilla: '🍽️', otro: '📦'
 }
 
 const CreateEventoForm = () => {
