@@ -25,16 +25,21 @@ const ProgresoEvento = () => {
     // Solo el organizador (rol activo) ve la barra de progreso del flujo de evento
     const esOrganizador = persona?.rol === 'organizador'
 
-    // Rutas del flujo (excluye el mapa fullscreen, que ocuparía toda la pantalla)
-    const enSalones = path.startsWith('/salones') && !path.startsWith('/salones/mapa')
-    const enRutaFlujo = enSalones || path.startsWith('/eventos/new') || path.startsWith('/organizar')
-        || path.startsWith('/mis-reservas') || path.startsWith('/pago')
-    const enFlujo = enRutaFlujo || !!reservaOrganizador
+    // La barra solo aparece mientras estás dentro del flujo real de armado del
+    // evento: el formulario de crear evento, los pasos de servicios/productos/
+    // invitados, o el pago. En cualquier otra pantalla desaparece, aunque haya una
+    // reserva parkeada en el carrito.
+    const enCreacion = path.startsWith('/eventos/new')
+    const enFlujo = enCreacion || path.startsWith('/organizar') || path.startsWith('/pago')
+    // El mapa fullscreen ocuparía toda la pantalla: la barra no debe taparlo
+    const enMapaFull = path.startsWith('/salones/mapa')
 
-    if (!esOrganizador || !enFlujo) return null
+    if (!esOrganizador || !enFlujo || enMapaFull) return null
 
-    const tieneReserva = !!reservaOrganizador
-    const servicios = serviciosCarrito || []
+    // En el formulario de crear evento se arranca de cero (paso 1), ignorando
+    // cualquier reserva previamente parkeada: es un evento nuevo.
+    const tieneReserva = !enCreacion && !!reservaOrganizador
+    const servicios = enCreacion ? [] : (serviciosCarrito || [])
     const tieneServicios = servicios.some((s) => (s.tipo_item || 'producto') === 'servicio')
     const tieneProductos = servicios.some((s) => (s.tipo_item || 'producto') === 'producto')
 
@@ -77,12 +82,16 @@ const ProgresoEvento = () => {
             <div className="prog-inner">
                 {PASOS.map((paso, i) => {
                     const done = completado[paso.n]
-                    const isActual = paso.n === actual && !done
+                    // "Estás aquí": el paso que corresponde a la pantalla actual (se resalta
+                    // aunque el paso ya esté completado, para que se note dónde estás parado)
+                    const isAqui = paso.n === actual
+                    const isActual = isAqui && !done
                     const disp = disponible(paso.n)
                     const clase = [
                         'prog-paso',
                         done ? 'prog-done' : '',
                         isActual ? 'prog-actual' : '',
+                        isAqui ? 'prog-aqui' : '',
                         !disp ? 'prog-disabled' : '',
                     ].join(' ')
                     return (
@@ -91,7 +100,8 @@ const ProgresoEvento = () => {
                                 className={clase}
                                 onClick={() => irAPaso(paso.n)}
                                 disabled={!disp}
-                                title={!disp ? 'Primero reservá un salón' : paso.label}
+                                title={!disp ? 'Primero reservá un salón' : (isAqui ? `Estás en: ${paso.label}` : paso.label)}
+                                aria-current={isAqui ? 'step' : undefined}
                             >
                                 <span className="prog-circulo">
                                     {done ? <FiCheck size={12} /> : paso.n}
