@@ -149,7 +149,12 @@ const CarritoContextProvider = ({ children }) => {
 
     const totalServiciosOrg = serviciosCarrito.reduce((acc, s) => {
         let multiplicador = 1
-        if (s.tipo_precio === 'por_persona') multiplicador = invitadosEfectivos > 0 ? invitadosEfectivos : 1
+        if (s.tipo_precio === 'por_persona') {
+            // El ítem puede tener su propia cantidad de personas (ej: comida para 30),
+            // si no, cae al total de invitados del evento.
+            const personasItem = Number(s.personas) > 0 ? Number(s.personas) : invitadosEfectivos
+            multiplicador = personasItem > 0 ? personasItem : 1
+        }
         else if (s.tipo_precio === 'por_hora')   multiplicador = Number(s.horas)  > 0 ? Number(s.horas)  : 1
         else if (s.tipo_precio === 'por_turno')  multiplicador = Number(s.turnos) > 0 ? Number(s.turnos) : 1
         // Aplica descuento por cantidad (productos) según las unidades del ítem
@@ -255,6 +260,8 @@ const CarritoContextProvider = ({ children }) => {
                     cantidad: 1,
                     horas:       servicio.tipo_precio === 'por_hora'  ? (Number(servicio.horas)  || 1) : null,
                     turnos:      servicio.tipo_precio === 'por_turno' ? (Number(servicio.turnos) || 1) : null,
+                    // personas: cantidad propia para ítems por persona (comida/viandas); null = usa el total de invitados
+                    personas:    servicio.tipo_precio === 'por_persona' ? (Number(servicio.personas) || null) : null,
                     hora_inicio: servicio.hora_inicio || null,
                 },
             ]
@@ -267,6 +274,42 @@ const CarritoContextProvider = ({ children }) => {
         setServiciosCarrito((prev) =>
             prev.map((s) => s.id_servicio === id_servicio ? { ...s, [campo]: num } : s)
         )
+    }
+
+    // Actualiza la cantidad de personas de un ítem por persona (null = todos los invitados)
+    const actualizarPersonasServicio = (id_servicio, personas) => {
+        const num = personas == null ? null : Math.max(1, Number(personas) || 1)
+        setServiciosCarrito((prev) =>
+            prev.map((s) => s.id_servicio === id_servicio ? { ...s, personas: num } : s)
+        )
+    }
+
+    // Reemplaza todos los ítems de un tipo ('servicio' | 'producto') con una lista nueva.
+    // Los ítems de los otros tipos se conservan. Permite que el picker maneje la lista
+    // completa (cantidad, personas, hora de entrega, horas, turnos) sin diffs parciales.
+    const reemplazarServiciosPorTipo = (tipo, lista) => {
+        const norm = (lista || []).map((s) => ({
+            id_servicio: s.id_servicio,
+            nombre: s.nombre,
+            descripcion: s.descripcion,
+            precio: Number(s.precio),
+            categoria: s.categoria,
+            tipo_precio: s.tipo_precio || 'fijo',
+            tipo_item: s.tipo_item || 'producto',
+            imagen: s.imagen || null,
+            cantidad: Math.max(1, Number(s.cantidad) || 1),
+            horas:    s.tipo_precio === 'por_hora'    ? (Number(s.horas)  || 1) : null,
+            turnos:   s.tipo_precio === 'por_turno'   ? (Number(s.turnos) || 1) : null,
+            personas: s.tipo_precio === 'por_persona' ? (Number(s.personas) || null) : null,
+            hora_inicio: s.hora_inicio || null,
+            hora_manual: !!s.hora_manual,
+            descuento_cantidad_min: s.descuento_cantidad_min ?? null,
+            descuento_porcentaje:   s.descuento_porcentaje ?? null,
+        }))
+        setServiciosCarrito((prev) => [
+            ...prev.filter((s) => (s.tipo_item || 'producto') !== tipo),
+            ...norm,
+        ])
     }
 
     const quitarServicioAdicional = (id_servicio) => {
@@ -316,6 +359,8 @@ const CarritoContextProvider = ({ children }) => {
                 quitarServicioAdicional,
                 actualizarCantidadServicio,
                 actualizarUnidadesServicio,
+                actualizarPersonasServicio,
+                reemplazarServiciosPorTipo,
                 vaciarCarritoOrganizador,
                 precioEntrada,
                 setPrecioEntrada,

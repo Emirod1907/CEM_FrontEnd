@@ -10,7 +10,7 @@ const EventoProductosScreen = () => {
     const navigate = useNavigate()
     const {
         reservaOrganizador, serviciosCarrito,
-        agregarServicioAdicional, quitarServicioAdicional, actualizarCantidadServicio,
+        reemplazarServiciosPorTipo,
         setIsCartOpen,
     } = useCarrito()
 
@@ -25,22 +25,7 @@ const EventoProductosScreen = () => {
 
     const seleccionados = serviciosCarrito.filter((s) => (s.tipo_item || 'producto') === 'producto')
 
-    const onChange = (nuevaLista) => {
-        const idsNuevos = new Set(nuevaLista.map((s) => s.id_servicio))
-        const mapaActual = new Map(seleccionados.map((s) => [s.id_servicio, s]))
-        for (const s of seleccionados) {
-            if (!idsNuevos.has(s.id_servicio)) quitarServicioAdicional(s.id_servicio)
-        }
-        for (const s of nuevaLista) {
-            const actual = mapaActual.get(s.id_servicio)
-            if (!actual) {
-                agregarServicioAdicional(s)
-                if ((s.cantidad || 1) > 1) actualizarCantidadServicio(s.id_servicio, s.cantidad)
-            } else if (Number(actual.cantidad) !== Number(s.cantidad)) {
-                actualizarCantidadServicio(s.id_servicio, s.cantidad)
-            }
-        }
-    }
+    const onChange = (nuevaLista) => reemplazarServiciosPorTipo('producto', nuevaLista)
 
     // (La pantalla de Invitados como paso propio se agrega en la próxima fase;
     // por ahora, continuar lleva al pago desde el carrito)

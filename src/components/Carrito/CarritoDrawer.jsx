@@ -204,8 +204,10 @@ const CarritoDrawer = () => {
                                             )}
                                         </div>
                                         {serviciosCarrito.map(s => {
+                                            // por persona: usa la cantidad propia del ítem si la tiene, si no el total de invitados
+                                            const personasItem = Number(s.personas) > 0 ? Number(s.personas) : invitadosEfectivos
                                             let multiplicador = 1
-                                            if (s.tipo_precio === 'por_persona') multiplicador = invitadosEfectivos > 0 ? invitadosEfectivos : 1
+                                            if (s.tipo_precio === 'por_persona') multiplicador = personasItem > 0 ? personasItem : 1
                                             else if (s.tipo_precio === 'por_hora')   multiplicador = Number(s.horas)  || 1
                                             else if (s.tipo_precio === 'por_turno')  multiplicador = Number(s.turnos) || 1
                                             const subtotal = Number(s.precio) * s.cantidad * multiplicador
@@ -217,7 +219,7 @@ const CarritoDrawer = () => {
 
                                                         {s.tipo_precio === 'por_persona' && (
                                                             <span className='carrito-item-precio tipo-badge'>
-                                                                ${Number(s.precio).toLocaleString('es-AR')}/persona × {invitadosEfectivos > 0 ? invitadosEfectivos : '?'} inv.
+                                                                ${Number(s.precio).toLocaleString('es-AR')}/persona × {personasItem > 0 ? personasItem : '?'} {Number(s.personas) > 0 ? 'pers.' : 'inv.'}
                                                             </span>
                                                         )}
 

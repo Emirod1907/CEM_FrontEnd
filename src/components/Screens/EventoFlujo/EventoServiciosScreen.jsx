@@ -10,7 +10,7 @@ const EventoServiciosScreen = () => {
     const navigate = useNavigate()
     const {
         reservaOrganizador, serviciosCarrito,
-        agregarServicioAdicional, quitarServicioAdicional, actualizarCantidadServicio,
+        reemplazarServiciosPorTipo,
         setIsCartOpen,
     } = useCarrito()
 
@@ -36,26 +36,8 @@ const EventoServiciosScreen = () => {
     // Solo los servicios (tipo servicio) del carrito son la selección de este paso
     const seleccionados = serviciosCarrito.filter((s) => (s.tipo_item || 'producto') === 'servicio')
 
-    // Sincroniza la lista del picker con el carrito (fuente de verdad)
-    const onChange = (nuevaLista) => {
-        const idsNuevos = new Set(nuevaLista.map((s) => s.id_servicio))
-        const mapaActual = new Map(seleccionados.map((s) => [s.id_servicio, s]))
-
-        // Quitar los que ya no están
-        for (const s of seleccionados) {
-            if (!idsNuevos.has(s.id_servicio)) quitarServicioAdicional(s.id_servicio)
-        }
-        // Agregar nuevos / actualizar cantidad
-        for (const s of nuevaLista) {
-            const actual = mapaActual.get(s.id_servicio)
-            if (!actual) {
-                agregarServicioAdicional(s)
-                if ((s.cantidad || 1) > 1) actualizarCantidadServicio(s.id_servicio, s.cantidad)
-            } else if (Number(actual.cantidad) !== Number(s.cantidad)) {
-                actualizarCantidadServicio(s.id_servicio, s.cantidad)
-            }
-        }
-    }
+    // El picker maneja la lista completa de servicios; la volcamos al carrito.
+    const onChange = (nuevaLista) => reemplazarServiciosPorTipo('servicio', nuevaLista)
 
     return (
         <div className='flujo-screen'>

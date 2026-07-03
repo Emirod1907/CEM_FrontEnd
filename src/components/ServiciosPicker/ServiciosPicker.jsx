@@ -11,8 +11,8 @@
  */
 import React, { useEffect, useState } from 'react'
 import { getServicios, getDisponibilidadServicios } from '../../services/servicioServices'
-import { calcularPrecioServicio, TIPO_DIA_LABEL, TIPO_DIA_COLOR } from '../../utils/preciosUtils'
-import { FiX, FiPlus, FiMinus, FiCheck, FiClock, FiRepeat, FiUsers, FiPackage, FiStar } from 'react-icons/fi'
+import { calcularPrecioServicio, precioUnitarioConDescuento, TIPO_DIA_LABEL, TIPO_DIA_COLOR } from '../../utils/preciosUtils'
+import { FiX, FiPlus, FiMinus, FiCheck, FiClock, FiRepeat, FiUsers, FiPackage, FiStar, FiEdit2, FiChevronDown, FiChevronUp } from 'react-icons/fi'
 import TimePicker24 from '../TimePicker24/TimePicker24'
 import './ServiciosPicker.css'
 
@@ -80,6 +80,9 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
     const [turnosPor, setTurnosPor]     = useState({})
     const [horaPor, setHoraPor]         = useState({})
     const [opcionTurnoPor, setOpcionTurnoPor] = useState({})
+    // Panel de "agregados": colapsable + edición de condiciones por ítem
+    const [agregadosAbierto, setAgregadosAbierto] = useState(true)
+    const [editId, setEditId] = useState(null)
 
     useEffect(() => {
         getServicios().then(d => { setServicios(d || []); setCargando(false) })
@@ -94,11 +97,11 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
         })
     }, [fechaEvento, cupo])
 
-    const serviciosPorTipo = servicios.filter(s => (s.tipo_item || 'producto') === tabTipo)
+    const selMap = Object.fromEntries(seleccionados.map(s => [s.id_servicio, s]))
+    // Los ítems ya agregados NO se muestran en la lista de abajo: quedan solo arriba
+    const serviciosPorTipo = servicios.filter(s => (s.tipo_item || 'producto') === tabTipo && !selMap[s.id_servicio])
     const categorias = ['todos', ...new Set(serviciosPorTipo.map(s => s.categoria))]
     const filtrados = categoriaActiva === 'todos' ? serviciosPorTipo : serviciosPorTipo.filter(s => s.categoria === categoriaActiva)
-
-    const selMap = Object.fromEntries(seleccionados.map(s => [s.id_servicio, s]))
 
     const getPrecioUnitario = (servicio) => {
         const opciones = getOpcionesTurno(servicio)
@@ -152,6 +155,8 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                 cantidad:     1,
                 horas:  tp === 'por_hora'  ? horas  : null,
                 turnos: tp === 'por_turno' ? turnos : null,
+                // por persona: arranca con el total de invitados, pero es editable por ítem
+                personas: tp === 'por_persona' ? (Number(cupo) || 1) : null,
                 hora_inicio: horaFinal,
                 hora_manual: !!horaManual,
                 descuento_cantidad_min: servicio.descuento_cantidad_min ?? null,
@@ -166,6 +171,30 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
             ? { ...s, cantidad: Math.max(1, s.cantidad + delta) }
             : s
         ))
+    }
+
+    // Cantidad de personas de un ítem por persona (comida/viandas), editable por ítem
+    const updatePersonas = (id, delta) => {
+        onChange(seleccionados.map(s => s.id_servicio === id
+            ? { ...s, personas: Math.max(1, (Number(s.personas) || Number(cupo) || 1) + delta) }
+            : s
+        ))
+    }
+    const personasDe = (s) => Number(s.personas) > 0 ? Number(s.personas) : Math.max(1, Number(cupo) || 1)
+
+    // Edita cualquier condición de un ítem ya agregado (hora de entrega, horas, turnos, personas)
+    const patchSel = (id, patch) => onChange(seleccionados.map(s => s.id_servicio === id ? { ...s, ...patch } : s))
+    // "Cubrir cupo": fija las personas al total de invitados del evento
+    const setPersonasCupo = (id) => patchSel(id, { personas: Math.max(1, Number(cupo) || 1) })
+
+    // Subtotal de un ítem ya agregado (misma lógica que el carrito):
+    // precio unitario (con descuento por cantidad) × cantidad × multiplicador por tipo.
+    const subtotalSeleccionado = (s) => {
+        let mult = 1
+        if (s.tipo_precio === 'por_persona')   mult = personasDe(s)
+        else if (s.tipo_precio === 'por_hora')  mult = Math.max(1, Number(s.horas)  || 1)
+        else if (s.tipo_precio === 'por_turno') mult = Math.max(1, Number(s.turnos) || 1)
+        return precioUnitarioConDescuento(s) * (Number(s.cantidad) || 1) * mult
     }
 
     const nProductos = servicios.filter(s => (s.tipo_item || 'producto') === 'producto').length
@@ -205,6 +234,138 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                         <button className={`spk-tipo-tab ${tabTipo === 'servicio' ? 'active' : ''}`} onClick={() => { setTabTipo('servicio'); setCategoriaActiva('todos') }}>
                             <FiStar size={13}/> Servicios {nServicios > 0 && <span className='spk-tipo-count'>{nServicios}</span>}
                         </button>
+                    </div>
+                )}
+
+                {/* Ítems ya agregados: panel colapsable, editable hasta el pago */}
+                {seleccionados.length > 0 && (
+                    <div className='spk-seleccionados'>
+                        <button
+                            className='spk-seleccionados-header'
+                            onClick={() => setAgregadosAbierto(v => !v)}
+                            type='button'
+                        >
+                            <span className='spk-seleccionados-titulo'>
+                                {soloTipo === 'servicio' ? 'Servicios agregados'
+                                    : soloTipo === 'producto' ? 'Productos agregados'
+                                    : 'Agregados'} ({seleccionados.length})
+                            </span>
+                            {agregadosAbierto ? <FiChevronUp size={16}/> : <FiChevronDown size={16}/>}
+                        </button>
+
+                        {agregadosAbierto && (
+                            <div className='spk-add-lista'>
+                                {seleccionados.map(s => {
+                                    const id = s.id_servicio
+                                    const porPersona = s.tipo_precio === 'por_persona'
+                                    const porHora    = s.tipo_precio === 'por_hora'
+                                    const porTurno   = s.tipo_precio === 'por_turno'
+                                    const horaEditable = CATEGORIAS_HORA_EDITABLE.includes(s.categoria)
+                                    const unidad = porPersona ? '/pers.' : porHora ? '/h' : porTurno ? '/turno' : ''
+                                    const qtyValor = porPersona ? personasDe(s) : Number(s.cantidad)
+                                    const onMenos = porPersona ? () => updatePersonas(id, -1) : () => updateCantidad(id, -1)
+                                    const onMas   = porPersona ? () => updatePersonas(id, +1) : () => updateCantidad(id, +1)
+                                    const abierto = editId === id
+                                    return (
+                                        <div key={id} className={`spk-add-row ${abierto ? 'spk-add-row--abierto' : ''}`}>
+                                            <div className='spk-add-main'>
+                                                {s.imagen && <img src={s.imagen} alt='' className='spk-add-img'/>}
+                                                <div className='spk-add-info'>
+                                                    <span className='spk-add-nombre'>{s.nombre}</span>
+                                                    <span className='spk-add-precio'>
+                                                        ${Number(subtotalSeleccionado(s)).toLocaleString('es-AR')}
+                                                        <small> (${Number(precioUnitarioConDescuento(s)).toLocaleString('es-AR')}{unidad} c/u)</small>
+                                                    </span>
+                                                    {s.hora_inicio && (
+                                                        <span className='spk-add-cond'>
+                                                            <FiClock size={11}/> Entrega {s.hora_inicio}
+                                                            {porHora && ` · ${s.horas || 1}h`}
+                                                            {porTurno && ` · ${s.turnos || 1} turno(s)`}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className='spk-add-controls'>
+                                                    <div className='spk-chip-qty'>
+                                                        {porPersona && <span className='spk-chip-qty-label'>pers.</span>}
+                                                        <button className='spk-chip-qty-btn' onClick={onMenos} disabled={qtyValor <= 1} title='Menos'><FiMinus size={12}/></button>
+                                                        <span className='spk-chip-qty-num'>{qtyValor}</span>
+                                                        <button className='spk-chip-qty-btn' onClick={onMas} title='Más'><FiPlus size={12}/></button>
+                                                    </div>
+                                                    <button
+                                                        className={`spk-add-editar ${abierto ? 'activo' : ''}`}
+                                                        onClick={() => setEditId(abierto ? null : id)}
+                                                        title='Editar condiciones'
+                                                    >
+                                                        <FiEdit2 size={13}/>
+                                                    </button>
+                                                    <button
+                                                        className='spk-add-quitar'
+                                                        onClick={() => { setEditId(null); onChange(seleccionados.filter(x => x.id_servicio !== id)) }}
+                                                        title='Quitar'
+                                                    >
+                                                        <FiX size={13}/> Quitar
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {abierto && (
+                                                <div className='spk-add-editor'>
+                                                    {porPersona && (
+                                                        <div className='spk-add-editor-row'>
+                                                            <label>Personas</label>
+                                                            <input
+                                                                type='number' min={1}
+                                                                value={personasDe(s)}
+                                                                onChange={e => patchSel(id, { personas: Math.max(1, Number(e.target.value) || 1) })}
+                                                                className='spk-add-input'
+                                                            />
+                                                            <button className='spk-add-cupo-btn' onClick={() => setPersonasCupo(id)}>
+                                                                <FiUsers size={12}/> Cubrir cupo ({Math.max(1, Number(cupo) || 1)})
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                    {porHora && (
+                                                        <div className='spk-add-editor-row'>
+                                                            <label>Horas contratadas</label>
+                                                            <input
+                                                                type='number' min={1}
+                                                                value={s.horas || 1}
+                                                                onChange={e => patchSel(id, { horas: Math.max(1, Number(e.target.value) || 1) })}
+                                                                className='spk-add-input'
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    {porTurno && (
+                                                        <div className='spk-add-editor-row'>
+                                                            <label>Turnos</label>
+                                                            <input
+                                                                type='number' min={1}
+                                                                value={s.turnos || 1}
+                                                                onChange={e => patchSel(id, { turnos: Math.max(1, Number(e.target.value) || 1) })}
+                                                                className='spk-add-input'
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    {horaEditable ? (
+                                                        <div className='spk-add-editor-row'>
+                                                            <label>{s.categoria === 'entretenimiento' ? 'Hora de inicio' : 'Hora de entrega'}</label>
+                                                            <TimePicker24
+                                                                value={s.hora_inicio || ''}
+                                                                onChange={v => patchSel(id, { hora_inicio: v, hora_manual: true })}
+                                                            />
+                                                        </div>
+                                                    ) : s.hora_inicio && (
+                                                        <div className='spk-add-editor-nota'>
+                                                            <FiClock size={12}/> Entrega automática a las {s.hora_inicio} (se calcula unas horas antes del evento)
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        )}
                     </div>
                 )}
 

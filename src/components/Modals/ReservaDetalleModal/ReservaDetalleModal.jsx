@@ -52,7 +52,7 @@ const TIPO_PRECIO_LABEL = {
 // invitados: numInvitados guardado en datos_evento, con fallback al cupo del evento
 const calcSubtotal = (s, invitados = 0) => {
     let multiplicador = 1
-    if      (s.tipo_precio === 'por_persona') multiplicador = invitados > 0 ? invitados : 1
+    if      (s.tipo_precio === 'por_persona') multiplicador = Number(s.personas) > 0 ? Number(s.personas) : (invitados > 0 ? invitados : 1)
     else if (s.tipo_precio === 'por_hora')    multiplicador = Number(s.horas)  > 0 ? Number(s.horas)  : 1
     else if (s.tipo_precio === 'por_turno')   multiplicador = Number(s.turnos) > 0 ? Number(s.turnos) : 1
     return precioUnitarioConDescuento(s) * (Number(s.cantidad) || 1) * multiplicador
@@ -401,7 +401,7 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                     const subtotal = calcSubtotal(s, invEfectivos)
                                                     const etiquetaUnidad = s.tipo_precio === 'por_hora'   ? `× ${s.horas || 1} h`
                                                         : s.tipo_precio === 'por_turno'  ? `× ${s.turnos || 1} turno(s)`
-                                                        : s.tipo_precio === 'por_persona' ? `× ${invEfectivos || 1} pers.`
+                                                        : s.tipo_precio === 'por_persona' ? `× ${(Number(s.personas) > 0 ? Number(s.personas) : invEfectivos) || 1} pers.`
                                                         : s.cantidad > 1 ? `× ${s.cantidad}` : ''
                                                     return (
                                                         <div key={i} className='rd-servicio-card'>
