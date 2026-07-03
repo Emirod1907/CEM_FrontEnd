@@ -115,6 +115,22 @@ export const parsePreciosConfig = (val) => {
 }
 
 /**
+ * Precio efectivo de un salón para un tipo de día ('fin_semana' | 'feriado'),
+ * contemplando tanto el monto fijo como el % de incremento sobre el precio base.
+ * Devuelve null si no hay nada configurado para ese día.
+ */
+export const precioTipoDia = (precioBase, preciosConfig, tipo) => {
+    const cfg = parsePreciosConfig(preciosConfig)
+    const base = Number(precioBase) || 0
+    if (!cfg) return null
+    const monto = tipo === 'feriado' ? cfg.feriado     : cfg.fin_semana
+    const pct   = tipo === 'feriado' ? cfg.feriado_pct : cfg.fin_semana_pct
+    if (monto != null) return Number(monto)
+    if (pct != null && base > 0) return +(base * (1 + Number(pct) / 100)).toFixed(2)
+    return null
+}
+
+/**
  * Calcula el precio para un evento dado una fecha y configuración.
  * @param {number} precioBase  - precio base del servicio/salón
  * @param {object|string|null} preciosConfig - config JSON

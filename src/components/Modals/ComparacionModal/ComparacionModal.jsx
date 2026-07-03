@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCompare } from '../../../Contexts/CompareContextProvider'
 import { useCarrito } from '../../../Contexts/CarritoContextProvider'
 import { FiX, FiCalendar, FiShoppingCart, FiTrash2, FiBookmark } from 'react-icons/fi'
+import { precioTipoDia } from '../../../utils/preciosUtils'
 import './ComparacionModal.css'
 
 const parsearJSON = (v) => {
@@ -64,18 +65,20 @@ const TablaSalones = ({ salones, onQuitar, onReservar }) => {
         {
             label: 'Precio fin de semana',
             render: s => {
-                const cfg = parsePreciosConfig(s.precios_config)
-                return cfg?.fin_semana != null
-                    ? <strong className='cmp-precio cmp-precio--alt'>${Number(cfg.fin_semana).toLocaleString('es-AR')}</strong>
+                const base = s.precio_publico ?? s.precio_alquiler
+                const p = precioTipoDia(base, s.precios_config, 'fin_semana')
+                return p != null
+                    ? <strong className='cmp-precio cmp-precio--alt'>${Number(p).toLocaleString('es-AR')}</strong>
                     : <span className='cmp-nd'>—</span>
             }
         },
         {
             label: 'Precio feriados',
             render: s => {
-                const cfg = parsePreciosConfig(s.precios_config)
-                return cfg?.feriado != null
-                    ? <strong className='cmp-precio cmp-precio--alt'>${Number(cfg.feriado).toLocaleString('es-AR')}</strong>
+                const base = s.precio_publico ?? s.precio_alquiler
+                const p = precioTipoDia(base, s.precios_config, 'feriado')
+                return p != null
+                    ? <strong className='cmp-precio cmp-precio--alt'>${Number(p).toLocaleString('es-AR')}</strong>
                     : <span className='cmp-nd'>—</span>
             }
         },
