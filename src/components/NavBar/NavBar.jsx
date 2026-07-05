@@ -16,6 +16,8 @@ const NavBar = () => {
     const esAdmin = isAuthenticated && rol === 'admin'
     const esFullAccess = isAuthenticated && EMAILS_FULL_ACCESS.includes(persona?.email)
 
+    // Cambiar de rol es solo para las cuentas full access (testing/admin):
+    // un usuario normal elige su rol al registrarse y queda fijo.
     const cambiarRolBtn = esFullAccess ? (
         <NavLink to='/seleccionar-rol' className={({ isActive }) => isActive ? 'link-seleccionado' : 'link'}>
             Cambiar Rol
@@ -169,7 +171,7 @@ const NavBar = () => {
         <div className='navbar-container'>
             <header className='app-header'>
                 <div className='logo'>
-                    <img src="/dream_events_logo.svg" alt="Dream Events" />
+                    <img src="/dream_events_isotipo.svg" alt="" aria-hidden="true" />
                 </div>
                 <span className='navbar-brand'>Dream Events</span>
                 {isAuthenticated && rol && (

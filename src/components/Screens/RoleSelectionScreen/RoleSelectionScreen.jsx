@@ -70,6 +70,12 @@ const RoleSelectionScreen = () => {
 
     return (
         <div className='role-selection-wrapper'>
+            {/* Fondo animado: íconos de fiesta que flotan detrás de la card */}
+            <div className='role-bg-anim' aria-hidden='true'>
+                {['🎉','🎈','🥂','🎊','🎁','🎶','✨','🪩','🎂','🍾','💃','🎇'].map((emoji, i) => (
+                    <span key={i} className='role-bg-icon'>{emoji}</span>
+                ))}
+            </div>
             <div className='role-selection-card'>
                 <div className='role-selection-header'>
                     <h1>¡Bienvenido/a{persona?.user ? `, ${persona.user}` : ''}!</h1>

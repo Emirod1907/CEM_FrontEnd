@@ -23,7 +23,7 @@
     background: transparent;
     border: none;
     border-radius: 9px;
-    color: rgba(255,255,255,0.55);
+    color: rgba(255,255,255,0.88);
     font-size: 0.88rem;
     font-family: 'Raleway', sans-serif;
     font-weight: 600;
@@ -87,7 +87,7 @@
 }
 .reservas-lista-titulo--sub {
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.8);
 }
 .reservas-lista-count {
     background: rgba(168,85,247,0.25);
@@ -100,7 +100,7 @@
 }
 .reservas-lista-count--filtrado {
     background: rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.55);
+    color: rgba(255,255,255,0.88);
 }
 .filtro-estado-select {
     background: rgba(255,255,255,0.06);
@@ -117,7 +117,7 @@
 .filtro-estado-select:focus { border-color: rgba(168,85,247,0.5); }
 .filtro-estado-select option { background: #1e1b2e; color: white; }
 
-.reservas-vacio { color: rgba(255,255,255,0.4); font-size: 0.9rem; text-align: center; padding: 20px 0; }
+.reservas-vacio { color: rgba(255,255,255,0.78); font-size: 0.9rem; text-align: center; padding: 20px 0; }
 .reservas-lista { display: flex; flex-direction: column; gap: 8px; }
 
 .reserva-item {
@@ -139,9 +139,9 @@
 .reserva-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
 .reserva-item-fecha-col { display: flex; flex-direction: column; align-items: center; min-width: 46px; }
 .reserva-item-fecha { font-size: 0.9rem; font-weight: 700; color: #c084fc; text-align: center; text-transform: capitalize; line-height: 1.2; }
-.reserva-item-anio  { font-size: 0.68rem; color: rgba(255,255,255,0.3); }
+.reserva-item-anio  { font-size: 0.68rem; color: rgba(255,255,255,0.7); }
 .reserva-item-nombre { display: block; font-size: 0.9rem; color: white; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.reserva-item-email  { display: block; font-size: 0.78rem; color: rgba(255,255,255,0.45); }
+.reserva-item-email  { display: block; font-size: 0.78rem; color: rgba(255,255,255,0.8); }
 
 /* ── Botón Archivo ── */
 .btn-archivo {
@@ -151,7 +151,7 @@
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.14);
     border-radius: 8px;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.9);
     font-size: 0.78rem;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
@@ -194,7 +194,7 @@
 }
 .modal-global-vacio {
     text-align: center;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.78);
     padding: 32px 0;
     font-size: 0.9rem;
 }
@@ -232,7 +232,7 @@
     text-transform: capitalize;
     line-height: 1.2;
 }
-.modal-global-anio { font-size: 0.68rem; color: rgba(255,255,255,0.3); }
+.modal-global-anio { font-size: 0.68rem; color: rgba(255,255,255,0.7); }
 .modal-global-info {
     flex: 1;
     display: flex;
@@ -248,7 +248,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.modal-global-sub { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+.modal-global-sub { font-size: 0.78rem; color: rgba(255,255,255,0.78); }
 .modal-global-badges {
     display: flex;
     flex-direction: column;
@@ -296,7 +296,7 @@
 }
 .archivo-detalle-fecha {
     font-size: 0.78rem;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.8);
     display: block;
     margin-top: 3px;
     text-transform: capitalize;
@@ -348,7 +348,7 @@
 }
 .reserva-detalle-header h4 { margin: 0; font-size: 0.95rem; color: white; font-family: 'Raleway', sans-serif; }
 .btn-cerrar-detalle {
-    background: transparent; border: none; color: rgba(255,255,255,0.5); cursor: pointer;
+    background: transparent; border: none; color: rgba(255,255,255,0.85); cursor: pointer;
     display: flex; align-items: center; transition: color 0.15s;
 }
 .btn-cerrar-detalle:hover { color: white; }
@@ -361,7 +361,7 @@
 }
 .reserva-dato-row { display: flex; flex-direction: column; gap: 2px; }
 .reserva-dato-full { grid-column: 1 / -1; }
-.reserva-dato-label { font-size: 0.72rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: .05em; }
+.reserva-dato-label { font-size: 0.72rem; color: rgba(255,255,255,0.78); text-transform: uppercase; letter-spacing: .05em; }
 .reserva-dato-row > span:last-child { font-size: 0.88rem; color: rgba(255,255,255,0.85); }
 
 .mis-servicios-contratados {
@@ -383,7 +383,7 @@
 /* Calendario (clases compartidas con MiSalonScreen) */
 .cal-wrapper { width: 100%; }
 .cal-header-dias { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 6px; }
-.cal-header-dias span { text-align: center; font-size: 0.72rem; color: rgba(255,255,255,0.35); font-weight: 600; text-transform: uppercase; padding: 4px 0; }
+.cal-header-dias span { text-align: center; font-size: 0.72rem; color: rgba(255,255,255,0.72); font-weight: 600; text-transform: uppercase; padding: 4px 0; }
 .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
 .cal-celda { aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; }
 .cal-libre:hover { background: rgba(255,255,255,0.08); }
@@ -412,7 +412,7 @@
 .cal-confirmada     { background: rgba(34,197,94,0.25); }
 .cal-confirmada .cal-num     { color: #4ade80; }
 .cal-leyenda { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
-.cal-leyenda-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+.cal-leyenda-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: rgba(255,255,255,0.85); }
 .cal-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .cal-dot.cal-pendiente_pago { background: #fde047; }
 .cal-dot.cal-seña_abonada   { background: #fb923c; }
@@ -515,7 +515,10 @@
 
 .mis-servicios-vacio {
     text-align: center;
-    background: rgba(255,255,255,0.08);
+    background: rgba(26, 13, 46, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.14);
     border-radius: 16px;
     padding: 60px 24px;
     color: rgba(255,255,255,0.85);
@@ -526,7 +529,7 @@
 }
 
 .mis-servicios-vacio svg {
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.78);
 }
 
 .mis-servicios-vacio h3 {
@@ -538,8 +541,9 @@
 .mis-servicios-vacio p {
     margin: 0;
     font-size: 0.9rem;
-    color: rgba(255,255,255,0.6);
+    color: #ffffff;
 }
+.mis-servicios-vacio h3 { color: #ffffff; }
 
 /* ── Grid de tarjetas ── */
 .mis-servicios-grid {
@@ -1104,7 +1108,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.78);
     padding: 0 4px;
 }
 
@@ -1171,7 +1175,7 @@
     background: rgba(255,255,255,0.07);
     border: 1px dashed rgba(255,255,255,0.2);
     border-radius: 6px;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.9);
     font-size: 0.82rem;
     padding: 5px 12px;
     cursor: pointer;
@@ -1423,7 +1427,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.78);
     border-top: 1px solid rgba(255,255,255,0.08);
     padding-top: 16px;
     margin-top: 4px;
@@ -1449,7 +1453,7 @@
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 8px;
-    color: rgba(255,255,255,0.55);
+    color: rgba(255,255,255,0.88);
     font-size: 0.82rem;
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
@@ -1530,7 +1534,7 @@
 }
 .dia-chip--inactivo {
     background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.68);
 }
 .schedule-horario {
     display: flex;
@@ -1672,7 +1676,7 @@
     white-space: nowrap;
 }
 .sc-precio {
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.9);
     font-weight: 600;
     white-space: nowrap;
 }
@@ -1683,7 +1687,7 @@
     align-items: center;
     gap: 5px;
     font-size: 0.77rem;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.85);
     margin-bottom: 4px;
 }
 .tienda-card-turno strong { color: rgba(255,255,255,0.8); }
@@ -1908,7 +1912,7 @@
 }
 .card-tramos-titulo {
     font-size: 0.72rem;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.78);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 3px;
@@ -1929,12 +1933,12 @@
     font-size: 0.76rem;
 }
 .card-tramo-hint {
-    color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.72);
     font-size: 0.72rem;
     flex: 1;
 }
 .card-tramo-dias {
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.8);
     font-size: 0.72rem;
     white-space: nowrap;
 }

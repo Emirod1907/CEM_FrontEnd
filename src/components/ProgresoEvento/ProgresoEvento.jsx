@@ -83,6 +83,7 @@ const ProgresoEvento = () => {
     }
 
     return (
+        <>
         <nav className="prog-evento" aria-label="Progreso del evento">
             <div className="prog-inner">
                 {PASOS.map((paso, i) => {
@@ -121,6 +122,9 @@ const ProgresoEvento = () => {
                 })}
             </div>
         </nav>
+        {/* Empuja el contenido hacia abajo cuando la barra está visible */}
+        <div className="prog-espaciador" aria-hidden="true" />
+        </>
     )
 }
 

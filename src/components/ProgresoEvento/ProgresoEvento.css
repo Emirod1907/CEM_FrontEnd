@@ -1,8 +1,9 @@
-/* Sub-barra delgada de progreso: fija debajo de la navbar (56px), flotando
-   por encima de forms y pantallas, con los pasos centrados */
+/* Sub-barra delgada de progreso: fija justo debajo de la navbar (usa la misma
+   variable --navbar-h definida en NavBar.css, así nunca quedan pisadas),
+   flotando por encima de forms y pantallas, con los pasos centrados */
 .prog-evento {
     position: fixed;
-    top: 56px;
+    top: var(--navbar-h, 68px);
     left: 0;
     right: 0;
     z-index: 900; /* debajo de la navbar (1000), encima del contenido */
@@ -15,6 +16,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Espaciador en flujo normal: solo se renderiza cuando la barra está visible
+   y empuja el contenido hacia abajo para que la barra (fija) no lo tape.
+   El padding-top global de .main-container (86px) cubre la navbar; esto
+   cubre el alto extra de la sub-barra. */
+.prog-espaciador {
+    height: 24px;
 }
 
 .prog-inner {

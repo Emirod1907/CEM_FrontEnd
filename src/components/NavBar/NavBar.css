@@ -1,4 +1,11 @@
 /* Barra superior — versión oscura para mejorar contraste sobre el fondo */
+
+/* Alto de la navbar compartido con la sub-barra de progreso (ProgresoEvento.css)
+   para que ninguna quede pisando a la otra. Si se cambia acá, se acomoda todo. */
+:root {
+    --navbar-h: 68px;
+}
+
 .navbar-container {
     height: 0;
 }
@@ -9,30 +16,29 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    min-height: 68px;
+    height: var(--navbar-h);
+    min-height: var(--navbar-h);
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 10px 26px;
-    background: linear-gradient(90deg, rgba(45, 24, 78, 0.96) 0%, rgba(81, 29, 103, 0.95) 45%, rgba(103, 17, 81, 0.95) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-    box-shadow: 0 12px 34px rgba(13, 8, 27, 0.28);
+    background: linear-gradient(90deg, rgba(45, 24, 78, 0.42) 0%, rgba(81, 29, 103, 0.38) 45%, rgba(103, 17, 81, 0.38) 100%);
+    backdrop-filter: blur(18px) saturate(1.25);
+    -webkit-backdrop-filter: blur(18px) saturate(1.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 26px rgba(13, 8, 27, 0.16);
 }
 
+/* Isotipo (la D del logo) sin cajita: en blanco sobre el degradado se lee
+   bien incluso chico, y no repite el texto de la marca que va al lado */
 .logo {
-    width: 44px;
-    height: 44px;
-    flex: 0 0 44px;
-    border-radius: 14px;
-    overflow: hidden;
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    filter: drop-shadow(0 2px 6px rgba(13, 8, 27, 0.35));
 }
 
 .logo img {
@@ -198,8 +204,11 @@
 }
 
 @media (max-width: 920px) {
+    :root {
+        --navbar-h: 64px;
+    }
+
     .app-header {
-        min-height: 64px;
         padding: 9px 14px;
         gap: 10px;
     }
@@ -213,7 +222,6 @@
         width: 40px;
         height: 40px;
         flex-basis: 40px;
-        border-radius: 12px;
     }
 
     .link,

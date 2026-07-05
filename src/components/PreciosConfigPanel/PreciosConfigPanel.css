@@ -13,23 +13,25 @@
 
 /* ── Dark variant (MiSalonScreen) ── */
 .pcp-dark {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(20, 10, 38, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.14);
 }
 .pcp-dark .pcp-section + .pcp-section {
     border-top-color: rgba(255,255,255,0.07);
 }
-.pcp-dark .pcp-section-title { color: rgba(255,255,255,0.55); }
-.pcp-dark .pcp-section-hint  { color: rgba(255,255,255,0.3); }
+.pcp-dark .pcp-section-title { color: rgba(255,255,255,0.88); }
+.pcp-dark .pcp-section-hint  { color: rgba(255,255,255,0.7); }
 .pcp-dark .pcp-label         { color: rgba(255,255,255,0.75); }
-.pcp-dark .pcp-sublabel      { color: rgba(255,255,255,0.35); }
-.pcp-dark .pcp-signo         { color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+.pcp-dark .pcp-sublabel      { color: rgba(255,255,255,0.72); }
+.pcp-dark .pcp-signo         { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
 .pcp-dark .pcp-input         { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); color: white; }
 .pcp-dark .pcp-input:focus   { border-color: rgba(168,85,247,0.6); background: rgba(255,255,255,0.1); }
-.pcp-dark .pcp-input::placeholder { color: rgba(255,255,255,0.25); }
-.pcp-dark .pcp-input-suffix  { color: rgba(255,255,255,0.4); }
+.pcp-dark .pcp-input::placeholder { color: rgba(255,255,255,0.68); }
+.pcp-dark .pcp-input-suffix  { color: rgba(255,255,255,0.78); }
 .pcp-dark .pcp-hora-toggle-label { color: rgba(255,255,255,0.85); }
-.pcp-dark .pcp-hora-toggle-sub   { color: rgba(255,255,255,0.4); }
+.pcp-dark .pcp-hora-toggle-sub   { color: rgba(255,255,255,0.78); }
 
 /* ── Light variant (MisServiciosScreen form modal) ── */
 .pcp-light {
@@ -139,7 +141,7 @@
     display: block;
     margin-top: 4px;
     font-size: 0.74rem;
-    color: rgba(255,255,255,0.55);
+    color: rgba(255,255,255,0.88);
 }
 .pcp-total-pct strong {
     color: #4ade80;
@@ -286,7 +288,7 @@
     margin-bottom: 2px;
     transition: background 0.15s, border-color 0.15s;
 }
-.pcp-dark  .pcp-turno-option-del { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.45); }
+.pcp-dark  .pcp-turno-option-del { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
 .pcp-light .pcp-turno-option-del { border-color: #e0d5f8; color: #aaa; }
 .pcp-turno-option-del:hover { border-color: #f87171 !important; color: #f87171 !important; background: rgba(248,113,113,0.1) !important; }
 

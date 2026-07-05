@@ -1,0 +1,24 @@
+<svg viewBox="20 78 344 396" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dream Events">
+  <!-- Isotipo: la D estilizada del logo completo (dream_events_logo.svg),
+       recortada para verse nítida en tamaños chicos (navbar, favicon, etc.) -->
+  <defs>
+    <mask id="swooshCutIso">
+      <rect x="0" y="0" width="1280" height="640" fill="white"/>
+      <path d="M20,470 L20,355 C60,425 160,452 310,458 L310,470 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- D estilizada con corte swoosh -->
+  <g mask="url(#swooshCutIso)">
+    <path fill="#FFFFFF" fill-rule="evenodd"
+      d="M70,90 L205,90 C300,90 352,164 352,262 C352,360 300,432 205,432 L70,432 Z
+         M138,156 L200,156 C254,156 286,200 286,262 C286,324 254,368 200,368 L138,368 Z"/>
+  </g>
+  <!-- cola del swoosh -->
+  <path fill="#FFFFFF"
+    d="M32,376 C72,442 172,462 288,446 C192,480 80,462 32,376 Z"/>
+
+  <!-- destello dorado dentro de la D -->
+  <path fill="#F5D57A"
+    d="M186,172 C190,209 200,219 236,224 C200,229 190,239 186,276 C182,239 172,229 136,224 C172,219 182,209 186,172 Z"/>
+</svg>
