@@ -862,3 +862,105 @@
         margin-left: 0;
     }
 }
+
+/* ═══════════════════════════════════════════════════════
+   FASE 5 — Ajuste de contraste y estados del calendario de reservas
+═══════════════════════════════════════════════════════ */
+.cr-panel,
+.cr-calendario,
+.mm-card,
+.cr-item,
+.cr-modal {
+    border-radius: 22px;
+    box-shadow: 0 24px 58px rgba(24, 12, 43, 0.22);
+}
+
+.cr-select,
+.cr-btn-archivo,
+.cr-volver,
+.cr-nav-btn,
+.cf-tooltip-btn,
+.cr-btn {
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+.cr-select,
+.cr-select option {
+    color: #251d38;
+}
+
+.estado-pendiente {
+    background: #b77905;
+    color: #ffffff;
+    border-color: rgba(183, 121, 5, 0.22);
+}
+.estado-sena {
+    background: #c45512;
+    color: #ffffff;
+    border-color: rgba(196, 85, 18, 0.22);
+}
+.estado-confirmada {
+    background: #15803d;
+    color: #ffffff;
+    border-color: rgba(21, 128, 61, 0.22);
+}
+.estado-cancelada {
+    background: #be123c;
+    color: #ffffff;
+    border-color: rgba(190, 18, 60, 0.22);
+}
+
+.cf-dia {
+    border-color: rgba(111, 90, 147, 0.14);
+}
+
+.cf-libre {
+    background: #ffffff;
+    color: #2f2936;
+}
+
+.cf-pasada {
+    background: #ebe7f3;
+    color: #857b97;
+}
+
+.cf-con-reserva {
+    background: linear-gradient(135deg, #6b21a8, #1d4ed8);
+    color: #ffffff;
+}
+
+.cr-overlay {
+    background: rgba(9, 5, 19, 0.72);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.cr-modal-header h2,
+.cr-modal-header h3,
+.cr-archivo-nombre,
+.cr-nombre,
+.cr-anio,
+.cr-mes-titulo,
+.mm-nombre {
+    color: #251d38;
+}
+
+@media (max-width: 560px) {
+    .cr-panel,
+    .cr-calendario,
+    .cr-modal {
+        border-radius: 18px;
+    }
+
+    .cr-item-acciones,
+    .cr-archivo-acciones {
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .cr-btn,
+    .cr-btn-archivo {
+        justify-content: center;
+    }
+}

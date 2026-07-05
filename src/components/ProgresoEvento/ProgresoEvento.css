@@ -8,9 +8,7 @@
     right: 0;
     z-index: 900; /* debajo de la navbar (1000), encima del contenido */
     height: 34px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: #ffffff;
     border-bottom: 1px solid rgba(119, 9, 129, 0.12);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     display: flex;
@@ -23,7 +21,7 @@
    El padding-top global de .main-container (86px) cubre la navbar; esto
    cubre el alto extra de la sub-barra. */
 .prog-espaciador {
-    height: 24px;
+    height: 44px;
 }
 
 .prog-inner {

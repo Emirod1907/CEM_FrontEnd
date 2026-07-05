@@ -8,12 +8,13 @@ import CalendarioDisponibilidad from '../../CalendarioDisponibilidad/CalendarioD
 import ServiciosPicker, { sugerirHoraServicio } from '../../ServiciosPicker/ServiciosPicker'
 import SugeridosSection from '../../Sugeridos/SugeridosSection'
 import InvitacionDesigner from '../../Modals/InvitacionDesigner/InvitacionDesigner'
-import { FaSearch } from "react-icons/fa";
-import { useCarrito } from '../../../Contexts/CarritoContextProvider';
-import { useCompare } from '../../../Contexts/CompareContextProvider';
-import { useTour } from '../../../hooks/useTour';
+import { FaSearch } from 'react-icons/fa'
+import { useCarrito } from '../../../Contexts/CarritoContextProvider'
+import { useCompare } from '../../../Contexts/CompareContextProvider'
+import { useTour } from '../../../hooks/useTour'
 import { calcularPrecioEvento, parsePreciosConfig, TIPO_DIA_COLOR, TIPO_DIA_LABEL } from '../../../utils/preciosUtils'
-import { FiColumns, FiCheck, FiBookmark, FiShoppingBag, FiX, FiZap, FiTag } from 'react-icons/fi'
+import { FiColumns, FiCheck, FiBookmark, FiShoppingBag, FiShoppingCart, FiZap, FiTag } from 'react-icons/fi'
+
 import {
     TIPOS_EVENTO, EMOJI_TIPO,
     detectarTipoEvento, generarTextoInvitacion,
@@ -21,11 +22,11 @@ import {
 
 const TimePicker24 = ({ name, value, onChange }) => {
     const [hh, mm] = (value || '').split(':')
-    const horas   = hh !== undefined ? parseInt(hh, 10) : ''
+    const horas = hh !== undefined ? parseInt(hh, 10) : ''
     const minutos = mm !== undefined ? parseInt(mm, 10) : ''
 
     const emit = useCallback((h, m) => {
-        const horasStr   = String(h).padStart(2, '0')
+        const horasStr = String(h).padStart(2, '0')
         const minutosStr = String(m).padStart(2, '0')
         onChange({ target: { name, value: `${horasStr}:${minutosStr}` } })
     }, [name, onChange])
@@ -34,6 +35,7 @@ const TimePicker24 = ({ name, value, onChange }) => {
         const h = Math.min(23, Math.max(0, Number(e.target.value)))
         emit(h, minutos !== '' ? minutos : 0)
     }
+
     const onChangeM = (e) => {
         const m = Math.min(59, Math.max(0, Number(e.target.value)))
         emit(horas !== '' ? horas : 0, m)
@@ -42,7 +44,9 @@ const TimePicker24 = ({ name, value, onChange }) => {
     return (
         <div className="cef-timepicker">
             <input
-                type="number" min={0} max={23}
+                type="number"
+                min={0}
+                max={23}
                 value={horas === '' ? '' : String(horas).padStart(2, '0')}
                 onChange={onChangeH}
                 onBlur={(e) => { if (e.target.value === '') emit(0, minutos !== '' ? minutos : 0) }}
@@ -51,7 +55,9 @@ const TimePicker24 = ({ name, value, onChange }) => {
             />
             <span className="cef-timepicker-sep">:</span>
             <input
-                type="number" min={0} max={59}
+                type="number"
+                min={0}
+                max={59}
                 value={minutos === '' ? '' : String(minutos).padStart(2, '0')}
                 onChange={onChangeM}
                 onBlur={(e) => { if (e.target.value === '') emit(horas !== '' ? horas : 0, 0) }}
@@ -63,36 +69,54 @@ const TimePicker24 = ({ name, value, onChange }) => {
 }
 
 const CATEGORIAS_CRONO_LABEL = {
-    catering: 'Catering', decoracion: 'Decoración', audio_video: 'Audio y Video',
-    seguridad: 'Seguridad', personal: 'Provisión de Personal', mobiliario: 'Mobiliario',
-    entretenimiento: 'Entretenimiento', tortas: 'Elaboración de Tortas',
-    bebidas: 'Bebidas', comida: 'Alimentos', alimentos: 'Alimentos',
-    cotillon: 'Cotillón y Souvenirs', vajilla: 'Vajilla', otro: 'Otros'
+    catering: 'Catering',
+    decoracion: 'Decoración',
+    audio_video: 'Audio y Video',
+    seguridad: 'Seguridad',
+    personal: 'Provisión de Personal',
+    mobiliario: 'Mobiliario',
+    entretenimiento: 'Entretenimiento',
+    tortas: 'Elaboración de Tortas',
+    bebidas: 'Bebidas',
+    comida: 'Alimentos',
+    alimentos: 'Alimentos',
+    cotillon: 'Cotillón y Souvenirs',
+    vajilla: 'Vajilla',
+    otro: 'Otros'
 }
+
 const CATEGORIAS_CRONO_EMOJI = {
-    catering: '🍽️', decoracion: '🌸', audio_video: '🎵',
-    seguridad: '🔒', personal: '🤵', mobiliario: '🪑', entretenimiento: '🎤',
-    tortas: '🎂', bebidas: '🥤', comida: '🍔', alimentos: '🍔',
-    cotillon: '🎉', vajilla: '🍽️', otro: '📦'
+    catering: '🍽️',
+    decoracion: '🌸',
+    audio_video: '🎵',
+    seguridad: '🔒',
+    personal: '🤵',
+    mobiliario: '🪑',
+    entretenimiento: '🎤',
+    tortas: '🎂',
+    bebidas: '🥤',
+    comida: '🍔',
+    alimentos: '🍔',
+    cotillon: '🎉',
+    vajilla: '🍽️',
+    otro: '📦'
 }
 
 const CreateEventoForm = () => {
-
-    const { agregarReservaOrganizador, agregarServicioAdicional, actualizarCantidadServicio } = useCarrito()
+    const { agregarReservaOrganizador } = useCarrito()
     const { agregarEventoComparar, enEventosComparar, quitarEventoComparar } = useCompare()
     const { startTour } = useTour()
+
     const [guardadoMsgVisible, setGuardadoMsgVisible] = useState(false)
     const [comparaMsgVisible, setComparaMsgVisible] = useState(false)
     const [borradorId] = useState(() => `borrador_${Date.now()}_${Math.random().toString(36).slice(2)}`)
     const [serviciosSeleccionados, setServiciosSeleccionados] = useState([])
-    const [pickerAbierto, setPickerAbierto] = useState(false)
-    const [canvaAbierto, setCanvaAbierto]   = useState(false)
-    // imagenUrl: URL directa (alternativa a subir un File)
-    const [imagenUrl, setImagenUrl]         = useState('')
-    // Auto-detección de tipo de evento
-    const [tipoAutoDetectado, setTipoAutoDetectado] = useState(false)   // fue seteado automáticamente
-    const [tipoManual, setTipoManual]               = useState(false)   // usuario lo eligió a mano
-    const [textoGenerado, setTextoGenerado]         = useState(false)   // feedback de generación
+    const [canvaAbierto, setCanvaAbierto] = useState(false)
+    const [imagenUrl, setImagenUrl] = useState('')
+    const [tipoAutoDetectado, setTipoAutoDetectado] = useState(false)
+    const [tipoManual, setTipoManual] = useState(false)
+    const [textoGenerado, setTextoGenerado] = useState(false)
+
     const location = useLocation()
     const navigate = useNavigate()
 
@@ -102,7 +126,7 @@ const CreateEventoForm = () => {
             popover: {
                 title: 'Formulario de Evento',
                 description: 'Completá este formulario para reservar el salón y crear tu evento.',
-                side: "bottom",
+                side: 'bottom',
                 align: 'start'
             }
         },
@@ -111,7 +135,7 @@ const CreateEventoForm = () => {
             popover: {
                 title: 'Nombre del Evento',
                 description: 'Ingresá el nombre del evento aquí.',
-                side: "bottom",
+                side: 'bottom',
                 align: 'start'
             }
         },
@@ -120,7 +144,7 @@ const CreateEventoForm = () => {
             popover: {
                 title: 'Descripción',
                 description: 'Describí los detalles del evento.',
-                side: "top",
+                side: 'top',
                 align: 'start'
             }
         },
@@ -129,7 +153,7 @@ const CreateEventoForm = () => {
             popover: {
                 title: 'Visibilidad y Entradas',
                 description: 'Definí si el evento es público o privado, y si se cobrará entrada.',
-                side: "bottom",
+                side: 'bottom',
                 align: 'start'
             }
         },
@@ -138,7 +162,7 @@ const CreateEventoForm = () => {
             popover: {
                 title: 'Salón',
                 description: 'Pulsá para buscar y seleccionar salón.',
-                side: "top",
+                side: 'top',
                 align: 'start'
             }
         },
@@ -147,13 +171,12 @@ const CreateEventoForm = () => {
             popover: {
                 title: 'Reservar Salón',
                 description: 'Agregá la reserva al carrito para continuar con el pago.',
-                side: "top",
+                side: 'top',
                 align: 'start'
             }
         }
-    ];
+    ]
 
-    const fields = { SALON: 'salon' };
     const initial_form_state = {
         nombre: '',
         tipo_evento: '',
@@ -163,23 +186,29 @@ const CreateEventoForm = () => {
         hora_fin: '',
         precio: '',
         cupo: '',
-        salon: { id_bodega: '', nombre: '', precio_alquiler: null, precio_publico: null, precios_config: null },
+        salon: {
+            id_bodega: '',
+            nombre: '',
+            precio_alquiler: null,
+            precio_publico: null,
+            precios_config: null
+        },
         imagen: null,
         es_publico: true,
         cobrar_entrada: false,
         horas: 2,
     }
 
-    const fechaPreseleccionada  = location.state?.fecha  || ''
-    const salonPreseleccionado  = location.state?.salon  || null
-    const formStateRestaurado   = location.state?._formState || null
+    const fechaPreseleccionada = location.state?.fecha || ''
+    const salonPreseleccionado = location.state?.salon || null
+    const formStateRestaurado = location.state?._formState || null
 
     const [OpenModal, SetOpenModal] = useState(false)
     const [form_values_state, setFormValuesState] = useState(() => {
-        // Restaurar desde borrador si viene del comparador
         if (formStateRestaurado) {
             return { ...initial_form_state, ...formStateRestaurado }
         }
+
         return {
             ...initial_form_state,
             fecha: fechaPreseleccionada,
@@ -190,86 +219,106 @@ const CreateEventoForm = () => {
                     precio_alquiler: salonPreseleccionado.precio_alquiler ?? null,
                     precio_publico: salonPreseleccionado.precio_publico ?? null,
                     precios_config: salonPreseleccionado.precios_config ?? null,
-                  }
+                }
                 : initial_form_state.salon,
         }
     })
 
-    // ── Cálculo de precio según fecha seleccionada ──────────────────────────────
     const precioInfo = useMemo(() => {
         const { salon, fecha, horas, hora_inicio, hora_fin } = form_values_state
+
         if (!salon.id_bodega || !fecha) return null
+
         const baseNum = Number(salon.precio_alquiler) || 0
-        const pubNum  = Number(salon.precio_publico)  || baseNum
-        const factor  = baseNum > 0 ? pubNum / baseNum : 1
-        // Duración real del evento (para precio por hora o por tramos);
-        // si cruza medianoche se suma un día
+        const pubNum = Number(salon.precio_publico) || baseNum
+        const factor = baseNum > 0 ? pubNum / baseNum : 1
+
         let horasEvento = horas
+
         if (hora_inicio && hora_fin) {
             const [hi, mi] = hora_inicio.split(':').map(Number)
             const [hf, mf] = hora_fin.split(':').map(Number)
             const mins = ((hf * 60 + mf) - (hi * 60 + mi) + 24 * 60) % (24 * 60)
-            if (mins > 0) horasEvento = Math.max(1, Math.ceil(mins / 60))
+
+            if (mins > 0) {
+                horasEvento = Math.max(1, Math.ceil(mins / 60))
+            }
         }
+
         return calcularPrecioEvento(pubNum, salon.precios_config, fecha, horasEvento, factor)
-    }, [form_values_state.salon, form_values_state.fecha, form_values_state.horas, form_values_state.hora_inicio, form_values_state.hora_fin])
+    }, [
+        form_values_state.salon,
+        form_values_state.fecha,
+        form_values_state.horas,
+        form_values_state.hora_inicio,
+        form_values_state.hora_fin
+    ])
+
     const [fechasReservadas, setFechasReservadas] = useState([])
     const [cargandoDisponibilidad, setCargandoDisponibilidad] = useState(false)
     const [cargando, setCargando] = useState(false)
 
-    // Si el salon viene preseleccionado desde la pantalla de salones, cargar disponibilidad al montar
     useEffect(() => {
         if (!salonPreseleccionado?.id_bodega) return
+
         setCargandoDisponibilidad(true)
+
         getDisponibilidadSalon(salonPreseleccionado.id_bodega)
             .then(setFechasReservadas)
             .finally(() => setCargandoDisponibilidad(false))
     }, [])
 
-    // ── Re-sincronizar horas de entrega al cambiar la hora del evento ─────────────
-    // Entretenimiento y horarios elegidos a mano (p.ej. catering caliente) se
-    // respetan; el resto se entrega 2-3h antes del inicio, automático.
     useEffect(() => {
         const horaEvento = form_values_state.hora_inicio
+
         if (!horaEvento) return
+
         setServiciosSeleccionados(prev => {
             let cambio = false
+
             const nuevos = prev.map(s => {
                 if (s.categoria === 'entretenimiento' || s.hora_manual) return s
+
                 const horaEntrega = sugerirHoraServicio(s.categoria, horaEvento)
+
                 if (s.hora_inicio === horaEntrega) return s
+
                 cambio = true
                 return { ...s, hora_inicio: horaEntrega }
             })
+
             return cambio ? nuevos : prev
         })
     }, [form_values_state.hora_inicio])
 
-    // ── Auto-detección de tipo de evento a partir del nombre (debounce 600ms) ─────
     useEffect(() => {
-        if (tipoManual) return          // el usuario eligió manualmente → no pisar
+        if (tipoManual) return
         if (!form_values_state.nombre) return
+
         const timer = setTimeout(() => {
             const detectado = detectarTipoEvento(form_values_state.nombre)
+
             if (detectado && detectado !== form_values_state.tipo_evento) {
                 setFormValuesState(prev => ({ ...prev, tipo_evento: detectado }))
                 setTipoAutoDetectado(true)
             }
         }, 600)
-        return () => clearTimeout(timer)
-    }, [form_values_state.nombre, tipoManual])
 
-    // ── Genera y aplica el texto de invitación ─────────────────────────────────
+        return () => clearTimeout(timer)
+    }, [form_values_state.nombre, tipoManual, form_values_state.tipo_evento])
+
     const handleGenerarTexto = () => {
         const tipo = form_values_state.tipo_evento
+
         if (!tipo) return
+
         const texto = generarTextoInvitacion(tipo, form_values_state.nombre)
+
         setFormValuesState(prev => ({ ...prev, descripcion: texto }))
         setTextoGenerado(true)
         setTimeout(() => setTextoGenerado(false), 2500)
     }
 
-    // ── Construye un objeto "borrador" con el estado actual del form ──────────────
     const buildBorrador = () => ({
         id_evento: borradorId,
         _esBorrador: true,
@@ -291,29 +340,42 @@ const CreateEventoForm = () => {
         _servicios: serviciosSeleccionados,
     })
 
-    // ── Guardar borrador en localStorage ─────────────────────────────────────────
     const handleGuardarBorrador = () => {
         if (!form_values_state.salon.id_bodega || !form_values_state.fecha) {
-            alert('Seleccioná al menos un salón y una fecha para guardar.'); return
+            alert('Seleccioná al menos un salón y una fecha para guardar.')
+            return
         }
+
         const LLAVE = 'cem_borradores_eventos'
         let borradores = []
-        try { borradores = JSON.parse(localStorage.getItem(LLAVE) || '[]') } catch {}
-        // Reemplaza si ya existe uno con el mismo id
+
+        try {
+            borradores = JSON.parse(localStorage.getItem(LLAVE) || '[]')
+        } catch {
+            borradores = []
+        }
+
         const idx = borradores.findIndex(b => b.id_evento === borradorId)
         const nuevo = { ...buildBorrador(), _guardadoEn: new Date().toISOString() }
-        if (idx >= 0) borradores[idx] = nuevo
-        else borradores.unshift(nuevo)
+
+        if (idx >= 0) {
+            borradores[idx] = nuevo
+        } else {
+            borradores.unshift(nuevo)
+        }
+
         localStorage.setItem(LLAVE, JSON.stringify(borradores))
+
         setGuardadoMsgVisible(true)
         setTimeout(() => setGuardadoMsgVisible(false), 3000)
     }
 
-    // ── Agregar a comparación ─────────────────────────────────────────────────────
     const handleAgregarComparar = () => {
         if (!form_values_state.salon.id_bodega || !form_values_state.fecha) {
-            alert('Seleccioná al menos un salón y una fecha para comparar.'); return
+            alert('Seleccioná al menos un salón y una fecha para comparar.')
+            return
         }
+
         if (enEventosComparar(borradorId)) {
             quitarEventoComparar(borradorId)
         } else {
@@ -325,23 +387,27 @@ const CreateEventoForm = () => {
 
     const handleSubmit = async (event, irAServicios = false) => {
         if (event) event.preventDefault()
+
         if (!form_values_state.salon.id_bodega) {
             alert('Por favor seleccioná un salón')
             return
         }
+
         if (!form_values_state.fecha) {
             alert('Por favor seleccioná una fecha')
             return
         }
 
         setCargando(true)
+
         try {
-            let imagenFinal = imagenUrl || null;
+            let imagenFinal = imagenUrl || null
+
             if (!imagenFinal && form_values_state.imagen) {
                 try {
-                    imagenFinal = await UploadImg(form_values_state.imagen);
+                    imagenFinal = await UploadImg(form_values_state.imagen)
                 } catch (error) {
-                    console.warn('Error subiendo imagen, continuando sin imagen:', error);
+                    console.warn('Error subiendo imagen, continuando sin imagen:', error)
                 }
             }
 
@@ -364,19 +430,18 @@ const CreateEventoForm = () => {
                 bodega_id: form_values_state.salon.id_bodega,
                 fecha: form_values_state.fecha,
                 datos_evento,
-                // Duración real del evento — el backend la usa para precio por hora y por tramos
                 horas: precioInfo?.horas ?? undefined,
             })
 
-            // No abrir el carrito automáticamente: el flujo lo maneja el organizador
             agregarReservaOrganizador(reserva, false)
             setFormValuesState(initial_form_state)
             setServiciosSeleccionados([])
             setImagenUrl('')
-            // "Agregar servicios" desliza al paso 2; "Agregar al carrito" termina el proceso
+
             navigate(irAServicios ? '/organizar/servicios' : '/mis-reservas')
         } catch (error) {
             console.error('Error al solicitar reserva:', error)
+
             const msg = error?.response?.data?.message || 'Error al procesar la reserva'
             alert(msg)
         } finally {
@@ -384,59 +449,64 @@ const CreateEventoForm = () => {
         }
     }
 
-    // ── Aplicar sugerido desde SugeridosSection ──────────────────────────────
     const handleAplicarSugerido = (salon, servicios) => {
         setFormValuesState(prev => ({
             ...prev,
             salon: {
-                id_bodega:      salon.id_bodega,
-                nombre:         salon.nombre,
+                id_bodega: salon.id_bodega,
+                nombre: salon.nombre,
                 precio_alquiler: salon.precio_alquiler ?? null,
-                precio_publico:  salon.precio_publico  ?? null,
-                precios_config:  salon.precios_config  ?? null,
+                precio_publico: salon.precio_publico ?? null,
+                precios_config: salon.precios_config ?? null,
             }
         }))
+
         if (servicios && servicios.length > 0) {
             setServiciosSeleccionados(servicios.map(s => ({
                 id_servicio: s.id_servicio,
-                nombre:      s.nombre,
-                precio:      Number(s.precio) || 0,
-                categoria:   s.categoria,
+                nombre: s.nombre,
+                precio: Number(s.precio) || 0,
+                categoria: s.categoria,
                 tipo_precio: s.tipo_precio || 'fijo',
-                tipo_item:   s.tipo_item   || 'producto',
-                imagen:      s.imagen      || null,
-                cantidad:    1,
-                horas:       null,
-                turnos:      null,
+                tipo_item: s.tipo_item || 'producto',
+                imagen: s.imagen || null,
+                cantidad: 1,
+                horas: null,
+                turnos: null,
                 hora_inicio: null,
             })))
         }
-        // Scroll al form para que el usuario vea los campos pre-llenados
-        document.querySelector('.form-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+        document.querySelector('.form-container')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        })
     }
 
     const handleChangeInputValue = (event) => {
-        const field = event.target.name;
+        const field = event.target.name
+
         if (field === 'imagen') {
             setFormValuesState(prev_state => ({
                 ...prev_state,
                 imagen: event.target.files[0]
-            }));
-        } else {
-            setFormValuesState(prev_state => ({
-                ...prev_state,
-                [field]: event.target.value
-            }));
-            // Si el usuario cambia el tipo manualmente, desactivar auto-detección
-            if (field === 'tipo_evento') {
-                setTipoManual(true)
-                setTipoAutoDetectado(false)
-            }
-            // Si borra el nombre, permitir volver a auto-detectar
-            if (field === 'nombre' && !event.target.value) {
-                setTipoManual(false)
-                setTipoAutoDetectado(false)
-            }
+            }))
+            return
+        }
+
+        setFormValuesState(prev_state => ({
+            ...prev_state,
+            [field]: event.target.value
+        }))
+
+        if (field === 'tipo_evento') {
+            setTipoManual(true)
+            setTipoAutoDetectado(false)
+        }
+
+        if (field === 'nombre' && !event.target.value) {
+            setTipoManual(false)
+            setTipoAutoDetectado(false)
         }
     }
 
@@ -447,28 +517,28 @@ const CreateEventoForm = () => {
     return (
         <div className='container'>
             <div className='form-container'>
-                <button
-                    onClick={() => startTour(crearEventoTour)}
-                    style={{
-                        background: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        padding: '10px 15px',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                        margin: '60px 20px'
-                    }}
-                >
-                    🎓 Tutorial Crear Evento
-                </button>
-                <SugeridosSection onAplicar={handleAplicarSugerido}/>
+                <div className='cef-header-shell'>
+                    <div className='cef-header-top'>
+                        <div className='form-title cef-form-title'>
+                            <h1>Crear Evento</h1>
+                            <p className='cef-form-subtitle'>
+                                Completá el formulario y agregá la reserva al carrito para luego elegir servicios adicionales y confirmar el pago.
+                            </p>
+                        </div>
 
-                <div className='form-title'>
-                    <h1>Crear Evento</h1>
-                    <p style={{ color: '#666', fontSize: '0.9rem', margin: '0 0 16px' }}>
-                        Completá el formulario y agregá la reserva al carrito para luego elegir servicios adicionales y confirmar el pago.
-                    </p>
+                        <button
+                            type='button'
+                            className='cef-tutorial-btn cef-tutorial-btn--pulse'
+                            onClick={() => startTour(crearEventoTour)}
+                        >
+                            <span className='cef-tutorial-btn__icon'>🎓</span>
+                            <span>Tutorial Crear Evento</span>
+                        </button>
+                    </div>
                 </div>
+
+                <SugeridosSection onAplicar={handleAplicarSugerido} />
+
                 <form action="submit" onSubmit={handleSubmit}>
                     <div className='form-input'>
                         <label htmlFor="nombre">Nombre del Evento</label>
@@ -484,10 +554,12 @@ const CreateEventoForm = () => {
                         />
                     </div>
 
-                    {/* ── Tipo de evento (con auto-detección) ── */}
                     <div className='cef-tipo-evento-bloque'>
                         <div className='cef-tipo-evento-row'>
-                            <label htmlFor='tipo_evento'><FiTag size={13}/> Tipo de evento</label>
+                            <label htmlFor='tipo_evento'>
+                                <FiTag size={13} /> Tipo de evento
+                            </label>
+
                             <div className='cef-tipo-evento-select-wrap'>
                                 <select
                                     id='tipo_evento'
@@ -503,21 +575,22 @@ const CreateEventoForm = () => {
                                         </option>
                                     ))}
                                 </select>
+
                                 {tipoAutoDetectado && form_values_state.tipo_evento && (
                                     <span className='cef-tipo-detectado'>
-                                        <FiZap size={11}/> Detectado automáticamente
+                                        <FiZap size={11} /> Detectado automáticamente
                                     </span>
                                 )}
                             </div>
                         </div>
                     </div>
 
-                    {/* ── Descripción = texto de invitación ── */}
                     <div className='form-input cef-desc-bloque'>
                         <label htmlFor="descripcion">
                             Texto de invitación
                             <span className='cef-desc-hint-label'> — aparecerá en las invitaciones</span>
                         </label>
+
                         <div className='cef-desc-wrapper'>
                             <textarea
                                 placeholder='Escribí el mensaje que recibirán tus invitados, o generalo automáticamente según el tipo de evento...'
@@ -529,6 +602,7 @@ const CreateEventoForm = () => {
                                 rows={5}
                                 required
                             />
+
                             {form_values_state.tipo_evento && (
                                 <button
                                     type='button'
@@ -537,15 +611,14 @@ const CreateEventoForm = () => {
                                     title='Generar texto de invitación según el tipo de evento'
                                 >
                                     {textoGenerado
-                                        ? <><FiCheck size={13}/> ¡Texto generado!</>
-                                        : <><FiZap size={13}/> Generar texto de invitación</>
+                                        ? <><FiCheck size={13} /> ¡Texto generado!</>
+                                        : <><FiZap size={13} /> Generar texto de invitación</>
                                     }
                                 </button>
                             )}
                         </div>
                     </div>
 
-                    {/* Toggle: Evento público o privado */}
                     <div className='form-toggle-grupo'>
                         <label>Visibilidad del evento</label>
                         <label className='toggle-switch'>
@@ -561,7 +634,6 @@ const CreateEventoForm = () => {
                         </span>
                     </div>
 
-                    {/* Toggle: Cobrar entrada */}
                     <div className='form-toggle-grupo'>
                         <label>Cobrar entrada</label>
                         <label className='toggle-switch'>
@@ -577,7 +649,6 @@ const CreateEventoForm = () => {
                         </span>
                     </div>
 
-                    {/* Precio: solo si cobrar_entrada = true */}
                     {form_values_state.cobrar_entrada && (
                         <div className='form-input'>
                             <label htmlFor="precio">Precio de entrada (ARS)</label>
@@ -592,6 +663,7 @@ const CreateEventoForm = () => {
                             />
                         </div>
                     )}
+
                     {form_values_state.cobrar_entrada && (
                         <p className='form-input-hint'>
                             💡 Podés ajustar el precio desde el carrito una vez que conozcas el costo total del evento.
@@ -613,15 +685,19 @@ const CreateEventoForm = () => {
 
                     <div className='form-input'>
                         <label htmlFor="salon">Salón donde se realizará el evento</label>
+
                         {form_values_state.fecha && !form_values_state.salon.id_bodega && (
                             <p style={{ fontSize: '0.82rem', color: '#a78bfa', margin: '0 0 6px' }}>
                                 📅 Al buscar el salón verás solo los disponibles para el <strong>
                                     {new Date(form_values_state.fecha + 'T00:00:00').toLocaleDateString('es-AR', {
-                                        day: '2-digit', month: 'long', year: 'numeric'
+                                        day: '2-digit',
+                                        month: 'long',
+                                        year: 'numeric'
                                     })}
                                 </strong>.
                             </p>
                         )}
+
                         <input
                             type="text"
                             readOnly
@@ -630,12 +706,18 @@ const CreateEventoForm = () => {
                             value={form_values_state.salon.nombre || ''}
                             placeholder='Seleccioná un salón'
                         />
-                        <span><FaSearch onClick={() => { SetOpenModal(true) }}>Buscar salón</FaSearch></span>
+
+                        <span>
+                            <FaSearch onClick={() => { SetOpenModal(true) }}>
+                                Buscar salón
+                            </FaSearch>
+                        </span>
                     </div>
 
                     {form_values_state.salon.id_bodega && !(fechaPreseleccionada && !salonPreseleccionado) && (
                         <div className='form-input-bloque'>
                             <label>Disponibilidad del salón</label>
+
                             {cargandoDisponibilidad ? (
                                 <p style={{ color: '#555', fontSize: '0.9rem' }}>Cargando disponibilidad...</p>
                             ) : (
@@ -671,6 +753,7 @@ const CreateEventoForm = () => {
                                 onChange={handleChangeInputValue}
                             />
                         </div>
+
                         <div className='form-input'>
                             <label>Horario de finalización</label>
                             <TimePicker24
@@ -680,34 +763,46 @@ const CreateEventoForm = () => {
                             />
                         </div>
                     </div>
+
                     {form_values_state.hora_inicio && form_values_state.hora_fin && (
                         <p className='form-input-hint'>
                             🕐 El evento está planificado de <strong>{form_values_state.hora_inicio}</strong> a <strong>{form_values_state.hora_fin}</strong>
                         </p>
                     )}
-                    {/* Horario de atención y check-in del salón (de su precios_config) */}
+
                     {(() => {
                         const cfgSalon = parsePreciosConfig(form_values_state.salon?.precios_config)
                         const apertura = cfgSalon?.horario_apertura
-                        const cierre   = cfgSalon?.horario_cierre
-                        const ciDesde  = cfgSalon?.checkin_desde
-                        const ciHasta  = cfgSalon?.checkin_hasta
+                        const cierre = cfgSalon?.horario_cierre
+                        const ciDesde = cfgSalon?.checkin_desde
+                        const ciHasta = cfgSalon?.checkin_hasta
+
                         if (!apertura && !cierre && !ciDesde && !ciHasta) return null
+
                         const hi = form_values_state.hora_inicio
                         const hf = form_values_state.hora_fin
-                        // Una hora HH:MM está dentro de [desde, hasta]; si hasta <= desde
-                        // la franja cruza la medianoche (ej. 09:00 a 04:00 del día siguiente)
-                        const aMin = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m }
+
+                        const aMin = (s) => {
+                            const [h, m] = s.split(':').map(Number)
+                            return h * 60 + m
+                        }
+
                         const enFranja = (t, desde, hasta) => {
-                            const tm = aMin(t), d = aMin(desde), h = aMin(hasta)
+                            const tm = aMin(t)
+                            const d = aMin(desde)
+                            const h = aMin(hasta)
+
                             return d <= h ? (tm >= d && tm <= h) : (tm >= d || tm <= h)
                         }
+
                         const fueraDeAtencion = (apertura && cierre && hi && hf)
                             ? !(enFranja(hi, apertura, cierre) && enFranja(hf, apertura, cierre))
                             : false
+
                         const fueraDeCheckin = (ciDesde && ciHasta && hi)
                             ? !enFranja(hi, ciDesde, ciHasta)
                             : false
+
                         return (
                             <>
                                 {(apertura || cierre) && (
@@ -718,6 +813,7 @@ const CreateEventoForm = () => {
                                         {fueraDeAtencion && ' — tu evento queda fuera de ese horario'}
                                     </p>
                                 )}
+
                                 {(ciDesde || ciHasta) && (
                                     <p className={`form-input-hint ${fueraDeCheckin ? 'form-input-hint--alerta' : ''}`}>
                                         {fueraDeCheckin ? '⚠️' : '🛎️'} Check-in de reservas:
@@ -730,7 +826,6 @@ const CreateEventoForm = () => {
                         )
                     })()}
 
-                    {/* ── Preview de precio según fecha seleccionada ── */}
                     {precioInfo && (
                         <div className='precio-evento-preview'>
                             <div className='pep-tipo' style={{ color: TIPO_DIA_COLOR[precioInfo.tipo] }}>
@@ -740,23 +835,39 @@ const CreateEventoForm = () => {
                             {precioInfo.porHora && (
                                 <div className='pep-horas-row'>
                                     <label className='pep-horas-label'>Duración del evento (horas):</label>
+
                                     <div className='pep-horas-control'>
-                                        <button type='button' onClick={() => setFormValuesState(p => ({ ...p, horas: Math.max(1, p.horas - 1) }))}>−</button>
+                                        <button
+                                            type='button'
+                                            onClick={() => setFormValuesState(p => ({ ...p, horas: Math.max(1, p.horas - 1) }))}
+                                        >
+                                            −
+                                        </button>
+
                                         <span className='pep-horas-val'>{form_values_state.horas}h</span>
-                                        <button type='button' onClick={() => setFormValuesState(p => ({ ...p, horas: p.horas + 1 }))}>+</button>
+
+                                        <button
+                                            type='button'
+                                            onClick={() => setFormValuesState(p => ({ ...p, horas: p.horas + 1 }))}
+                                        >
+                                            +
+                                        </button>
                                     </div>
                                 </div>
                             )}
 
                             <div className='pep-precio-row'>
                                 <span className='pep-precio-label'>Alquiler estimado:</span>
+
                                 <strong className='pep-precio-val'>
                                     ${precioInfo.precio.toLocaleString('es-AR')}
+
                                     {precioInfo.porTramos && (
                                         <span className='pep-precio-detalle'>
                                             {' '}(tramo de {precioInfo.tramoHoras}h)
                                         </span>
                                     )}
+
                                     {precioInfo.porHora && (
                                         <span className='pep-precio-detalle'>
                                             {' '}(${precioInfo.precioUnitario.toLocaleString('es-AR')}/h × {precioInfo.horas}h)
@@ -764,15 +875,17 @@ const CreateEventoForm = () => {
                                     )}
                                 </strong>
                             </div>
+
                             <p className='pep-nota'>El monto final se confirma al procesar la reserva.</p>
                         </div>
                     )}
 
-                    {/* ── Imagen del evento ── */}
                     <div className='form-input cef-imagen-bloque'>
-                        <label>Imagen del evento <span style={{ fontWeight: 400, color: '#aaa', fontSize: '0.8rem' }}>(opcional)</span></label>
+                        <label>
+                            Imagen del evento <span style={{ fontWeight: 400, color: '#aaa', fontSize: '0.8rem' }}>(opcional)</span>
+                        </label>
+
                         <div className='cef-imagen-opciones'>
-                            {/* Subida normal */}
                             <label className='cef-imagen-upload-btn' htmlFor='imagen'>
                                 📁 Subir imagen
                                 <input
@@ -790,7 +903,6 @@ const CreateEventoForm = () => {
 
                             <span className='cef-imagen-o'>o</span>
 
-                            {/* Diseñador de tarjeta integrado */}
                             <button
                                 type='button'
                                 className='cef-imagen-canva-btn'
@@ -800,63 +912,89 @@ const CreateEventoForm = () => {
                             </button>
                         </div>
 
-                        {/* Vista previa de lo seleccionado */}
                         {(form_values_state.imagen || imagenUrl) && (
                             <div className='cef-imagen-preview'>
                                 {imagenUrl ? (
                                     <>
-                                        <img src={imagenUrl} alt='preview' onError={e => e.target.style.display='none'}/>
+                                        <img
+                                            src={imagenUrl}
+                                            alt='preview'
+                                            onError={e => e.target.style.display = 'none'}
+                                        />
                                         <span className='cef-imagen-preview-nombre'>URL de imagen aplicada</span>
-                                        <button type='button' className='cef-imagen-preview-quitar' onClick={() => setImagenUrl('')}>✕</button>
+                                        <button
+                                            type='button'
+                                            className='cef-imagen-preview-quitar'
+                                            onClick={() => setImagenUrl('')}
+                                        >
+                                            ✕
+                                        </button>
                                     </>
                                 ) : (
                                     <>
-                                        <span className='cef-imagen-preview-nombre'>📎 {form_values_state.imagen?.name}</span>
-                                        <button type='button' className='cef-imagen-preview-quitar' onClick={() => setFormValuesState(p => ({ ...p, imagen: null }))}>✕</button>
+                                        <span className='cef-imagen-preview-nombre'>
+                                            📎 {form_values_state.imagen?.name}
+                                        </span>
+                                        <button
+                                            type='button'
+                                            className='cef-imagen-preview-quitar'
+                                            onClick={() => setFormValuesState(p => ({ ...p, imagen: null }))}
+                                        >
+                                            ✕
+                                        </button>
                                     </>
                                 )}
                             </div>
                         )}
                     </div>
-                    {/* ── Servicios adicionales ── */}
+
                     <div className='cef-servicios-aviso'>
-                        <FiShoppingBag size={15}/>
-                        <span>Después de reservar vas a poder sumar <strong>servicios</strong> y <strong>productos</strong> en los próximos pasos.</span>
+                        <FiShoppingBag size={15} />
+                        <span>
+                            Después de reservar vas a poder sumar <strong>servicios</strong> y <strong>productos</strong> en los próximos pasos.
+                        </span>
                     </div>
 
-                    {/* ── Cronograma del evento ── */}
                     {serviciosSeleccionados.length > 0 && form_values_state.hora_inicio && (() => {
                         const ordenados = [...serviciosSeleccionados].sort((a, b) => {
                             const ta = a.hora_inicio || '99:99'
                             const tb = b.hora_inicio || '99:99'
                             return ta.localeCompare(tb)
                         })
+
                         const horaEvento = form_values_state.hora_inicio
+
                         return (
                             <div className='cef-cronograma'>
                                 <div className='cef-crono-titulo'>
                                     🕐 Cronograma del evento
                                 </div>
-                                {/* Línea del evento */}
+
                                 <div className='cef-crono-evento-row'>
                                     <span className='cef-crono-hora cef-crono-hora--evento'>{horaEvento}</span>
                                     <span className='cef-crono-linea'></span>
                                     <span className='cef-crono-nombre cef-crono-nombre--evento'>🎉 Inicio del evento</span>
                                 </div>
-                                {/* Servicios */}
+
                                 {ordenados.map((s) => {
                                     const antesDelEvento = s.hora_inicio && s.hora_inicio < horaEvento
                                     const esEntret = s.categoria === 'entretenimiento'
                                     const numEntret = ordenados.filter(x => x.categoria === 'entretenimiento').findIndex(x => x.id_servicio === s.id_servicio) + 1
+
                                     let etiqueta = CATEGORIAS_CRONO_LABEL[s.categoria] || s.categoria
+
                                     if (antesDelEvento) {
                                         const diffH = Math.round((new Date(`2000-01-01T${horaEvento}`) - new Date(`2000-01-01T${s.hora_inicio}`)) / 3600000)
                                         etiqueta = `${etiqueta} — ${diffH}h antes del evento`
                                     } else if (esEntret) {
                                         etiqueta = `Entretenimiento — ${numEntret}° turno`
                                     }
+
                                     return (
-                                        <div key={s.id_servicio} className={`cef-crono-item ${antesDelEvento ? 'cef-crono-item--pre' : 'cef-crono-item--durante'}`}>
+                                        <div
+                                            key={s.id_servicio}
+                                            className={`cef-crono-item ${antesDelEvento ? 'cef-crono-item--pre' : 'cef-crono-item--durante'}`}
+                                        >
                                             <span className='cef-crono-hora'>{s.hora_inicio || '—'}</span>
                                             <span className='cef-crono-linea'></span>
                                             <span className='cef-crono-emoji'>{CATEGORIAS_CRONO_EMOJI[s.categoria] || '📦'}</span>
@@ -865,60 +1003,63 @@ const CreateEventoForm = () => {
                                         </div>
                                     )
                                 })}
+
                                 <p className='cef-crono-hint'>Podés ajustar los horarios desde el selector de servicios.</p>
                             </div>
                         )
                     })()}
 
-                    {/* ── Mensajes de feedback ── */}
                     {guardadoMsgVisible && (
                         <div className='cef-feedback cef-feedback--guardado'>
-                            <FiBookmark size={14}/> Borrador guardado correctamente.
+                            <FiBookmark size={14} /> Borrador guardado correctamente.
                         </div>
                     )}
+
                     {comparaMsgVisible && (
                         <div className='cef-feedback cef-feedback--comparar'>
-                            <FiColumns size={14}/> Agregado a la comparación.
+                            <FiColumns size={14} /> Agregado a la comparación.
                         </div>
                     )}
 
                     <div className='cef-acciones'>
-                        {/* Guardar borrador */}
-                        <button
-                            type='button'
-                            className='cef-btn-guardar'
-                            onClick={handleGuardarBorrador}
-                            title='Guardar como borrador para retomar luego'
-                        >
-                            <FiBookmark size={15}/> Guardar reserva
-                        </button>
+                        <div className='cef-acciones-centro'>
+                            <button
+                                type='button'
+                                className='cef-btn-guardar'
+                                onClick={handleGuardarBorrador}
+                                title='Guardar como borrador para retomar luego'
+                            >
+                                <FiBookmark size={15} /> Guardar reserva
+                            </button>
 
-                        {/* Agregar para comparar */}
-                        <button
-                            type='button'
-                            className={`cef-btn-comparar ${enEventosComparar(borradorId) ? 'cef-btn-comparar--activo' : ''}`}
-                            onClick={handleAgregarComparar}
-                            title='Agregar esta configuración al comparador'
-                        >
-                            {enEventosComparar(borradorId)
-                                ? <><FiCheck size={15}/> En comparación</>
-                                : <><FiColumns size={15}/> Agregar para comparar</>
-                            }
-                        </button>
+                            <button
+                                type='button'
+                                className={`cef-btn-comparar ${enEventosComparar(borradorId) ? 'cef-btn-comparar--activo' : ''}`}
+                                onClick={handleAgregarComparar}
+                                title='Agregar esta configuración al comparador'
+                            >
+                                {enEventosComparar(borradorId)
+                                    ? <><FiCheck size={15} /> En comparación</>
+                                    : <><FiColumns size={15} /> Agregar para comparar</>
+                                }
+                            </button>
 
-                        {/* Agregar servicios: crea la reserva y desliza al paso 2 */}
+                            <button
+                                type='button'
+                                className='cef-btn-servicios-continuar'
+                                onClick={() => handleSubmit(null, true)}
+                                disabled={cargando}
+                            >
+                                <FiShoppingBag size={15} /> {cargando ? 'Procesando...' : 'Agregar servicios'}
+                            </button>
+                        </div>
+
                         <button
-                            type='button'
-                            className='cef-btn-servicios-continuar'
-                            onClick={() => handleSubmit(null, true)}
+                            type='submit'
+                            className='cef-btn-carrito'
                             disabled={cargando}
                         >
-                            <FiShoppingBag size={15}/> {cargando ? 'Procesando...' : 'Agregar servicios'}
-                        </button>
-
-                        {/* Terminar: agrega la reserva al carrito para pagar cuando quiera */}
-                        <button type='submit' className='cef-btn-carrito' disabled={cargando}>
-                            {cargando ? 'Procesando...' : 'Agregar Reserva al Carrito'}
+                            <FiShoppingCart size={16} /> {cargando ? 'Procesando...' : 'Agregar Reserva al Carrito'}
                         </button>
                     </div>
                 </form>
@@ -959,9 +1100,12 @@ const CreateEventoForm = () => {
                             },
                             fecha: prev.fecha || ''
                         }))
+
                         SetOpenModal(false)
                         setCargandoDisponibilidad(true)
+
                         const fechas = await getDisponibilidadSalon(salon.id_bodega)
+
                         setFechasReservadas(fechas)
                         setCargandoDisponibilidad(false)
                     }}

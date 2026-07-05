@@ -1,20 +1,30 @@
-import { useState } from 'react';
-import { driver } from 'driver.js';
-import 'driver.js/dist/driver.css';
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
 
 export const useTour = () => {
-  const [driverObj, setDriverObj] = useState(null);
+  const startTour = (steps = []) => {
+    if (!steps || steps.length === 0) return
 
-  const startTour = (steps) => {
-    const driverInstance = driver({
+    const driverObj = driver({
       showProgress: true,
+      allowClose: true,
       animate: true,
-      steps: steps
-    });
+      smoothScroll: true,
+      overlayOpacity: 0.72,
 
-    setDriverObj(driverInstance);
-    driverInstance.drive();
-  };
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      closeBtnText: 'Cerrar',
+      progressText: '{{current}} de {{total}}',
 
-  return { startTour, driverObj };
-};
+      popoverClass: 'dream-tour-popover',
+
+      steps,
+    })
+
+    driverObj.drive()
+  }
+
+  return { startTour }
+}

@@ -7,10 +7,33 @@
     border: 1px solid rgba(255, 255, 255, 0.55);
     padding: 20px;
     height: fit-content;
+    max-height: calc(100vh - 115px);
+    overflow-y: auto;
+    overflow-x: hidden;
     position: sticky;
     top: 88px;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+}
+
+.filtros-aside::-webkit-scrollbar {
+    width: 8px;
+}
+
+.filtros-aside::-webkit-scrollbar-track {
+    background: rgba(119, 9, 129, 0.06);
+    border-radius: 999px;
+}
+
+.filtros-aside::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #770981, #1882da);
+    border-radius: 999px;
+}
+
+.filtros-aside::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #5f0668, #1268ad);
 }
 
 .filtros-header {
@@ -239,6 +262,8 @@
     .filtros-aside {
         width: 100%;
         min-width: 0;
+        max-height: none;
+        overflow: visible;
         position: static;
     }
 

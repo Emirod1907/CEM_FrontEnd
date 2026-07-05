@@ -4,7 +4,7 @@ import { useAuth } from '../../Contexts/PersonaContextProvider'
 import { useCarrito } from '../../Contexts/CarritoContextProvider'
 import { FiShoppingCart, FiLogOut } from 'react-icons/fi'
 import axios from '../../services/axios'
-import { EMAILS_FULL_ACCESS } from '../../config/fullAccessEmails'
+import { tieneFullAccess } from '../../config/fullAccessEmails'
 import './NavBar.css'
 
 const NavBar = () => {
@@ -14,7 +14,7 @@ const NavBar = () => {
 
     const rol = persona?.rol || null
     const esAdmin = isAuthenticated && rol === 'admin'
-    const esFullAccess = isAuthenticated && EMAILS_FULL_ACCESS.includes(persona?.email)
+    const esFullAccess = isAuthenticated && tieneFullAccess(persona?.email)
 
     // Cambiar de rol es solo para las cuentas full access (testing/admin):
     // un usuario normal elige su rol al registrarse y queda fijo.
@@ -27,7 +27,7 @@ const NavBar = () => {
     // Solo visible para los dos emails de administrador, independientemente del rol activo
     const panelAdminBtn = esFullAccess ? (
         <NavLink to='/admin' className={({ isActive }) => isActive ? 'link-seleccionado' : 'link'}>
-            Panel Admin
+            Panel de Administración
         </NavLink>
     ) : null
 
@@ -120,7 +120,9 @@ const NavBar = () => {
                 return (
                     <>
                         {link('/mi-salon', 'Mi Salón')}
-                        {link('/salones/mapa', 'Ver Mapa')}
+                        {link('/salones/new', 'Registrar Salón')}
+                        {link('/salones', 'Salones')}
+                        {link('/salones/mapa', 'Mapa')}
                         {panelAdminBtn}
                         {cambiarRolBtn}
                         <button className='link link-logout' onClick={handleLogout} title='Cerrar sesión'>

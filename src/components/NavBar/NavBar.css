@@ -22,11 +22,11 @@
     align-items: center;
     gap: 16px;
     padding: 10px 26px;
-    background: linear-gradient(90deg, rgba(45, 24, 78, 0.42) 0%, rgba(81, 29, 103, 0.38) 45%, rgba(103, 17, 81, 0.38) 100%);
-    backdrop-filter: blur(18px) saturate(1.25);
-    -webkit-backdrop-filter: blur(18px) saturate(1.25);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 26px rgba(13, 8, 27, 0.16);
+    /* Fondo sólido: sin transparencia para que la botonera se lea igual de bien
+       sobre cualquier pantalla (antes el rgba dejaba ver el fondo y lavaba los botones) */
+    background: linear-gradient(90deg, #2a1749 0%, #4b1b60 45%, #5f104b 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 26px rgba(13, 8, 27, 0.28);
 }
 
 /* Isotipo (la D del logo) sin cajita: en blanco sobre el degradado se lee
@@ -98,15 +98,15 @@
 }
 
 .link {
-    color: rgba(255, 255, 255, 0.94);
-    background: rgba(255, 255, 255, 0.10);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.30);
 }
 
 .link:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.26);
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.45);
     transform: translateY(-1px);
 }
 
@@ -132,9 +132,9 @@
     justify-content: center;
     gap: 6px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.30);
     padding: 8px 14px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.14);
     color: #ffffff;
     font-size: 0.84rem;
     font-weight: 800;
@@ -156,9 +156,9 @@
     min-height: 30px;
     padding: 6px 12px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.18);
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.34);
     font-size: 0.75rem;
     font-weight: 800;
     white-space: nowrap;
@@ -171,9 +171,9 @@
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.30);
     padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.16);
     color: #ffffff;
     cursor: pointer;
     transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;

@@ -4,6 +4,7 @@ import { loginRequest } from '../../../services/personasServices'
 import { GOOGLE_AUTH_URL } from '../../../config/api'
 import { useAuth } from '../../../Contexts/PersonaContextProvider'
 import { useNavigate } from 'react-router-dom'
+import { tieneFullAccess } from '../../../config/fullAccessEmails'
 
 const Login = () => {
     const fields = {
@@ -30,7 +31,6 @@ const Login = () => {
         try {
             const response = await loginRequest(form_values_state)
             if (response && response.message === 'Sesion iniciada con exito') {
-                const EMAILS_FULL_ACCESS = ['emi.electro2012@gmail.com', 'emi.rodri1907guez@gmail.com']
                 setPersona({
                     id_persona: response.id_persona,
                     user: response.user,
@@ -41,7 +41,7 @@ const Login = () => {
                 })
                 setIsAuthenticated(true)
 
-                if (EMAILS_FULL_ACCESS.includes(response.email)) {
+                if (tieneFullAccess(response.email)) {
                     navigate('/seleccionar-rol')
                     return
                 }

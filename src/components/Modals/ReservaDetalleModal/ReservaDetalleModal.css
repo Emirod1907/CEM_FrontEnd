@@ -586,3 +586,49 @@
     .rd-modal { max-height: 95vh; }
     .rd-servicio-img { width: 56px; height: 56px; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   FASE 5 — ReservaDetalleModal: contraste y estados claros
+═══════════════════════════════════════════════════════ */
+.rd-overlay {
+    background: rgba(9, 5, 19, 0.76);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.rd-modal {
+    background: rgba(24, 14, 40, 0.96);
+    border-color: rgba(255, 255, 255, 0.18);
+    border-radius: 22px;
+    box-shadow: 0 28px 80px rgba(8, 4, 18, 0.64);
+}
+
+.rd-tab {
+    color: rgba(255,255,255,0.82);
+    font-weight: 800;
+}
+
+.rd-tab-activa {
+    color: #ffffff;
+    background: rgba(255,255,255,0.14);
+    border-bottom-color: #7dd3fc;
+}
+
+.rd-loading,
+.rd-campo-label,
+.rd-campo-valor,
+.rd-reiterar-texto {
+    color: rgba(255,255,255,0.88);
+}
+
+.rd-btn-reiterar,
+.rd-btn-guardar,
+.rd-btn-continuar {
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+.badge-pendiente  { background: var(--de-status-pending-bg); color: #ffffff; border-color: rgba(255,255,255,0.20); }
+.badge-sena       { background: var(--de-status-deposit-bg); color: #ffffff; border-color: rgba(255,255,255,0.20); }
+.badge-confirmada { background: var(--de-status-confirmed-bg); color: #ffffff; border-color: rgba(255,255,255,0.20); }
+.badge-cancelada  { background: var(--de-status-cancelled-bg); color: #ffffff; border-color: rgba(255,255,255,0.20); }
