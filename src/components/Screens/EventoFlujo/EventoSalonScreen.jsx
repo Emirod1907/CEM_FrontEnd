@@ -2,10 +2,29 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCarrito } from '../../../Contexts/CarritoContextProvider'
 import { getSalones } from '../../../services/salonesServices'
+import { cambiarFechaReserva } from '../../../services/reservaServices'
+import { calcularPrecioEvento, tipoDia, TIPO_DIA_LABEL, TIPO_DIA_COLOR } from '../../../utils/preciosUtils'
 import MapaSalonModal from '../../Modals/MapaSalonModal/MapaSalonModal'
-import { FiArrowRight, FiHome, FiMapPin, FiUsers, FiMap, FiArrowLeft } from 'react-icons/fi'
+import { FiArrowRight, FiHome, FiMapPin, FiUsers, FiMap, FiArrowLeft, FiCalendar, FiCheck, FiAlertCircle } from 'react-icons/fi'
 import '../../Buscadores/BuscarSalonList/BuscarSalonList.css'
 import './EventoFlujo.css'
+
+const DIAS_LIMITE_CAMBIO_FECHA = 7
+
+// Duración del evento (horas) a partir de hora_inicio/hora_fin
+const horasDeEvento = (de) => {
+    const hi = de?.hora_inicio, hf = de?.hora_fin
+    if (!hi || !hf) return 1
+    const [h1, m1] = String(hi).split(':').map(Number)
+    const [h2, m2] = String(hf).split(':').map(Number)
+    if ([h1, m1, h2, m2].some(n => Number.isNaN(n))) return 1
+    const mins = ((h2 * 60 + m2) - (h1 * 60 + m1) + 1440) % 1440
+    return mins > 0 ? Math.max(1, Math.ceil(mins / 60)) : 1
+}
+const hoyISO = () => new Date().toISOString().slice(0, 10)
+const fmtFecha = (f) => f
+    ? new Date(String(f).slice(0, 10) + 'T12:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })
+    : '—'
 
 const parsearJSON = (valor) => {
     if (!valor) return []
@@ -25,11 +44,15 @@ const staticMapUrl = (salon) => {
 // dependiente del flujo — NO es un modal ni lleva a la lista de salones).
 const EventoSalonScreen = () => {
     const navigate = useNavigate()
-    const { reservaOrganizador } = useCarrito()
+    const { reservaOrganizador, setReservaOrganizador } = useCarrito()
 
     const [salon, setSalon] = useState(null)
     const [cargando, setCargando] = useState(true)
     const [mapaAbierto, setMapaAbierto] = useState(false)
+    const [nuevaFecha, setNuevaFecha] = useState('')
+    const [cambiandoFecha, setCambiandoFecha] = useState(false)
+    const [fechaMsg, setFechaMsg] = useState(null)
+    const [fechaError, setFechaError] = useState(null)
 
     const salonId = reservaOrganizador?.salon_id
         ?? reservaOrganizador?.bodega_id
@@ -74,6 +97,51 @@ const EventoSalonScreen = () => {
     const serviciosIncluidos = parsearJSON(salon?.servicios_incluidos)
     const tiposEvento = parsearJSON(salon?.tipos_evento)
     const mapa = staticMapUrl(salon)
+
+    // ── Cambio de fecha (mismo salón) ──────────────────────────────────────────
+    const fechaActual = reservaOrganizador.fecha ? String(reservaOrganizador.fecha).slice(0, 10) : null
+    const horas = horasDeEvento(de)
+    const comisionFactor = 1 + (Number(reservaOrganizador.comision_cliente_porcentaje) || 0) / 100
+    const precioBaseSalon = Number(salon?.precio_alquiler) || 0
+
+    // Días hasta el evento actual y si estamos dentro del plazo sin penalidad
+    const diasHastaEvento = fechaActual
+        ? Math.floor((new Date(fechaActual + 'T00:00:00').getTime() - new Date(hoyISO() + 'T00:00:00').getTime()) / 86400000)
+        : 0
+    const dentroDePlazo = diasHastaEvento >= DIAS_LIMITE_CAMBIO_FECHA
+
+    // Precio actual y precio de la nueva fecha (según feriado/finde/hábil)
+    const precioAlquilerFecha = (fStr) => {
+        if (!fStr || !(precioBaseSalon > 0)) return null
+        const info = calcularPrecioEvento(precioBaseSalon, salon?.precios_config, fStr, horas)
+        return +(info.precio * comisionFactor).toFixed(2)
+    }
+    const precioActual = precioAlquilerFecha(fechaActual)
+    const precioNuevo = nuevaFecha ? precioAlquilerFecha(nuevaFecha) : null
+    const tipoNuevo = nuevaFecha ? tipoDia(nuevaFecha) : null
+    const diffPrecio = (precioNuevo != null && precioActual != null) ? precioNuevo - precioActual : null
+
+    const handleCambiarFecha = async () => {
+        if (!nuevaFecha || cambiandoFecha) return
+        setCambiandoFecha(true); setFechaError(null); setFechaMsg(null)
+        try {
+            const r = await cambiarFechaReserva(reservaOrganizador.id_reserva, nuevaFecha)
+            setReservaOrganizador(prev => ({
+                ...prev,
+                fecha: r.fecha,
+                monto_alquiler: r.monto_alquiler,
+                monto_sena: r.monto_sena,
+                comision_cliente_porcentaje: r.comision_cliente_porcentaje ?? prev.comision_cliente_porcentaje,
+                datos_evento: { ...prev.datos_evento, ...(r.datos_evento || {}) },
+            }))
+            setFechaMsg('¡Fecha actualizada!')
+            setNuevaFecha('')
+        } catch (e) {
+            setFechaError(e?.response?.data?.message || 'No se pudo cambiar la fecha.')
+        } finally {
+            setCambiandoFecha(false)
+        }
+    }
 
     return (
         <div className='flujo-screen'>
@@ -146,6 +214,67 @@ const EventoSalonScreen = () => {
                             </button>
                         )}
                     </div>
+                </div>
+            )}
+
+            {/* ── Cambiar fecha del evento (mismo salón) ── */}
+            {!cargando && salon && (
+                <div className='salon-fecha-card'>
+                    <div className='salon-fecha-head'>
+                        <FiCalendar size={16} />
+                        <h3>Fecha del evento</h3>
+                    </div>
+                    <p className='salon-fecha-actual'>
+                        Actual: <strong>{fmtFecha(fechaActual)}</strong>
+                        {precioActual != null && <span className='salon-fecha-precio'> · Alquiler ${Number(precioActual).toLocaleString('es-AR')}</span>}
+                    </p>
+
+                    {!dentroDePlazo ? (
+                        <div className='salon-fecha-aviso'>
+                            <FiAlertCircle size={14} />
+                            El cambio de fecha sin penalidad está disponible hasta <strong>{DIAS_LIMITE_CAMBIO_FECHA} días antes</strong> del evento
+                            {diasHastaEvento >= 0 ? ` (faltan ${diasHastaEvento} día${diasHastaEvento === 1 ? '' : 's'})` : ''}.
+                        </div>
+                    ) : (
+                        <>
+                            <p className='salon-fecha-hint'>
+                                Podés mover el evento a otra fecha en este mismo salón, sin penalidad. El precio se ajusta según sea día hábil, fin de semana o feriado.
+                            </p>
+                            <div className='salon-fecha-form'>
+                                <input
+                                    type='date'
+                                    className='salon-fecha-input'
+                                    value={nuevaFecha}
+                                    min={hoyISO()}
+                                    onChange={e => { setNuevaFecha(e.target.value); setFechaMsg(null); setFechaError(null) }}
+                                />
+                                <button
+                                    className='flujo-btn flujo-btn--primary'
+                                    onClick={handleCambiarFecha}
+                                    disabled={!nuevaFecha || cambiandoFecha || nuevaFecha === fechaActual}
+                                >
+                                    {cambiandoFecha ? 'Cambiando...' : <><FiCheck size={15} /> Cambiar fecha</>}
+                                </button>
+                            </div>
+
+                            {nuevaFecha && nuevaFecha !== fechaActual && precioNuevo != null && (
+                                <div className='salon-fecha-preview'>
+                                    <span className='salon-fecha-tipo' style={{ color: TIPO_DIA_COLOR[tipoNuevo] }}>
+                                        {TIPO_DIA_LABEL[tipoNuevo]}
+                                    </span>
+                                    <span>Nuevo alquiler: <strong>${Number(precioNuevo).toLocaleString('es-AR')}</strong></span>
+                                    {diffPrecio != null && diffPrecio !== 0 && (
+                                        <span className={`salon-fecha-diff ${diffPrecio > 0 ? 'sube' : 'baja'}`}>
+                                            {diffPrecio > 0 ? '▲' : '▼'} ${Math.abs(diffPrecio).toLocaleString('es-AR')}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+                        </>
+                    )}
+
+                    {fechaMsg   && <div className='salon-fecha-ok'><FiCheck size={14} /> {fechaMsg}</div>}
+                    {fechaError && <div className='salon-fecha-err'><FiAlertCircle size={14} /> {fechaError}</div>}
                 </div>
             )}
 

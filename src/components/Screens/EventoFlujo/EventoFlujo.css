@@ -80,6 +80,60 @@
 
 .flujo-cargando { text-align: center; color: #888; padding: 40px 20px; }
 
+/* ── Cambiar fecha del evento (paso 1) ── */
+.salon-fecha-card {
+    margin-top: 16px;
+    background: #fff;
+    border: 1px solid #ece8f2;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+.salon-fecha-head { display: flex; align-items: center; gap: 8px; color: #770981; }
+.salon-fecha-head h3 { margin: 0; font-size: 1.05rem; font-family: 'Raleway', sans-serif; color: #2d2a33; }
+.salon-fecha-actual { margin: 10px 0 4px; color: #555; font-size: 0.92rem; text-transform: capitalize; }
+.salon-fecha-precio { color: #770981; font-weight: 600; }
+.salon-fecha-hint { margin: 6px 0 12px; color: #888; font-size: 0.85rem; }
+.salon-fecha-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.salon-fecha-input {
+    padding: 9px 12px;
+    border: 1.5px solid #d9d4e2;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.92rem;
+    color: #3a0a4a;
+    outline: none;
+}
+.salon-fecha-input:focus { border-color: #770981; box-shadow: 0 0 0 2px rgba(119, 9, 129, 0.15); }
+.salon-fecha-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #f9f6fc;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #444;
+}
+.salon-fecha-tipo { font-weight: 700; font-size: 0.82rem; }
+.salon-fecha-diff { font-weight: 700; }
+.salon-fecha-diff.sube { color: #c0392b; }
+.salon-fecha-diff.baja { color: #0a8f4a; }
+.salon-fecha-aviso {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px; padding: 10px 12px;
+    background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px;
+    color: #b45309; font-size: 0.86rem;
+}
+.salon-fecha-ok, .salon-fecha-err {
+    display: flex; align-items: center; gap: 7px;
+    margin-top: 10px; padding: 9px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 600;
+}
+.salon-fecha-ok  { background: #eafaf0; color: #0a8f4a; }
+.salon-fecha-err { background: #fdecec; color: #c0392b; }
+
 /* ── Detalle del salón (paso 1) en página completa ── */
 .salon-detalle-fs {
     background: #fff;

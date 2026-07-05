@@ -18,6 +18,12 @@ export const solicitarReserva = async ({ bodega_id, salon_id, fecha, datos_event
     }
 }
 
+// PATCH /api/reservas/:id/fecha — cambia la fecha del evento (mismo salón)
+export const cambiarFechaReserva = async (id_reserva, fecha) => {
+    const response = await axios.patch(`reservas/${id_reserva}/fecha`, { fecha })
+    return response.data.reserva
+}
+
 // GET /api/reservas/mis-reservas
 export const getMisReservas = async () => {
     try {
