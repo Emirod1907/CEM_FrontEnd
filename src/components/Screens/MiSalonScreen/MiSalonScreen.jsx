@@ -7,11 +7,13 @@ import {
     actualizarPreciosSalon,
     gestionarReservaDueno,
     crearReservaManual,
-    descargarReservasICS
+    getGoogleCalendarStatus,
+    disconnectGoogleCalendar,
+    googleCalendarConnectUrl
 } from '../../../services/salonesServices'
 import { FiHome, FiEdit2, FiX, FiMapPin, FiUsers, FiDollarSign,
          FiCalendar, FiCheck, FiSlash, FiPlus, FiTrash2, FiSave, FiChevronLeft, FiChevronRight,
-         FiDownload, FiInfo } from 'react-icons/fi'
+         FiInfo, FiLink, FiExternalLink } from 'react-icons/fi'
 import PreciosConfigPanel from '../../PreciosConfigPanel/PreciosConfigPanel'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MiSalonScreen.css'
@@ -376,20 +378,48 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const [filtroEstado,     setFiltroEstado]     = useState('')
     const [filtroTipo,       setFiltroTipo]       = useState('')   // '' | 'interna' | 'externa'
     const [mostrarArchivo,   setMostrarArchivo]   = useState(false)
-    const [exportando,       setExportando]       = useState(false)
-    const [mostrarAyudaCal,  setMostrarAyudaCal]  = useState(false)
+    const [mostrarCal,   setMostrarCal]   = useState(false)   // modal de Google Calendar
+    const [calConectado, setCalConectado] = useState(false)
+    const [calCargando,  setCalCargando]  = useState(false)
+    const [calMsg,       setCalMsg]       = useState(null)    // feedback tras el callback
 
-    const handleExportarCalendario = async () => {
-        setExportando(true)
+    // Al montar: estado de conexión + leer el resultado del callback (?calendar=...)
+    useEffect(() => {
+        getGoogleCalendarStatus().then(setCalConectado)
+        const params = new URLSearchParams(window.location.search)
+        const r = params.get('calendar')
+        if (r) {
+            const mapa = {
+                conectado:  { tipo: 'ok',  texto: '¡Google Calendar conectado! Tus reservas se sincronizarán automáticamente.' },
+                cancelado:  { tipo: 'err', texto: 'Cancelaste la conexión con Google Calendar.' },
+                sin_refresh:{ tipo: 'err', texto: 'Google no devolvió el permiso de sincronización. Probá de nuevo y aceptá todos los accesos.' },
+                error:      { tipo: 'err', texto: 'No se pudo conectar con Google Calendar. Intentá de nuevo.' },
+            }
+            setCalMsg(mapa[r] || null)
+            if (r === 'conectado') { setMostrarCal(true); getGoogleCalendarStatus().then(setCalConectado) }
+            // limpiar el query param de la URL
+            window.history.replaceState({}, '', window.location.pathname)
+        }
+    }, [])
+
+    const aceptarYConectar = () => {
+        // Navegación top-level: manda la cookie de sesión y va a la pantalla de Google
+        window.location.href = googleCalendarConnectUrl()
+    }
+
+    const desconectarCalendario = async () => {
+        setCalCargando(true)
         try {
-            await descargarReservasICS(nombreSalon || 'salon')
-            setMostrarAyudaCal(true)
+            await disconnectGoogleCalendar()
+            setCalConectado(false)
+            setCalMsg({ tipo: 'ok', texto: 'Google Calendar desconectado.' })
         } catch {
-            alert('No se pudo generar el calendario. Intentá de nuevo.')
+            setCalMsg({ tipo: 'err', texto: 'No se pudo desconectar. Intentá de nuevo.' })
         } finally {
-            setExportando(false)
+            setCalCargando(false)
         }
     }
+
 
     // Reservas activas del período (sin canceladas)
     const reservasActivas = reservas.filter(r => {
@@ -554,12 +584,11 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                                 <option value='confirmada'>Confirmada</option>
                             </select>
                             <button
-                                className='btn-exportar-cal'
-                                onClick={handleExportarCalendario}
-                                disabled={exportando || reservasActivas.length === 0}
-                                title='Exportar reservas a Google Calendar (.ics) para bloquear esas fechas'
+                                className={`btn-exportar-cal ${calConectado ? 'conectado' : ''}`}
+                                onClick={() => setMostrarCal(true)}
+                                title='Sincronizar tus reservas con Google Calendar'
                             >
-                                <FiDownload size={13} /> {exportando ? 'Generando...' : 'Google Calendar'}
+                                <FiCalendar size={13} /> {calConectado ? 'Calendar ✓' : 'Google Calendar'}
                             </button>
                             <button className='btn-archivo' onClick={() => setMostrarArchivo(true)}>
                                 Archivo {reservasArchivadas.length > 0 && <span className='archivo-badge'>{reservasArchivadas.length}</span>}
@@ -567,27 +596,53 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                         </div>
                     </div>
 
-                    {/* Ayuda: cómo importar el .ics en Google Calendar */}
-                    {mostrarAyudaCal && (
-                        <div className='cal-ayuda-overlay' onClick={() => setMostrarAyudaCal(false)}>
+                    {/* Feedback tras el callback de Google */}
+                    {calMsg && (
+                        <div className={`cal-flash cal-flash--${calMsg.tipo}`}>
+                            {calMsg.tipo === 'ok' ? <FiCheck size={14} /> : <FiInfo size={14} />}
+                            <span>{calMsg.texto}</span>
+                            <button className='cal-flash-x' onClick={() => setCalMsg(null)}><FiX size={14} /></button>
+                        </div>
+                    )}
+
+                    {/* Modal: conectar Google Calendar (OAuth + T&C) */}
+                    {mostrarCal && (
+                        <div className='cal-ayuda-overlay' onClick={() => setMostrarCal(false)}>
                             <div className='cal-ayuda-modal' onClick={e => e.stopPropagation()}>
                                 <div className='cal-ayuda-head'>
                                     <FiCalendar size={18} />
-                                    <h3>Bloquear estas fechas en Google Calendar</h3>
-                                    <button className='cal-ayuda-x' onClick={() => setMostrarAyudaCal(false)}><FiX size={18} /></button>
+                                    <h3>Sincronizar con Google Calendar</h3>
+                                    <button className='cal-ayuda-x' onClick={() => setMostrarCal(false)}><FiX size={18} /></button>
                                 </div>
-                                <p className='cal-ayuda-sub'>Se descargó el archivo <strong>.ics</strong> con tus reservas. Para importarlo:</p>
-                                <ol className='cal-ayuda-pasos'>
-                                    <li>Abrí <strong>Google Calendar</strong> en la computadora (calendar.google.com).</li>
-                                    <li>Arriba a la derecha: <strong>⚙️ Configuración → Importar y exportar</strong>.</li>
-                                    <li>En <strong>Importar</strong>, seleccioná el archivo <code>.ics</code> que se acaba de descargar.</li>
-                                    <li>Elegí el calendario de destino y tocá <strong>Importar</strong>.</li>
-                                </ol>
-                                <div className='cal-ayuda-nota'>
-                                    <FiInfo size={14} />
-                                    <span>Cada reserva queda como evento <strong>“ocupado”</strong>, bloqueando la fecha. Esto es un <strong>punto inicial</strong>: la sincronización automática con notificaciones y alarmas la sumamos más adelante.</span>
-                                </div>
-                                <button className='cal-ayuda-ok' onClick={() => setMostrarAyudaCal(false)}>Entendido</button>
+
+                                {calConectado ? (
+                                    <>
+                                        <div className='cal-estado-ok'>
+                                            <FiCheck size={18} />
+                                            <span>Tu Google Calendar está <strong>conectado</strong> y todo se sincroniza <strong>automáticamente</strong>.</span>
+                                        </div>
+                                        <ul className='cal-auto-lista'>
+                                            <li><FiCheck size={13} /> Tus eventos de Google bloquean las fechas en Dream Events.</li>
+                                            <li><FiCheck size={13} /> Cada reserva nueva se agenda sola en tu calendario, con recordatorios.</li>
+                                            <li><FiCheck size={13} /> Cambios y cancelaciones se reflejan al instante.</li>
+                                        </ul>
+                                        <button className='cal-btn-desconectar' onClick={desconectarCalendario} disabled={calCargando}>
+                                            {calCargando ? 'Desconectando...' : 'Desconectar Google Calendar'}
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className='cal-ayuda-sub'>Conectá tu cuenta de Google para que las reservas de tu salón se agenden solas y bloqueen las fechas.</p>
+                                        <div className='cal-terminos'>
+                                            <FiInfo size={14} />
+                                            <span>Para sincronizar tu agenda, <strong>Dream Events se conectará a tu Google Calendar</strong>. Al continuar, autorizás esta integración; podés desconectarla cuando quieras desde acá.</span>
+                                        </div>
+                                        <button className='cal-btn-conectar' onClick={aceptarYConectar}>
+                                            <FiLink size={15} /> Conectar Google Calendar <FiExternalLink size={13} />
+                                        </button>
+                                        <p className='cal-ayuda-nota-min'>Se abrirá la pantalla de Google para autorizar (una sola vez).</p>
+                                    </>
+                                )}
                             </div>
                         </div>
                     )}

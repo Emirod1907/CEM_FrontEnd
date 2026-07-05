@@ -1,4 +1,5 @@
 import axios from "./axios"
+import { BACKEND_URL } from "../config/api"
 
 // La DB usa id_salon pero todo el frontend usa id_bodega — alias para compatibilidad
 const normalizeSalon = (s) => s ? { ...s, id_bodega: s.id_salon ?? s.id_bodega } : s
@@ -50,20 +51,33 @@ export const getMiSalonReservas = async () => {
     }
 }
 
-// Descarga las reservas del salón como archivo .ics (para importar a Google Calendar)
-export const descargarReservasICS = async (nombreSalon = 'salon') => {
-    const response = await axios.get('salones/mi-salon/reservas.ics', {
-        withCredentials: true,
-        responseType: 'blob',
-    })
-    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'text/calendar' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `reservas-${String(nombreSalon).replace(/[^\w\-]+/g, '_').toLowerCase()}.ics`
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-    window.URL.revokeObjectURL(url)
+// ── Google Calendar (OAuth) ──────────────────────────────────────────────────
+// URL a la que se navega para iniciar el consentimiento (envía la cookie de sesión)
+export const googleCalendarConnectUrl = () => `${BACKEND_URL}/api/salones/google/connect`
+
+export const getGoogleCalendarStatus = async () => {
+    try {
+        const r = await axios.get('salones/google/status', { withCredentials: true })
+        return !!r.data?.connected
+    } catch {
+        return false
+    }
+}
+
+export const disconnectGoogleCalendar = async () => {
+    await axios.post('salones/google/disconnect', {}, { withCredentials: true })
+}
+
+// Vía B (punto cero): importa los eventos del Google Calendar y bloquea esas fechas
+export const importarGoogleCalendar = async () => {
+    const r = await axios.post('salones/google/importar', {}, { withCredentials: true })
+    return r.data   // { importadas, salteadas, total }
+}
+
+// Vía A (backfill): empuja las reservas actuales del salón al Google Calendar
+export const sincronizarReservasCalendar = async () => {
+    const r = await axios.post('salones/google/sync-reservas', {}, { withCredentials: true })
+    return r.data   // { sincronizadas, total }
 }
 
 export const actualizarPreciosSalon = async (precios_config) => {
