@@ -50,6 +50,22 @@ export const getMiSalonReservas = async () => {
     }
 }
 
+// Descarga las reservas del salón como archivo .ics (para importar a Google Calendar)
+export const descargarReservasICS = async (nombreSalon = 'salon') => {
+    const response = await axios.get('salones/mi-salon/reservas.ics', {
+        withCredentials: true,
+        responseType: 'blob',
+    })
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'text/calendar' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `reservas-${String(nombreSalon).replace(/[^\w\-]+/g, '_').toLowerCase()}.ics`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    window.URL.revokeObjectURL(url)
+}
+
 export const actualizarPreciosSalon = async (precios_config) => {
     try {
         const response = await axios.put('salones/mi-salon/precios', { precios_config }, { withCredentials: true })

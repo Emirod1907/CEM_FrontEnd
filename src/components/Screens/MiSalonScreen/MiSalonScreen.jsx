@@ -6,10 +6,12 @@ import {
     getMiSalonReservas,
     actualizarPreciosSalon,
     gestionarReservaDueno,
-    crearReservaManual
+    crearReservaManual,
+    descargarReservasICS
 } from '../../../services/salonesServices'
 import { FiHome, FiEdit2, FiX, FiMapPin, FiUsers, FiDollarSign,
-         FiCalendar, FiCheck, FiSlash, FiPlus, FiTrash2, FiSave, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+         FiCalendar, FiCheck, FiSlash, FiPlus, FiTrash2, FiSave, FiChevronLeft, FiChevronRight,
+         FiDownload, FiInfo } from 'react-icons/fi'
 import PreciosConfigPanel from '../../PreciosConfigPanel/PreciosConfigPanel'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MiSalonScreen.css'
@@ -353,7 +355,7 @@ const FORM_MANUAL_VACIO = {
 
 // ─── Tab Reservas ─────────────────────────────────────────────────────────────
 
-const TabReservas = ({ reservas, onActualizar }) => {
+const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const hoy = new Date()
     const [año,       setAño]       = useState(hoy.getFullYear())
     const [mesZoom,   setMesZoom]   = useState(null)    // null = vista anual
@@ -374,6 +376,20 @@ const TabReservas = ({ reservas, onActualizar }) => {
     const [filtroEstado,     setFiltroEstado]     = useState('')
     const [filtroTipo,       setFiltroTipo]       = useState('')   // '' | 'interna' | 'externa'
     const [mostrarArchivo,   setMostrarArchivo]   = useState(false)
+    const [exportando,       setExportando]       = useState(false)
+    const [mostrarAyudaCal,  setMostrarAyudaCal]  = useState(false)
+
+    const handleExportarCalendario = async () => {
+        setExportando(true)
+        try {
+            await descargarReservasICS(nombreSalon || 'salon')
+            setMostrarAyudaCal(true)
+        } catch {
+            alert('No se pudo generar el calendario. Intentá de nuevo.')
+        } finally {
+            setExportando(false)
+        }
+    }
 
     // Reservas activas del período (sin canceladas)
     const reservasActivas = reservas.filter(r => {
@@ -537,11 +553,44 @@ const TabReservas = ({ reservas, onActualizar }) => {
                                 <option value='seña_abonada'>Seña abonada</option>
                                 <option value='confirmada'>Confirmada</option>
                             </select>
+                            <button
+                                className='btn-exportar-cal'
+                                onClick={handleExportarCalendario}
+                                disabled={exportando || reservasActivas.length === 0}
+                                title='Exportar reservas a Google Calendar (.ics) para bloquear esas fechas'
+                            >
+                                <FiDownload size={13} /> {exportando ? 'Generando...' : 'Google Calendar'}
+                            </button>
                             <button className='btn-archivo' onClick={() => setMostrarArchivo(true)}>
                                 Archivo {reservasArchivadas.length > 0 && <span className='archivo-badge'>{reservasArchivadas.length}</span>}
                             </button>
                         </div>
                     </div>
+
+                    {/* Ayuda: cómo importar el .ics en Google Calendar */}
+                    {mostrarAyudaCal && (
+                        <div className='cal-ayuda-overlay' onClick={() => setMostrarAyudaCal(false)}>
+                            <div className='cal-ayuda-modal' onClick={e => e.stopPropagation()}>
+                                <div className='cal-ayuda-head'>
+                                    <FiCalendar size={18} />
+                                    <h3>Bloquear estas fechas en Google Calendar</h3>
+                                    <button className='cal-ayuda-x' onClick={() => setMostrarAyudaCal(false)}><FiX size={18} /></button>
+                                </div>
+                                <p className='cal-ayuda-sub'>Se descargó el archivo <strong>.ics</strong> con tus reservas. Para importarlo:</p>
+                                <ol className='cal-ayuda-pasos'>
+                                    <li>Abrí <strong>Google Calendar</strong> en la computadora (calendar.google.com).</li>
+                                    <li>Arriba a la derecha: <strong>⚙️ Configuración → Importar y exportar</strong>.</li>
+                                    <li>En <strong>Importar</strong>, seleccioná el archivo <code>.ics</code> que se acaba de descargar.</li>
+                                    <li>Elegí el calendario de destino y tocá <strong>Importar</strong>.</li>
+                                </ol>
+                                <div className='cal-ayuda-nota'>
+                                    <FiInfo size={14} />
+                                    <span>Cada reserva queda como evento <strong>“ocupado”</strong>, bloqueando la fecha. Esto es un <strong>punto inicial</strong>: la sincronización automática con notificaciones y alarmas la sumamos más adelante.</span>
+                                </div>
+                                <button className='cal-ayuda-ok' onClick={() => setMostrarAyudaCal(false)}>Entendido</button>
+                            </div>
+                        </div>
+                    )}
 
                     {reservasFiltradas.length === 0 ? (
                         <p className='reservas-vacio'>{textoVacio}</p>
@@ -1112,6 +1161,7 @@ const MiSalonScreen = () => {
                 <TabReservas
                     reservas={reservas}
                     onActualizar={cargarReservas}
+                    nombreSalon={salon?.nombre}
                 />
             )}
 
