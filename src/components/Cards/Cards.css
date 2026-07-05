@@ -1,161 +1,136 @@
-
-/* .card-conteiner{
-    align-items: center;
-    text-align: center;
-    position: relative;
-    width: calc(25% - 40px);
-    min-width: 250px;
-    height: auto;
-    margin: 15px;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
-    transition: box-shadow 0.3 ease;
-    overflow: hidden;
-    background: #576ce7;
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    box-sizing: border-box;
-}
-.discount{
-    background: red;
-}
-.real_price{
-    text-decoration: line-through;
-    background-color: #4a4a4a;
-}
-span{
-    margin: 2px;
-    padding: 5px;
-    border-radius: 3px;
-    box-sizing: border-box;
-    border: 1px solid black;
-    height: fit-content;
-}
-.price_info{
-    align-items: left;
-    display: flex;
-    justify-content: center;
-}
-.final_price{
-    background-color:rgb(153, 231, 153);
-    font-weight: bold;
-    font-size: 1.3rem;
-}
-img{
-    width: 220px;
-    height: 200px;
-    overflow: hidden;
-    object-fit: cover;
-}
-h3{
-    position:relative;
-    display: flex;
-    /*justify-content: left;*/
-    /*align-items: center;
-} */
-
 .card-container {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin: 10px;
-    padding: 16px;
-    transition: all 0.3s ease;
-    border: 1px solid #e6e6e6;
-    max-width: 300px;
+    width: 100%;
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow: 0 16px 38px rgba(24, 10, 45, 0.16);
+    padding: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    overflow: hidden;
 }
 
 .card-container:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 22px 48px rgba(24, 10, 45, 0.22);
+    border-color: rgba(24, 130, 218, 0.24);
 }
 
 .card-box {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    min-height: 100%;
+}
+
+.card-fields {
+    min-width: 0;
 }
 
 .card-fields h1 {
-    color: #333;
-    font-size: 1.4rem;
-    font-weight: 600;
+    color: #271930;
+    font-size: 1.18rem;
+    line-height: 1.15;
+    font-weight: 800;
     margin: 0;
-    border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(119, 9, 129, 0.10);
+}
+
+.card-fields h2,
+.card-fields h3 {
+    margin: 0;
+    color: #5f5969;
+    line-height: 1.35;
 }
 
 .card-fields h2 {
-    color: #666;
-    font-size: 1rem;
-    font-weight: 500;
-    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
     display: flex;
     justify-content: space-between;
+    gap: 12px;
 }
 
 .card-fields h3 {
-    color: #888;
-    font-size: 0.9rem;
-    font-weight: 400;
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
+    font-size: 0.86rem;
+    font-weight: 500;
 }
 
 .card-fields span {
     color: #00a650;
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.42rem;
+    font-weight: 800;
 }
 
 .card-fields img {
     width: 100%;
-    height: 180px;
+    height: 176px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 16px;
+    display: block;
+    background: rgba(119, 9, 129, 0.06);
+}
+
+/* Contenedor de imagen: recorta el zoom sutil al hacer hover sobre la card */
+.card-img-wrap {
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.card-img-wrap img {
+    transition: transform 0.35s ease;
+    will-change: transform;
+}
+
+.card-container:hover .card-img-wrap img {
+    transform: scale(1.04);
 }
 
 .salon-card-precio {
-    display: inline-block;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
     background: linear-gradient(135deg, #770981, #1882da);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-size: 1.3rem;
-    font-weight: 700;
+    font-size: 1.28rem;
+    font-weight: 800;
     font-family: 'Raleway', sans-serif;
+    letter-spacing: -0.03em;
 }
 
 .salon-card-precio small {
     font-size: 0.7rem;
-    font-weight: 400;
-    -webkit-text-fill-color: #888;
+    font-weight: 600;
+    -webkit-text-fill-color: #80768a;
     margin-left: 2px;
 }
 
 .salon-card-precio-nd {
     font-size: 0.82rem;
-    color: #aaa;
+    color: #8d8496;
     font-style: italic;
 }
 
-/* Tags de tipos de evento y servicios en la card */
 .salon-card-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 5px;
     width: 100%;
     overflow: hidden;
 }
 
 .salon-tag {
-    display: inline-block;
-    border-radius: 12px;
-    padding: 2px 9px;
-    font-size: 0.7rem;
-    font-weight: 500;
-    line-height: 1.6;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
     white-space: nowrap;
     max-width: 100%;
     overflow: hidden;
@@ -163,75 +138,125 @@ h3{
 }
 
 .salon-tag--tipo {
-    background: linear-gradient(135deg, #770981, #1882da);
-    color: white;
+    background: #770981;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
 }
 
 .salon-tag--servicio {
-    background: #e8f4fd;
-    color: #1882da;
-    border: 1px solid #b3d9f5;
+    background: rgba(39, 25, 48, 0.055);
+    color: #5f5969;
 }
 
-/* Pie de la card con botón ojo */
+/* Indicador de servicios adicionales no listados ("+N") */
+.salon-tag--mas {
+    background: transparent;
+    color: #8a8494;
+    border: 1px dashed rgba(95, 89, 105, 0.35);
+    cursor: help;
+}
+
+/* Dentro de las cards, la regla ".card-fields span" (pensada para el precio:
+   1.42rem, verde, negrita) le gana en especificidad a ".salon-tag" y deforma
+   las etiquetas. Estas reglas re-afirman el estilo correcto en ese contexto. */
+.card-fields .salon-tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #5f5969;
+}
+
+.card-fields .salon-tag--tipo {
+    color: #ffffff;
+    font-size: 0.62rem;
+}
+
+.card-fields .salon-tag--mas {
+    color: #8a8494;
+}
+
 .salon-card-footer {
     display: flex;
     justify-content: flex-end;
-    padding-top: 4px;
-    border-top: 1px solid #f0f0f0;
+    gap: 8px;
+    padding-top: 12px;
+    margin-top: auto;
+    border-top: 1px solid rgba(119, 9, 129, 0.10);
+    flex-wrap: wrap;
+}
+
+.salon-ver-detalle-btn,
+.salon-comparar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    line-height: 1;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.16s ease, background 0.16s ease, color 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+    font-family: 'Poppins', sans-serif;
 }
 
 .salon-ver-detalle-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: none;
-    border: 1px solid #1882da;
-    color: #1882da;
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
+    background: rgba(24, 130, 218, 0.08);
+    border: 1px solid rgba(24, 130, 218, 0.28);
+    color: #1268ad;
 }
+
 .salon-ver-detalle-btn:hover {
     background: #1882da;
     color: white;
+    transform: translateY(-1px);
 }
 
-/* ── Botón comparar en cards ── */
 .salon-comparar-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: none;
-    border: 1px solid #c4b5fd;
-    color: #7c3aed;
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    font-family: 'Poppins', sans-serif;
+    background: rgba(119, 9, 129, 0.07);
+    border: 1px solid rgba(119, 9, 129, 0.18);
+    color: #770981;
 }
+
 .salon-comparar-btn:hover:not(:disabled) {
-    background: #ede9fe;
-    border-color: #7c3aed;
+    background: rgba(119, 9, 129, 0.12);
+    transform: translateY(-1px);
 }
+
 .salon-comparar-btn--activo {
     background: linear-gradient(135deg, #770981, #1882da);
     color: white;
     border-color: transparent;
 }
+
 .salon-comparar-btn--activo:hover:not(:disabled) {
-    opacity: 0.85;
+    opacity: 0.9;
 }
+
 .salon-comparar-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.45;
     cursor: not-allowed;
 }
-.salon-card-footer {
-    gap: 6px;
+
+@media (max-width: 540px) {
+    .card-container {
+        border-radius: 16px;
+        padding: 12px;
+    }
+
+    .card-fields img {
+        height: 160px;
+        border-radius: 13px;
+    }
+
+    .salon-card-footer {
+        justify-content: stretch;
+    }
+
+    .salon-ver-detalle-btn,
+    .salon-comparar-btn {
+        flex: 1;
+    }
 }

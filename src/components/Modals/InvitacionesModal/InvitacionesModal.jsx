@@ -3,9 +3,9 @@ import { createPortal } from 'react-dom'
 import { crearInvitacion, getMisInvitaciones } from '../../../services/invitacionServices'
 import { FiX, FiPlus, FiSend, FiUsers, FiPhone, FiCopy, FiCheck, FiCalendar, FiImage, FiBook } from 'react-icons/fi'
 import './InvitacionesModal.css'
+import { BACKEND_URL } from '../../../config/api'
 
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || window.location.origin
-const BACKEND_URL  = import.meta.env.VITE_BACKEND_URL  || 'http://localhost:8000'
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
 // URL con OG tags para WhatsApp preview; redirige al frontend automáticamente

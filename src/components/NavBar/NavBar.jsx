@@ -166,10 +166,10 @@ const NavBar = () => {
     }
 
     return (
-        <div className='container'>
-            <header>
+        <div className='navbar-container'>
+            <header className='app-header'>
                 <div className='logo'>
-                    <img src="/dream_events_logo.png" alt="Dream Events" />
+                    <img src="/dream_events_logo.svg" alt="Dream Events" />
                 </div>
                 <span className='navbar-brand'>Dream Events</span>
                 {isAuthenticated && rol && (

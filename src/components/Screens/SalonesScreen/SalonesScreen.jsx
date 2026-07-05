@@ -35,7 +35,7 @@ const SalonesScreen = () => {
     const [error, setError] = useState(null)
     const [filters, setFilters] = useState(FILTROS_INICIALES)
     const [salonDetalle, setSalonDetalle] = useState(null)
-    const [salonMapa,   setSalonMapa]   = useState(null)
+    const [salonMapa, setSalonMapa] = useState(null)
 
     useEffect(() => {
         const fetchSalones = async () => {
@@ -125,7 +125,7 @@ const SalonesScreen = () => {
             />
             <main className='salones-main'>
                 <div className='salones-main-header'>
-                    <h1 className='salones-main-titulo'>Salones disponibles</h1>
+                    <h1 className='salones-main-titulo'>Salones</h1>
                     {!loading && !error && (
                         <span className='salones-contador'>
                             {filteredSalones.length} salón{filteredSalones.length !== 1 ? 'es' : ''} encontrado{filteredSalones.length !== 1 ? 's' : ''}
@@ -201,8 +201,8 @@ const SalonesScreen = () => {
                                 }}
                             >
                                 {enSalonesComparar(salonDetalle.id_bodega)
-                                    ? <><FiCheck size={14}/> En comparación</>
-                                    : <><FiColumns size={14}/> Comparar</>
+                                    ? <><FiCheck size={14} /> En comparación</>
+                                    : <><FiColumns size={14} /> Comparar</>
                                 }
                             </button>
                             <button

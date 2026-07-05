@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { getMisReservas, cancelarReserva } from '../../../services/reservaServices'
 import { getValoracionesReserva } from '../../../services/valoracionServices'
 import { useCarrito } from '../../../Contexts/CarritoContextProvider'
 import { useNavigate } from 'react-router-dom'
-import { FiCalendar, FiStar } from 'react-icons/fi'
+import { FiCalendar, FiStar, FiClock, FiCheckCircle, FiLayers } from 'react-icons/fi'
 import ReservaDetalleModal from '../../Modals/ReservaDetalleModal/ReservaDetalleModal'
 import ReiterarReservaModal from '../../Modals/ReiterarReservaModal/ReiterarReservaModal'
 import ValoracionModal from '../../Modals/ValoracionModal/ValoracionModal'
@@ -17,7 +17,6 @@ const MisReservasScreen = () => {
     const [detalleId,       setDetalleId]       = useState(null)
     const [reservaAReiterar, setReservaAReiterar] = useState(null)
     const [reservaAValorar, setReservaAValorar] = useState(null)
-    // Set de ids de reservas ya calificadas
     const [yaCalificadas,   setYaCalificadas]   = useState(new Set())
 
     const { agregarReservaOrganizador, reservaOrganizador, setIsCartOpen } = useCarrito()
@@ -29,7 +28,6 @@ const MisReservasScreen = () => {
         setReservas(data)
         setCargando(false)
 
-        // Verificar cuáles reservas pasadas ya fueron calificadas
         const hoy = new Date()
         const pasadas = data.filter(r => r.estado === 'confirmada' && new Date(r.fecha) < hoy)
         const checks = await Promise.allSettled(
@@ -47,7 +45,6 @@ const MisReservasScreen = () => {
 
     useEffect(() => { cargarReservas() }, [cargarReservas])
 
-    // Carga una reserva ya existente en el carrito organizador (sin abrir el carrito).
     const cargarReservaEnCarrito = (reserva) => {
         agregarReservaOrganizador({
             id_reserva:                  reserva.id_reserva,
@@ -71,15 +68,12 @@ const MisReservasScreen = () => {
         setTimeout(() => setIsCartOpen(true), 100)
     }
 
-    // "Continuar con la reserva": vuelve a los 5 pasos, arrancando en el paso 2 (servicios).
     const handleContinuar = (reserva) => {
         cargarReservaEnCarrito(reserva)
         navigate('/organizar/servicios')
     }
 
     const handleReiterar = (nuevaReserva, viejoId) => {
-        // viejoId viene del archivo modal (CalendarioReservas);
-        // cuando se abre desde el detalle modal usamos reservaAReiterar del estado local.
         const idAEliminar = viejoId ?? reservaAReiterar?.id_reserva
 
         setReservas(prev => {
@@ -123,12 +117,36 @@ const MisReservasScreen = () => {
         }
     }
 
-    // Reservas confirmadas con fecha pasada que aún no calificó
     const pendientesValorar = reservas.filter(
         r => r.estado === 'confirmada'
           && new Date(r.fecha) < new Date()
           && !yaCalificadas.has(r.id_reserva)
     )
+
+    const resumen = useMemo(() => {
+        const activas = reservas.filter(r => r.estado !== 'cancelada')
+        const pendientes = activas.filter(r => r.estado === 'pendiente_pago').length
+        const sena = activas.filter(r => r.estado === 'seña_abonada').length
+        const confirmadas = activas.filter(r => r.estado === 'confirmada').length
+        const proximas = activas
+            .filter(r => r.fecha && new Date(r.fecha) >= new Date(new Date().setHours(0,0,0,0)))
+            .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+
+        const proxima = proximas[0]
+        const proximaTexto = proxima?.fecha
+            ? new Date(proxima.fecha).toLocaleDateString('es-AR', {
+                day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC',
+              })
+            : 'Sin próximas fechas'
+
+        return {
+            activas: activas.length,
+            pendientes,
+            sena,
+            confirmadas,
+            proximaTexto,
+        }
+    }, [reservas])
 
     if (cargando) {
         return (
@@ -143,14 +161,41 @@ const MisReservasScreen = () => {
             <div className="mis-reservas-header">
                 <div className="mis-reservas-titulo">
                     <FiCalendar size={28} />
-                    <h1>Mis Reservas</h1>
+                    <div>
+                        <h1>Mis Reservas</h1>
+                        <p className="mis-reservas-subtitulo">
+                            Gestioná tus eventos, pagos pendientes y próximas fechas desde un solo lugar.
+                        </p>
+                    </div>
                 </div>
-                <p className="mis-reservas-subtitulo">
+                <div className="mis-reservas-ayuda">
                     Las reservas pendientes deben pagarse dentro de las 48 horas o se cancelarán automáticamente.
-                </p>
+                </div>
             </div>
 
-            {/* Banner de valoraciones pendientes */}
+            <section className="mis-reservas-resumen-grid">
+                <article className="mis-reservas-stat mis-reservas-stat--principal">
+                    <span className="mis-reservas-stat-label"><FiLayers size={15} /> Activas</span>
+                    <strong>{resumen.activas}</strong>
+                    <small>Reservas vigentes en tu agenda</small>
+                </article>
+                <article className="mis-reservas-stat mis-reservas-stat--warn">
+                    <span className="mis-reservas-stat-label"><FiClock size={15} /> Pendientes</span>
+                    <strong>{resumen.pendientes}</strong>
+                    <small>Esperan pago de seña o confirmación</small>
+                </article>
+                <article className="mis-reservas-stat mis-reservas-stat--ok">
+                    <span className="mis-reservas-stat-label"><FiCheckCircle size={15} /> Señadas / confirmadas</span>
+                    <strong>{resumen.sena + resumen.confirmadas}</strong>
+                    <small>{resumen.sena} con seña y {resumen.confirmadas} confirmadas</small>
+                </article>
+                <article className="mis-reservas-stat mis-reservas-stat--accent">
+                    <span className="mis-reservas-stat-label"><FiCalendar size={15} /> Próxima fecha</span>
+                    <strong className="mis-reservas-stat-strong-small">{resumen.proximaTexto}</strong>
+                    <small>La reserva más cercana en el calendario</small>
+                </article>
+            </section>
+
             {pendientesValorar.length > 0 && (
                 <div className='mis-reservas-valorar-banner'>
                     <FiStar size={18}/>

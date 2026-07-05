@@ -32,17 +32,42 @@ const SalonCard = ({ id_bodega, nombre, domicilio, localidad, departamento, serv
 
     const lleno = !enComparacion && salonesComparar.length >= MAX
 
+    const servicios = parsearJSON(servicios_incluidos)
+    const MAX_TAGS = 3
+    const serviciosVisibles = servicios.slice(0, MAX_TAGS)
+    const serviciosExtra = servicios.length - serviciosVisibles.length
+
+    const handleImgError = (e) => {
+        // Evita el ícono de imagen rota si la URL no carga
+        if (e.target.dataset.fallback) return
+        e.target.dataset.fallback = '1'
+        e.target.src = 'https://picsum.photos/seed/dreamevents-fallback/800/600'
+    }
+
     return (
         <div className='card-container' onClick={handleSelect} style={{ cursor: 'pointer' }}>
             <div className='card-box'>
                 <div className='card-fields'>
                     <h1>{nombre}</h1>
                 </div>
-                <div className='card-fields'>
-                    <img src={imagen} alt={nombre} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
+                <div className='card-fields card-img-wrap'>
+                    <img src={imagen} alt={nombre} loading='lazy' onError={handleImgError} />
                 </div>
+                {(tipo_salon || serviciosVisibles.length > 0) && (
+                    <div className='card-fields salon-card-tags'>
+                        {tipo_salon && <span className='salon-tag salon-tag--tipo'>{tipo_salon}</span>}
+                        {serviciosVisibles.map((s, i) => (
+                            <span key={i} className='salon-tag salon-tag--servicio'>{s}</span>
+                        ))}
+                        {serviciosExtra > 0 && (
+                            <span className='salon-tag salon-tag--mas' title={servicios.slice(MAX_TAGS).join(', ')}>
+                                +{serviciosExtra}
+                            </span>
+                        )}
+                    </div>
+                )}
                 <div className='card-fields'>
-                    <h3>📍 {domicilio}{localidad ? `, ${localidad}` : ''}</h3>
+                    <h3>📍 {domicilio}{localidad ? `, ${localidad}` : ''}{departamento ? ` — ${departamento}` : ''}</h3>
                 </div>
                 <div className='card-fields'>
                     <h3>👥 Aforo: {aforo} personas</h3>

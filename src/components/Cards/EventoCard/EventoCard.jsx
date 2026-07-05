@@ -21,8 +21,17 @@ const EventoCard = ({ id_evento, nombre, descripcion, fecha, precio, cupo, salon
                 <div className='card-fields'>
                     <h1>{nombre}</h1>
                 </div>
-                <div className='card-fields'>
-                    <img src={imagen} alt={nombre} />
+                <div className='card-fields card-img-wrap'>
+                    <img
+                        src={imagen}
+                        alt={nombre}
+                        loading='lazy'
+                        onError={(e) => {
+                            if (e.target.dataset.fallback) return
+                            e.target.dataset.fallback = '1'
+                            e.target.src = 'https://picsum.photos/seed/dreamevents-fallback/800/600'
+                        }}
+                    />
                 </div>
                 <div className='card-fields'>
                     <h3>Entradas disponibles:</h3>

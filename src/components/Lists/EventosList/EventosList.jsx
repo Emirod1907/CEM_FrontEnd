@@ -96,11 +96,11 @@ const EventosList = () => {
   let content
 
   if(loading){
-    content= <h1>{<TailSpin/>}</h1>
+    content = <div className='list-state list-state--loading'><TailSpin stroke='#ffffff'/> <span>Cargando eventos...</span></div>
   }
   else{
     if(error){
-      content = <h2>{error}</h2>
+      content = <div className='list-state list-state--error'>{error}</div>
     }
     else{
       content = (
@@ -110,24 +110,22 @@ const EventosList = () => {
     }
   }
   return (
-    <div>
-      <button
-        onClick={() => startTour(eventListTour)}
-        style={{
-          background: '#007bff',
-          color: 'white',
-          border: 'none',
-          padding: '10px 15px',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          margin: '80px 20px 20px 20px'
-        }}
-      >
-        🎓 Iniciar Tutorial
-      </button>
+    <section className='eventos-list-page' id='event-list'>
+      <div className='list-toolbar'>
+        <div>
+          <p className='list-kicker'>Dream Events</p>
+          <h1 className='list-title'>Eventos disponibles</h1>
+        </div>
+        <button
+          onClick={() => startTour(eventListTour)}
+          className='tutorial-btn'
+        >
+          🎓 Iniciar tutorial
+        </button>
+      </div>
       {content}
       <CompareBar tipo='eventos' />
-    </div>
+    </section>
   )
 }
 

@@ -1,182 +1,225 @@
-/* ── Navbar wrapper ── */
-.container {
-    padding-top: 56px;
+/* Barra superior — versión oscura para mejorar contraste sobre el fondo */
+.navbar-container {
+    height: 0;
 }
 
-header {
+.app-header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    height: 56px;
+    min-height: 68px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 18px;
-    background: rgba(255, 255, 255, 0.82);
+    gap: 16px;
+    padding: 10px 26px;
+    background: linear-gradient(90deg, rgba(45, 24, 78, 0.96) 0%, rgba(81, 29, 103, 0.95) 45%, rgba(103, 17, 81, 0.95) 100%);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(24, 130, 218, 0.15);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 12px 34px rgba(13, 8, 27, 0.28);
 }
 
-/* ── Logo (a la izquierda) ── */
 .logo {
-    height: 40px;
-    flex-shrink: 0;
-    /* Esquinas redondeadas: el fondo oscuro del logo queda como pastilla limpia */
-    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 14px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .logo img {
+    width: 100%;
     height: 100%;
-    width: auto;
     object-fit: contain;
     display: block;
 }
 
-/* ── Brand name (centrado en el espacio entre logo y nav) ── */
 .navbar-brand {
-    flex: 1;
-    text-align: center;
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    background: linear-gradient(135deg, #770981, #1882da);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    display: inline-flex;
+    align-items: center;
+    min-width: 145px;
+    color: #ffffff;
+    font-size: 1.08rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
     white-space: nowrap;
-    margin: 0;
-    min-width: 0;
 }
 
-/* ── Nav links ── */
-nav {
+.app-header nav {
+    margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 2px;
+    justify-content: flex-end;
+    gap: 8px;
     flex-wrap: nowrap;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.app-header nav::-webkit-scrollbar {
+    display: none;
+}
+
+.link,
+.link-seleccionado,
+.link-logout,
+.carrito-nav-btn {
+    min-height: 38px;
 }
 
 .link,
 .link-seleccionado {
-    display: inline-block;
-    padding: 5px 11px;
-    border-radius: 6px;
-    font-size: 0.82rem;
-    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.84rem;
+    line-height: 1;
+    font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
-    transition: background 0.18s ease, color 0.18s ease;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .link {
-    color: #444;
-    background: transparent;
+    color: rgba(255, 255, 255, 0.94);
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .link:hover {
-    background: rgba(24, 130, 218, 0.09);
-    color: #1882da;
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
 }
 
 .link-seleccionado {
-    background: linear-gradient(135deg, #770981, #1882da);
-    color: white;
-    font-weight: 600;
+    background: linear-gradient(135deg, #ffffff, #ece4ff);
+    color: #57116f;
+    border: 1px solid transparent;
+    box-shadow: 0 10px 20px rgba(16, 8, 29, 0.18);
 }
 
-/* ── Admin link ── */
 .link-admin {
-    color: #770981;
-    border: 1px solid rgba(119, 9, 129, 0.3);
-}
-
-.link-admin:hover {
-    background: rgba(119, 9, 129, 0.09);
-    color: #770981;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.18);
 }
 
 .link-seleccionado.link-admin {
-    background: linear-gradient(135deg, #770981, #1882da);
-    color: white;
-    border: none;
+    color: #57116f;
 }
 
-/* ── Logout link-button ── */
 .link-logout {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    background: transparent;
-    border: none;
-    padding: 5px 11px;
-    border-radius: 6px;
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: #770981;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-size: 0.84rem;
+    font-weight: 800;
     cursor: pointer;
     white-space: nowrap;
-    transition: background 0.18s ease;
+    transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
 }
 
 .link-logout:hover {
-    background: rgba(119, 9, 129, 0.09);
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
 }
 
-/* ── Rol badge ── */
 .navbar-rol-badge {
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, rgba(119,9,129,0.10), rgba(24,130,218,0.10));
-    color: #770981;
-    border: 1px solid rgba(119,9,129,0.2);
-    white-space: nowrap;
-    letter-spacing: 0.01em;
-}
-
-/* ── Carrito ── */
-.carrito-nav-btn {
-    position: relative;
-    background: transparent;
-    border: 1px solid rgba(24, 130, 218, 0.3);
-    border-radius: 6px;
-    padding: 5px 9px;
-    cursor: pointer;
-    color: #444;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-left: 4px;
-    transition: background 0.18s ease, color 0.18s ease;
+    min-height: 30px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 0.75rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.carrito-nav-btn {
+    position: relative;
+    min-width: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.10);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
 .carrito-nav-btn:hover {
-    background: rgba(24, 130, 218, 0.09);
-    color: #1882da;
-    border-color: #1882da;
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.26);
+    transform: translateY(-1px);
 }
 
 .carrito-badge {
     position: absolute;
-    top: -6px;
-    right: -6px;
-    background: linear-gradient(135deg, #770981, #1882da);
-    color: white;
-    font-size: 0.65rem;
-    font-weight: 700;
-    border-radius: 50%;
-    width: 17px;
-    height: 17px;
+    top: -5px;
+    right: -5px;
+    width: 19px;
+    height: 19px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ffd0f0, #ffffff);
+    color: #57116f;
+    font-size: 0.66rem;
+    font-weight: 800;
+    border: 2px solid rgba(53, 21, 72, 0.92);
+}
+
+@media (max-width: 920px) {
+    .app-header {
+        min-height: 64px;
+        padding: 9px 14px;
+        gap: 10px;
+    }
+
+    .navbar-brand {
+        min-width: auto;
+        font-size: 1rem;
+    }
+
+    .logo {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        border-radius: 12px;
+    }
+
+    .link,
+    .link-seleccionado,
+    .link-logout {
+        padding: 8px 11px;
+        font-size: 0.78rem;
+    }
 }
