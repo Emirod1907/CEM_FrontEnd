@@ -452,6 +452,72 @@
 }
 .inv-item-wa:hover { background: #1da851; }
 
+/* Editar / eliminar item */
+.inv-item-editar, .inv-item-eliminar {
+    display: flex;
+    align-items: center;
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+    padding: 5px 7px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.inv-item-editar:hover { background: #e5e7eb; color: #111; }
+.inv-item-eliminar:hover { background: #fee2e2; color: #dc2626; border-color: #fecaca; }
+.inv-item-eliminar:disabled { opacity: 0.5; cursor: default; }
+
+/* Edición inline */
+.inv-item--editando {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    background: #faf5ff;
+    border-color: #e9d5ff;
+}
+.inv-edit-campos {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+.inv-edit-nombre {
+    flex: 1;
+    min-width: 140px;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 0.88rem;
+    font-family: inherit;
+}
+.inv-edit-num {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.inv-edit-num label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    color: #6b7280;
+}
+.inv-edit-num input {
+    width: 80px;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 0.88rem;
+    font-family: inherit;
+}
+.inv-edit-error { margin: 0; }
+.inv-edit-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
 /* Badges */
 .inv-badge {
     font-size: 0.72rem;

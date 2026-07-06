@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { crearInvitacion, getMisInvitaciones } from '../../../services/invitacionServices'
-import { FiX, FiPlus, FiSend, FiUsers, FiPhone, FiCopy, FiCheck, FiCalendar, FiImage, FiBook, FiAlertTriangle } from 'react-icons/fi'
+import { crearInvitacion, getMisInvitaciones, editarInvitacion, eliminarInvitacion } from '../../../services/invitacionServices'
+import { FiX, FiPlus, FiSend, FiUsers, FiPhone, FiCopy, FiCheck, FiCalendar, FiImage, FiBook, FiAlertTriangle, FiEdit2, FiTrash2, FiSave } from 'react-icons/fi'
 import './InvitacionesModal.css'
 import { BACKEND_URL } from '../../../config/api'
 
@@ -550,6 +550,46 @@ export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, evento
     const [formError, setFormError] = useState('')
     const [linkNuevo, setLinkNuevo] = useState(null)
 
+    // Edición / eliminación de invitaciones existentes
+    const [editando, setEditando]         = useState(null)
+    const [editForm, setEditForm]         = useState({ num_invitados: 1, nombre_invitado: '' })
+    const [editError, setEditError]       = useState('')
+    const [guardandoEdit, setGuardandoEdit] = useState(false)
+    const [eliminandoId, setEliminandoId] = useState(null)
+
+    const iniciarEdicion = (inv) => {
+        setEditando(inv.id_invitacion)
+        setEditForm({ num_invitados: inv.num_invitados, nombre_invitado: inv.nombre_invitado || '' })
+        setEditError('')
+    }
+    const cancelarEdicion = () => { setEditando(null); setEditError('') }
+
+    const guardarEdicion = async (inv) => {
+        setEditError(''); setGuardandoEdit(true)
+        try {
+            await editarInvitacion(inv.id_invitacion, {
+                num_invitados: Number(editForm.num_invitados),
+                nombre_invitado: editForm.nombre_invitado.trim() || null
+            })
+            setEditando(null)
+            await cargar()
+        } catch (err) {
+            setEditError(err?.response?.data?.message || 'No se pudo guardar el cambio.')
+        } finally { setGuardandoEdit(false) }
+    }
+
+    const borrarInvitacion = async (inv) => {
+        const quien = inv.nombre_invitado || inv.telefono || 'sin nombre'
+        if (!window.confirm(`¿Eliminar la invitación de "${quien}" (${inv.num_invitados} entrada/s)?`)) return
+        setEliminandoId(inv.id_invitacion)
+        try {
+            await eliminarInvitacion(inv.id_invitacion)
+            await cargar()
+        } catch (err) {
+            alert(err?.response?.data?.message || 'No se pudo eliminar la invitación.')
+        } finally { setEliminandoId(null) }
+    }
+
     const cargar = async () => {
         if (!eventoId) { setCargando(false); return }
         setCargando(true); setError(null)
@@ -776,6 +816,42 @@ export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, evento
                 {invitaciones.map(inv => {
                     const link   = `${FRONTEND_URL}/invitacion/${inv.token}`
                     const ogLink = buildOgUrl(inv.token)
+                    const enEdicion = editando === inv.id_invitacion
+
+                    if (enEdicion) {
+                        return (
+                            <div key={inv.id_invitacion} className='inv-item inv-item--editando'>
+                                <div className='inv-edit-campos'>
+                                    <input
+                                        type='text'
+                                        className='inv-edit-nombre'
+                                        placeholder='Nombre'
+                                        value={editForm.nombre_invitado}
+                                        onChange={e => setEditForm(f => ({ ...f, nombre_invitado: e.target.value }))}
+                                        maxLength={100}
+                                    />
+                                    <div className='inv-edit-num'>
+                                        <label><FiUsers size={12}/> Entradas</label>
+                                        <input
+                                            type='number' min={1} max={20}
+                                            value={editForm.num_invitados}
+                                            onChange={e => setEditForm(f => ({ ...f, num_invitados: e.target.value }))}
+                                        />
+                                    </div>
+                                </div>
+                                {editError && <p className='inv-form-error inv-edit-error'>{editError}</p>}
+                                <div className='inv-edit-acciones'>
+                                    <button className='inv-cp-btn-cancel' onClick={cancelarEdicion} disabled={guardandoEdit}>
+                                        Cancelar
+                                    </button>
+                                    <button className='inv-btn-crear' onClick={() => guardarEdicion(inv)} disabled={guardandoEdit}>
+                                        {guardandoEdit ? 'Guardando...' : <><FiSave size={13}/> Guardar</>}
+                                    </button>
+                                </div>
+                            </div>
+                        )
+                    }
+
                     return (
                         <div key={inv.id_invitacion} className='inv-item'>
                             <div className='inv-item-info'>
@@ -797,6 +873,21 @@ export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, evento
                                     title='Copiar link'>
                                     {copiado === inv.id_invitacion ? <FiCheck size={13}/> : <FiCopy size={13}/>}
                                 </button>
+                                {inv.estado === 'pendiente' && (
+                                    <button className='inv-item-editar'
+                                        onClick={() => iniciarEdicion(inv)}
+                                        title='Editar invitación'>
+                                        <FiEdit2 size={13}/>
+                                    </button>
+                                )}
+                                {inv.estado !== 'usada' && (
+                                    <button className='inv-item-eliminar'
+                                        onClick={() => borrarInvitacion(inv)}
+                                        disabled={eliminandoId === inv.id_invitacion}
+                                        title='Eliminar invitación'>
+                                        <FiTrash2 size={13}/>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     )

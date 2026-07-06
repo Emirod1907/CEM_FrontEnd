@@ -22,6 +22,16 @@ export const getMisInvitaciones = async (evento_id) => {
     return response.data
 }
 
+export const editarInvitacion = async (id, { num_invitados, nombre_invitado } = {}) => {
+    const response = await axios.patch(`invitaciones/${id}`, { num_invitados, nombre_invitado })
+    return response.data
+}
+
+export const eliminarInvitacion = async (id) => {
+    const response = await axios.delete(`invitaciones/${id}`)
+    return response.data
+}
+
 export const validarQR = async (token) => {
     const response = await axios.post('invitaciones/validar', { token })
     return response.data
