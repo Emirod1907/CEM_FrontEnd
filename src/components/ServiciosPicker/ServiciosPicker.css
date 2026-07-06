@@ -43,7 +43,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px 16px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     flex-shrink: 0;
 }
@@ -97,11 +97,11 @@
 }
 .spk-tipo-tab:hover { color: #555; }
 .spk-tipo-tab.active {
-    color: #770981;
-    border-bottom-color: #770981;
+    color: #6b23d8;
+    border-bottom-color: #6b23d8;
 }
 .spk-tipo-count {
-    background: #770981;
+    background: #6b23d8;
     color: white;
     border-radius: 10px;
     padding: 1px 7px;
@@ -112,7 +112,7 @@
 /* ── Categorías ── */
 /* ── Ítems ya agregados: panel colapsable + filas editables ── */
 .spk-seleccionados {
-    background: linear-gradient(135deg, rgba(119, 9, 129, 0.06), rgba(24, 130, 218, 0.06));
+    background: linear-gradient(135deg, rgba(107, 35, 216, 0.06), rgba(216, 39, 183, 0.06));
     border-bottom: 1px solid #eeecf8;
     flex-shrink: 0;
 }
@@ -125,14 +125,14 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: #770981;
+    color: #6b23d8;
 }
 .spk-seleccionados-titulo {
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: #770981;
+    color: #6b23d8;
 }
 .spk-add-lista {
     display: flex;
@@ -144,12 +144,12 @@
 }
 .spk-add-row {
     background: #fff;
-    border: 1.5px solid rgba(119, 9, 129, 0.3);
+    border: 1.5px solid rgba(107, 35, 216, 0.3);
     border-radius: 12px;
-    box-shadow: 0 1px 5px rgba(119, 9, 129, 0.08);
+    box-shadow: 0 1px 5px rgba(107, 35, 216, 0.08);
     overflow: hidden;
 }
-.spk-add-row--abierto { border-color: #770981; }
+.spk-add-row--abierto { border-color: #6b23d8; }
 .spk-add-main {
     display: flex;
     align-items: center;
@@ -159,7 +159,7 @@
 .spk-add-img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
 .spk-add-info { display: flex; flex-direction: column; line-height: 1.25; flex: 1; min-width: 0; }
 .spk-add-nombre { font-size: 0.86rem; font-weight: 600; color: #3a0a4a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.spk-add-precio { font-size: 0.82rem; font-weight: 700; color: #770981; }
+.spk-add-precio { font-size: 0.82rem; font-weight: 700; color: #6b23d8; }
 .spk-add-precio small { font-weight: 500; color: #9a8aa5; font-size: 0.7rem; }
 .spk-add-cond { font-size: 0.72rem; color: #7c6f8a; display: inline-flex; align-items: center; gap: 4px; margin-top: 1px; }
 .spk-add-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
@@ -182,14 +182,14 @@
     border: none;
     border-radius: 50%;
     background: #fff;
-    color: #770981;
+    color: #6b23d8;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
 }
-.spk-chip-qty-btn:hover:not(:disabled) { background: #770981; color: #fff; }
+.spk-chip-qty-btn:hover:not(:disabled) { background: #6b23d8; color: #fff; }
 .spk-chip-qty-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .spk-chip-qty-num { min-width: 18px; text-align: center; font-size: 0.82rem; font-weight: 700; }
-.spk-chip-qty-label { font-size: 0.68rem; font-weight: 700; color: #770981; padding: 0 4px 0 6px; text-transform: uppercase; }
+.spk-chip-qty-label { font-size: 0.68rem; font-weight: 700; color: #6b23d8; padding: 0 4px 0 6px; text-transform: uppercase; }
 
 /* Lápiz de edición */
 .spk-add-editar {
@@ -201,11 +201,11 @@
     border: 1px solid #e0d5f8;
     border-radius: 8px;
     background: #fff;
-    color: #770981;
+    color: #6b23d8;
     cursor: pointer;
     transition: all 0.15s;
 }
-.spk-add-editar:hover, .spk-add-editar.activo { background: #770981; color: #fff; border-color: #770981; }
+.spk-add-editar:hover, .spk-add-editar.activo { background: #6b23d8; color: #fff; border-color: #6b23d8; }
 
 /* Botón Quitar (igual estética que en la lista) */
 .spk-add-quitar {
@@ -248,15 +248,15 @@
     color: #3a0a4a;
     outline: none;
 }
-.spk-add-input:focus { border-color: #770981; box-shadow: 0 0 0 2px rgba(119, 9, 129, 0.15); }
+.spk-add-input:focus { border-color: #6b23d8; box-shadow: 0 0 0 2px rgba(107, 35, 216, 0.15); }
 .spk-add-cupo-btn {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     padding: 7px 12px;
-    border: 1.5px solid rgba(24, 130, 218, 0.4);
+    border: 1.5px solid rgba(216, 39, 183, 0.4);
     border-radius: 8px;
-    background: rgba(24, 130, 218, 0.1);
+    background: rgba(216, 39, 183, 0.1);
     color: #1670c0;
     font-size: 0.8rem;
     font-weight: 600;
@@ -265,7 +265,7 @@
     transition: all 0.15s;
     align-self: flex-end;
 }
-.spk-add-cupo-btn:hover { background: #1882da; color: #fff; border-color: #1882da; }
+.spk-add-cupo-btn:hover { background: #d827b7; color: #fff; border-color: #d827b7; }
 .spk-add-editor-nota {
     display: inline-flex;
     align-items: center;
@@ -300,7 +300,7 @@
     cursor: pointer;
     transition: all 0.15s;
 }
-.spk-add-confirmar.pendiente { background: linear-gradient(135deg, #770981, #1882da); color: #fff; }
+.spk-add-confirmar.pendiente { background: linear-gradient(135deg, #6b23d8, #d827b7); color: #fff; }
 .spk-add-confirmar.pendiente:hover { filter: brightness(1.08); }
 .spk-add-confirmar.guardado { background: #eafaf0; color: #0a8f4a; cursor: default; }
 .spk-add-confirmar:disabled { opacity: 0.75; cursor: default; }
@@ -331,7 +331,7 @@
 }
 .spk-cat-btn:hover { border-color: #9f7aea; background: #faf5ff; }
 .spk-cat-btn.activa {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-color: transparent;
 }
@@ -376,10 +376,10 @@
     transition: border-color 0.15s, box-shadow 0.15s;
     position: relative;
 }
-.spk-card:hover { border-color: #c4b5fd; box-shadow: 0 2px 10px rgba(119,9,129,0.07); }
+.spk-card:hover { border-color: #c4b5fd; box-shadow: 0 2px 10px rgba(107,35,216,0.07); }
 .spk-card--sel {
-    border-color: #770981;
-    background: linear-gradient(135deg, rgba(119,9,129,0.04), rgba(24,130,218,0.03));
+    border-color: #6b23d8;
+    background: linear-gradient(135deg, rgba(107,35,216,0.04), rgba(216,39,183,0.03));
 }
 .spk-card--bloqueado {
     opacity: 0.6;
@@ -472,7 +472,7 @@
 }
 .spk-turno-btn:hover { border-color: #9f7aea; }
 .spk-turno-btn--active {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-color: transparent;
 }
@@ -513,7 +513,7 @@
     outline: none;
     transition: border-color 0.14s;
 }
-.spk-hora-input:focus { border-color: #770981; }
+.spk-hora-input:focus { border-color: #6b23d8; }
 .spk-hora-fin {
     font-size: 0.74rem;
     color: #9f7aea;
@@ -533,7 +533,7 @@
 .spk-precio-unit {
     font-size: 0.9rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -541,7 +541,7 @@
 .spk-precio-fijo {
     font-size: 1rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -558,7 +558,7 @@
 .spk-unidades-row > strong {
     font-size: 0.95rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -574,7 +574,7 @@
     outline: none;
     color: #333;
 }
-.spk-num-input:focus { border-color: #770981; }
+.spk-num-input:focus { border-color: #6b23d8; }
 
 /* ── Acciones de la card ── */
 .spk-card-actions {
@@ -596,7 +596,7 @@
     border-radius: 7px;
     border: 1.5px solid #d1c4f5;
     background: white;
-    color: #770981;
+    color: #6b23d8;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -617,7 +617,7 @@
     align-items: center;
     gap: 5px;
     padding: 7px 14px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 8px;
@@ -662,7 +662,7 @@
 .spk-footer-resumen {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #770981;
+    color: #6b23d8;
 }
 .spk-footer-hint {
     font-size: 0.82rem;
@@ -674,7 +674,7 @@
     align-items: center;
     gap: 6px;
     padding: 9px 20px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 9px;

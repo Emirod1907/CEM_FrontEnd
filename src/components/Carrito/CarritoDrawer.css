@@ -26,7 +26,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
 }
 
@@ -293,7 +293,7 @@
 }
 
 .badge-org {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     font-size: 0.75rem;
     font-weight: 600;
@@ -341,7 +341,7 @@
 }
 
 .reserva-card-header {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     padding: 10px 14px;
     font-size: 0.95rem;
@@ -374,7 +374,7 @@
 }
 
 .reserva-alquiler strong {
-    color: #770981;
+    color: #6b23d8;
     font-size: 1rem;
     font-family: 'Raleway', sans-serif;
 }
@@ -400,8 +400,8 @@
     align-items: center;
     gap: 8px;
     background: none;
-    border: 2px dashed #1882da;
-    color: #1882da;
+    border: 2px dashed #d827b7;
+    color: #d827b7;
     padding: 10px;
     border-radius: 10px;
     font-size: 0.9rem;
@@ -508,9 +508,9 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    background: rgba(119, 9, 129, 0.15);
+    background: rgba(107, 35, 216, 0.15);
     color: #c084fc;
-    border: 1px solid rgba(119, 9, 129, 0.4);
+    border: 1px solid rgba(107, 35, 216, 0.4);
     padding: 10px;
     border-radius: 10px;
     font-size: 0.88rem;
@@ -521,7 +521,7 @@
     letter-spacing: 0.2px;
 }
 .btn-guardar-reserva:hover {
-    background: rgba(119, 9, 129, 0.28);
+    background: rgba(107, 35, 216, 0.28);
     color: white;
     transform: translateY(-1px);
 }
@@ -556,7 +556,7 @@
     margin: 0;
     font-size: 0.95rem;
     font-family: 'Raleway', sans-serif;
-    color: #770981;
+    color: #6b23d8;
     font-weight: 700;
 }
 
@@ -572,7 +572,7 @@
 }
 
 .roi-sugerido-monto {
-    color: #770981;
+    color: #6b23d8;
     font-family: 'Raleway', sans-serif;
     font-size: 0.92rem;
 }
@@ -605,11 +605,11 @@
 }
 
 .roi-precio-input:focus {
-    border-color: #770981;
+    border-color: #6b23d8;
 }
 
 .roi-btn-sugerir {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     padding: 7px 12px;
@@ -702,7 +702,7 @@
 }
 
 .roi-reparto-monto strong {
-    color: #1882da;
+    color: #d827b7;
     font-family: 'Raleway', sans-serif;
     font-size: 1rem;
 }
@@ -793,7 +793,7 @@
 
 .unidades-drawer-input:focus {
     outline: none;
-    border-color: #770981;
+    border-color: #6b23d8;
 }
 
 .carrito-item-precio.tipo-badge {

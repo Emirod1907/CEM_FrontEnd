@@ -380,7 +380,7 @@ const CarritoDrawer = () => {
                                                     <strong>${costoPorInvitado.toLocaleString('es-AR')}</strong>
                                                 </div>
                                                 <div className='roi-barra-track'>
-                                                    <div className='roi-barra-fill' style={{ width: '100%', background: '#1882da' }} />
+                                                    <div className='roi-barra-fill' style={{ width: '100%', background: '#d827b7' }} />
                                                 </div>
                                                 <span className='roi-reparto-nota'>
                                                     {cupo} invitados × ${costoPorInvitado.toLocaleString('es-AR')} = ${totalOrganizador.toLocaleString('es-AR')}

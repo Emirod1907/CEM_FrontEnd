@@ -233,12 +233,12 @@
     color: white;
 }
 .rr-chip.rr-chip-sel {
-    background: rgba(119, 9, 129, 0.3);
+    background: rgba(107, 35, 216, 0.3);
     border-color: rgba(168, 85, 247, 0.65);
     color: white;
     font-weight: 600;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(119, 9, 129, 0.28);
+    box-shadow: 0 4px 12px rgba(107, 35, 216, 0.28);
 }
 
 .rr-sin-fechas {
@@ -310,7 +310,7 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    background: #770981;
+    background: #6b23d8;
     border: none;
     border-radius: 8px;
     padding: 9px 20px;
@@ -321,7 +321,7 @@
     cursor: pointer;
     transition: background 0.15s, transform 0.12s, opacity 0.15s;
 }
-.rr-btn-prim:hover:not(:disabled) { background: #5e0668; transform: translateY(-1px); }
+.rr-btn-prim:hover:not(:disabled) { background: #5f16c9; transform: translateY(-1px); }
 .rr-btn-prim:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
 /* ── Responsive ─────────────────────────────── */

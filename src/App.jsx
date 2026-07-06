@@ -105,7 +105,7 @@ function App() {
 // Placeholder temporal para rutas de proveedores aún no desarrolladas
 const PlaceholderScreen = ({ titulo }) => (
   <div style={{ padding: '80px 24px', textAlign: 'center' }}>
-    <h2 style={{ color: '#770981' }}>{titulo}</h2>
+    <h2 style={{ color: '#6b23d8' }}>{titulo}</h2>
     <p style={{ color: '#666' }}>Esta sección está en construcción.</p>
   </div>
 )

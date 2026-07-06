@@ -18,7 +18,7 @@ const MAPA_MODAL_ESTILO = { width: '100%', height: '100%', borderRadius: '8px' }
 
 const PIN_STYLE = {
     width: 22, height: 22,
-    background: 'linear-gradient(135deg,#770981,#1882da)',
+    background: 'linear-gradient(135deg,#6b23d8,#d827b7)',
     border: '3px solid white',
     borderRadius: '50%',
     boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
@@ -51,15 +51,15 @@ const selectStyles = {
     container: (base) => ({ ...base, flex: 1, maxWidth: '400px' }),
     control: (base, state) => ({
         ...base,
-        borderColor: state.isFocused ? '#1882da' : 'rgba(119,9,129,0.16)',
-        boxShadow: state.isFocused ? '0 0 0 3px rgba(24,130,218,0.13)' : 'none',
+        borderColor: state.isFocused ? '#d827b7' : 'rgba(107,35,216,0.16)',
+        boxShadow: state.isFocused ? '0 0 0 3px rgba(216,39,183,0.13)' : 'none',
         borderRadius: '12px',
         minHeight: '42px',
-        '&:hover': { borderColor: '#1882da' },
+        '&:hover': { borderColor: '#d827b7' },
     }),
     multiValue: (base) => ({
         ...base,
-        background: 'linear-gradient(135deg,#770981,#1882da)',
+        background: 'linear-gradient(135deg,#6b23d8,#d827b7)',
         borderRadius: '12px',
     }),
     multiValueLabel: (base) => ({ ...base, color: 'white', fontSize: '0.8rem', padding: '2px 6px' }),
@@ -69,7 +69,7 @@ const selectStyles = {
     }),
     option: (base, state) => ({
         ...base,
-        background: state.isSelected ? '#1882da' : state.isFocused ? '#e8f4fd' : 'white',
+        background: state.isSelected ? '#d827b7' : state.isFocused ? '#e8f4fd' : 'white',
         color: state.isSelected ? 'white' : '#333',
         fontSize: '0.9rem',
     }),

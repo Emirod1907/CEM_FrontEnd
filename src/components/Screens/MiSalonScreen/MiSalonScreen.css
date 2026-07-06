@@ -32,7 +32,7 @@
 .ms-btn-primario {
     margin-top: 8px;
     background: white;
-    color: #770981;
+    color: #6b23d8;
     border: none;
     border-radius: 10px;
     padding: 11px 28px;
@@ -206,8 +206,8 @@
 .tags-row { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .tag { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-.tag-servicio { background: rgba(24,130,218,0.2); color: #7dd3fc; border: 1px solid rgba(24,130,218,0.4); }
-.tag-evento   { background: rgba(119,9,129,0.25); color: #e879f9; border: 1px solid rgba(119,9,129,0.45); }
+.tag-servicio { background: rgba(216,39,183,0.2); color: #7dd3fc; border: 1px solid rgba(216,39,183,0.4); }
+.tag-evento   { background: rgba(107,35,216,0.25); color: #e879f9; border: 1px solid rgba(107,35,216,0.45); }
 
 /* ═══════════════════════════════════════════
    Tab PRECIOS
@@ -408,7 +408,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 9px;
@@ -730,7 +730,7 @@
 }
 
 .reservas-lista-count {
-    background: #770981;
+    background: #6b23d8;
     color: white;
     font-size: 0.7rem;
     font-weight: 700;
@@ -963,7 +963,7 @@
 .btn-cancelar-modal:hover { background: rgba(255,255,255,0.14); }
 
 .btn-guardar-modal {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 8px;
@@ -1234,7 +1234,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     border: none;
     border-radius: 8px;
     color: #fff;
@@ -1271,7 +1271,7 @@
     display: flex;
     align-items: center;
     gap: 9px;
-    color: #770981;
+    color: #6b23d8;
     margin-bottom: 8px;
 }
 .cal-ayuda-head h3 { margin: 0; flex: 1; font-size: 1.08rem; color: #2d2a33; font-family: 'Raleway', sans-serif; }
@@ -1281,7 +1281,7 @@
 .cal-ayuda-pasos { margin: 0 0 14px; padding-left: 20px; color: #444; font-size: 0.9rem; }
 .cal-ayuda-pasos li { margin: 7px 0; }
 .cal-ayuda-pasos code {
-    background: #f2edf7; color: #770981; padding: 1px 6px; border-radius: 5px; font-size: 0.85em;
+    background: #f2edf7; color: #6b23d8; padding: 1px 6px; border-radius: 5px; font-size: 0.85em;
 }
 .cal-ayuda-nota {
     display: flex;
@@ -1295,10 +1295,10 @@
     font-size: 0.82rem;
     margin-bottom: 16px;
 }
-.cal-ayuda-nota svg { flex-shrink: 0; margin-top: 2px; color: #770981; }
+.cal-ayuda-nota svg { flex-shrink: 0; margin-top: 2px; color: #6b23d8; }
 .cal-ayuda-ok {
     width: 100%;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: #fff;
     border: none;
     border-radius: 10px;
@@ -1344,14 +1344,14 @@
     margin: 12px 0 16px;
     line-height: 1.5;
 }
-.cal-terminos svg { flex-shrink: 0; margin-top: 2px; color: #770981; }
+.cal-terminos svg { flex-shrink: 0; margin-top: 2px; color: #6b23d8; }
 .cal-btn-conectar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     width: 100%;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: #fff;
     border: none;
     border-radius: 11px;
@@ -1403,7 +1403,7 @@
     padding: 13px 15px;
     margin-bottom: 14px;
 }
-.cal-pc-titulo { font-weight: 700; color: #770981; font-size: 0.92rem; margin-bottom: 4px; }
+.cal-pc-titulo { font-weight: 700; color: #6b23d8; font-size: 0.92rem; margin-bottom: 4px; }
 .cal-pc-desc { color: #6b5b79; font-size: 0.85rem; margin: 0 0 11px; line-height: 1.5; }
 .cal-btn-importar {
     display: inline-flex;
@@ -1411,7 +1411,7 @@
     justify-content: center;
     gap: 8px;
     width: 100%;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: #fff;
     border: none;
     border-radius: 10px;

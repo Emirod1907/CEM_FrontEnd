@@ -124,7 +124,7 @@
     gap: 6px;
     margin-top: 8px;
     padding: 10px 22px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 999px;
@@ -180,15 +180,15 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    background: linear-gradient(135deg, rgba(119, 9, 129, 0.10), rgba(24, 130, 218, 0.08));
-    color: #770981;
+    background: linear-gradient(135deg, rgba(107, 35, 216, 0.10), rgba(216, 39, 183, 0.08));
+    color: #6b23d8;
     font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     padding: 3px 9px;
     border-radius: 999px;
-    border: 1px solid rgba(119, 9, 129, 0.18);
+    border: 1px solid rgba(107, 35, 216, 0.18);
 }
 
 .bor-guardado {
@@ -303,7 +303,7 @@
     justify-content: center;
     gap: 7px;
     padding: 9px 14px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 10px;

@@ -9,8 +9,8 @@
     width: fit-content;
 }
 .tp24:focus-within {
-    border-color: #770981;
-    box-shadow: 0 0 0 2px rgba(119, 9, 129, 0.15);
+    border-color: #6b23d8;
+    box-shadow: 0 0 0 2px rgba(107, 35, 216, 0.15);
 }
 .tp24-num {
     width: 34px;
@@ -29,7 +29,7 @@
 .tp24-sep {
     font-size: 1rem;
     font-weight: 700;
-    color: #770981;
+    color: #6b23d8;
     line-height: 1;
 }
 

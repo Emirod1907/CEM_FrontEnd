@@ -1,20 +1,73 @@
 /* Estilos globales de Dream Events */
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('./de-ui.css');
 
+/* ═══════════════════════════════════════════════════════
+   MARCA UNIFICADA — paleta del Panel de Administración
+   Fuente única de verdad para todo el sitio.
+   (Antes: #770981 / #1882da. Ahora: violeta → magenta.)
+═══════════════════════════════════════════════════════ */
 :root {
-    --de-purple: #770981;
-    --de-blue: #1882da;
-    --de-dark: #211329;
-    --de-text: #26222d;
-    --de-muted: #6e6878;
-    --de-line: rgba(119, 9, 129, 0.14);
-    --de-panel: rgba(255, 255, 255, 0.94);
+    /* Paleta base */
+    --de-indigo: #2d0f73;
+    --de-purple: #5f16c9;
+    --de-violet: #6b23d8;
+    --de-bright: #8d39ff;
+    --de-magenta: #d827b7;
+    --de-gold: #ffd23f;
+
+    /* Alias semánticos de marca (nombres estables que ya usan los componentes) */
+    --de-primary: #6b23d8;
+    --de-primary-dark: #5f16c9;
+    --de-accent: #d827b7;
+    --de-accent-dark: #b7269f;
+    --de-blue: #8d39ff;
+    --de-dark: #1a1030;
+
+    /* Degradados de marca */
+    --de-grad: linear-gradient(135deg, #5f16c9 0%, #8d39ff 55%, #d827b7 100%);
+    --de-grad-soft: linear-gradient(135deg, #6b23d8 0%, #d827b7 100%);
+    --de-bg-gradient: linear-gradient(to right top, #2d0f73, #45149c, #5f16c9, #7526db, #8d39ff, #a338e8, #bd30d0, #d827b7);
+
+    /* Texto */
+    --de-text: #1a1030;
+    --de-ink: #1a1030;
+    --de-ink-soft: #4a4058;
+    --de-muted: #6b6280;
+    --de-muted-strong: #6b6280;
+
+    /* Superficies y líneas */
+    --de-line: rgba(62, 32, 98, 0.12);
+    --de-line-strong: rgba(62, 32, 98, 0.18);
+    --de-panel: rgba(255, 255, 255, 0.96);
     --de-panel-strong: #ffffff;
-    --de-radius-sm: 10px;
+    --de-white: #ffffff;
+    --de-surface: rgba(255, 255, 255, 0.82);
+    --de-glass-dark: rgba(24, 14, 40, 0.74);
+    --de-glass-dark-strong: rgba(23, 13, 39, 0.88);
+    --de-glass-light: rgba(255, 255, 255, 0.96);
+    --de-glass-border: rgba(255, 255, 255, 0.22);
+
+    /* Radios y sombras */
+    --de-radius-sm: 12px;
     --de-radius-md: 16px;
-    --de-radius-lg: 24px;
-    --de-shadow-soft: 0 14px 34px rgba(27, 13, 46, 0.13);
-    --de-shadow-panel: 0 24px 70px rgba(24, 10, 45, 0.22);
+    --de-radius-lg: 22px;
+    --de-radius: 20px;
+    --de-shadow-soft: 0 14px 36px rgba(31, 18, 58, 0.13);
+    --de-shadow-panel: 0 30px 80px rgba(42, 16, 90, 0.20);
+
+    /* Foco */
+    --de-focus: rgba(141, 57, 255, 0.30);
+
+    /* Estados (semánticos, sin cambios) */
+    --de-status-pending-bg: #b77905;
+    --de-status-deposit-bg: #c45512;
+    --de-status-confirmed-bg: #15803d;
+    --de-status-cancelled-bg: #be123c;
+    --de-status-blocked-bg: #475569;
+    --de-danger: #dc2626;
+    --de-success: #15803d;
+    --de-warning: #b77905;
 }
 
 * {
@@ -27,7 +80,7 @@ html {
 }
 
 body {
-    background-image: linear-gradient(to right top, #770981, #732a95, #6c3fa7, #6350b9, #5761c8, #6b5cc2, #7b58bb, #8953b4, #a1358d, #a71261, #9f0035, #8b0a0a);
+    background-image: var(--de-bg-gradient);
     min-height: 100vh;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -52,12 +105,21 @@ a {
     -webkit-tap-highlight-color: transparent;
 }
 
+button {
+    min-height: 36px;
+}
+
+button:disabled,
+[aria-disabled='true'] {
+    cursor: not-allowed !important;
+}
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-    outline: 3px solid rgba(24, 130, 218, 0.25);
+    outline: 3px solid var(--de-focus);
     outline-offset: 2px;
 }
 
@@ -98,7 +160,22 @@ nav {
     z-index: 10000 !important;
 }
 
-/* Scrollbar acorde a la paleta existente (violeta/azul ya definidos) */
+input::placeholder,
+textarea::placeholder {
+    color: rgba(80, 70, 93, 0.62);
+    opacity: 1;
+}
+
+select {
+    color-scheme: light;
+}
+
+::selection {
+    background: rgba(141, 57, 255, 0.30);
+    color: #ffffff;
+}
+
+/* Scrollbar acorde a la paleta */
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -140,65 +217,9 @@ nav {
 }
 
 /* ═══════════════════════════════════════════════════════
-   FASE 5 — Sistema visual unificado / legibilidad
-   Base transversal para evitar parches aislados.
-   No toca lógica ni estructura de datos.
+   Tratamientos transversales heredados (FASE 5)
+   Se mantienen: sólo cambia la paleta subyacente.
 ═══════════════════════════════════════════════════════ */
-:root {
-    --de-bg-gradient: linear-gradient(to right top, #770981, #732a95, #6c3fa7, #6350b9, #5761c8, #6b5cc2, #7b58bb, #8953b4, #a1358d, #a71261, #9f0035, #8b0a0a);
-    --de-white: #ffffff;
-    --de-ink: #251d38;
-    --de-ink-soft: #403647;
-    --de-muted-strong: #665b73;
-    --de-primary: #770981;
-    --de-primary-dark: #5d0667;
-    --de-accent: #1882da;
-    --de-accent-dark: #0f66b0;
-    --de-glass-dark: rgba(24, 14, 40, 0.74);
-    --de-glass-dark-strong: rgba(23, 13, 39, 0.88);
-    --de-glass-light: rgba(255, 255, 255, 0.94);
-    --de-glass-border: rgba(255, 255, 255, 0.22);
-    --de-focus: rgba(24, 130, 218, 0.24);
-    --de-status-pending-bg: #b77905;
-    --de-status-deposit-bg: #c45512;
-    --de-status-confirmed-bg: #15803d;
-    --de-status-cancelled-bg: #be123c;
-    --de-status-blocked-bg: #475569;
-    --de-danger: #dc2626;
-    --de-success: #15803d;
-    --de-warning: #b77905;
-}
-
-body {
-    background-image: var(--de-bg-gradient);
-}
-
-::selection {
-    background: rgba(24, 130, 218, 0.28);
-    color: #ffffff;
-}
-
-button {
-    min-height: 36px;
-}
-
-button:disabled,
-[aria-disabled='true'] {
-    cursor: not-allowed !important;
-}
-
-/* Formularios: contraste mínimo consistente en campos genéricos */
-input::placeholder,
-textarea::placeholder {
-    color: rgba(80, 70, 93, 0.62);
-    opacity: 1;
-}
-
-select {
-    color-scheme: light;
-}
-
-/* Componentes base que comparten intención visual aunque tengan clases distintas */
 :is(.link, .link-seleccionado, .link-logout, .carrito-nav-btn,
     .auth-submit, .btn-nueva-reserva, .btn-google,
     .cr-btn, .cr-btn-archivo, .cr-nav-btn, .cr-volver,
@@ -219,7 +240,6 @@ select {
     outline-offset: 2px;
 }
 
-/* Badges semánticos: forma consistente, el color específico se define por pantalla */
 :is(.estado-badge, .cr-badge, .rd-badge, .badge-manual, .tipo-pill) {
     display: inline-flex;
     align-items: center;
@@ -242,18 +262,16 @@ select {
     }
 }
 
-
 /* =========================
    DREAM EVENTS — TOUR
 ========================= */
-
 .dream-tour-popover {
     border-radius: 16px !important;
     font-family: 'Poppins', sans-serif !important;
 }
 
 .dream-tour-popover .driver-popover-title {
-    color: #2a2030 !important;
+    color: #1a1030 !important;
     font-weight: 700 !important;
 }
 
@@ -263,7 +281,7 @@ select {
 }
 
 .dream-tour-popover .driver-popover-progress-text {
-    color: #6f6577 !important;
+    color: #6b6280 !important;
 }
 
 .dream-tour-popover .driver-popover-prev-btn,
@@ -274,7 +292,7 @@ select {
 }
 
 .dream-tour-popover .driver-popover-next-btn {
-    background: linear-gradient(135deg, #770981, #1882da) !important;
+    background: var(--de-grad) !important;
     color: #ffffff !important;
     border: none !important;
 }
@@ -282,5 +300,5 @@ select {
 .dream-tour-popover .driver-popover-prev-btn {
     background: #ffffff !important;
     color: #4a4052 !important;
-    border: 1px solid rgba(119, 9, 129, 0.18) !important;
+    border: 1px solid var(--de-line-strong) !important;
 }

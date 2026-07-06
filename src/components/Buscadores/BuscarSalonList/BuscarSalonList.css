@@ -7,7 +7,7 @@
 /* Separar el aviso del resto del layout */
 .buscar-salon-aviso-fecha {
     padding: 10px 16px;
-    background: rgba(119, 9, 129, 0.14);
+    background: rgba(107, 35, 216, 0.14);
     border-bottom: 1px solid rgba(168, 85, 247, 0.28);
     color: rgba(192, 132, 252, 0.9);
     font-size: 0.83rem;
@@ -74,8 +74,8 @@
 }
 
 .buscar-salon-input:focus {
-    border-color: #1882da;
-    box-shadow: 0 0 0 2px rgba(24, 130, 218, 0.15);
+    border-color: #d827b7;
+    box-shadow: 0 0 0 2px rgba(216, 39, 183, 0.15);
 }
 
 .buscar-salon-lista-wrapper {
@@ -165,7 +165,7 @@
 .salon-detalle-precio {
     font-size: 1.2rem !important;
     font-weight: 700;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -218,7 +218,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 8px;
@@ -234,9 +234,9 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(24, 130, 218, 0.12);
-    border: 1px solid rgba(24, 130, 218, 0.4);
-    color: #1882da;
+    background: rgba(216, 39, 183, 0.12);
+    border: 1px solid rgba(216, 39, 183, 0.4);
+    color: #d827b7;
     border-radius: 8px;
     padding: 8px 16px;
     font-size: 0.9rem;
@@ -246,7 +246,7 @@
     text-decoration: none;
     transition: background 0.15s, color 0.15s;
 }
-.salon-detalle-mapa:hover { background: rgba(24, 130, 218, 0.22); color: #0f5fa0; }
+.salon-detalle-mapa:hover { background: rgba(216, 39, 183, 0.22); color: #0f5fa0; }
 
 .salon-detalle-comparar {
     display: inline-flex;
@@ -265,7 +265,7 @@
 }
 .salon-detalle-comparar:hover { background: rgba(124, 58, 237, 0.2); }
 .salon-detalle-comparar--activo {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-color: transparent;
 }

@@ -37,7 +37,7 @@
 .pozo-card--recaudado { color: #00a650; background: #f0faf4; border-color: #c9ecd8; }
 .pozo-card--costos    { color: #b45309; background: #fdf7ef; border-color: #f3e0c2; }
 .pozo-card--retirado  { color: #6d28d9; background: #f7f3fe; border-color: #e2d6f9; }
-.pozo-card--saldo     { color: #770981; background: linear-gradient(135deg, #faf0fc, #f3e3f7); border-color: #e3bfe9; }
+.pozo-card--saldo     { color: #6b23d8; background: linear-gradient(135deg, #faf0fc, #f3e3f7); border-color: #e3bfe9; }
 
 .pozo-costo-info {
     font-size: 0.82rem;
@@ -68,7 +68,7 @@
 .pozo-btn--retiro { background: #f3ebfd; color: #6d28d9; border: 1px solid #ddc9f6; }
 .pozo-btn--retiro:hover:not(:disabled) { background: #eadcfb; }
 .pozo-btn--confirmar {
-    background: linear-gradient(135deg, #770981, #a31bb5);
+    background: linear-gradient(135deg, #6b23d8, #a31bb5);
     color: white;
     justify-content: center;
 }
@@ -95,7 +95,7 @@
     font-size: 0.85rem;
     outline: none;
 }
-.pozo-form-row input:focus { border-color: #770981; }
+.pozo-form-row input:focus { border-color: #6b23d8; }
 .pozo-btn-max {
     border: 1px solid #d9c8e3;
     background: white;
@@ -103,7 +103,7 @@
     padding: 6px 10px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #770981;
+    color: #6b23d8;
     cursor: pointer;
 }
 .pozo-form-desc {
@@ -114,7 +114,7 @@
     font-size: 0.83rem;
     outline: none;
 }
-.pozo-form-desc:focus { border-color: #770981; }
+.pozo-form-desc:focus { border-color: #6b23d8; }
 
 .pozo-feedback {
     background: #f0faf4;

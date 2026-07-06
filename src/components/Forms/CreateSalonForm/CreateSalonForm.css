@@ -2,17 +2,17 @@
    CreateSalonForm — Dream Events
    Estilos propios del formulario de alta de salón. Todo va scopeado bajo
    .salon-form-page para no pisar auth / evento / resto de Forms.css.
-   Paleta de marca del sitio: #770981 → #1882da.
+   Paleta de marca del sitio: #6b23d8 → #d827b7.
    ========================================================================== */
 
 .salon-form-page {
-    --sf-magenta: #770981;
-    --sf-blue: #1882da;
-    --sf-grad: linear-gradient(135deg, #770981, #1882da);
+    --sf-magenta: #6b23d8;
+    --sf-blue: #d827b7;
+    --sf-grad: linear-gradient(135deg, #6b23d8, #d827b7);
     --sf-ink: #2a2030;
     --sf-ink-soft: #6f6577;
-    --sf-line: rgba(119, 9, 129, 0.14);
-    --sf-focus-ring: 0 0 0 3px rgba(24, 130, 218, 0.13);
+    --sf-line: rgba(107, 35, 216, 0.14);
+    --sf-focus-ring: 0 0 0 3px rgba(216, 39, 183, 0.13);
     --sf-radius: 12px;
 }
 
@@ -25,7 +25,7 @@
     flex-wrap: wrap;
     margin: 0 0 22px;
     padding: 0 0 18px;
-    border-bottom: 1px solid rgba(119, 9, 129, 0.12);
+    border-bottom: 1px solid rgba(107, 35, 216, 0.12);
 }
 
 .salon-form-page .salon-head-title {
@@ -270,7 +270,7 @@
     width: 100%;
     min-height: 44px;
     padding: 10px 14px;
-    border: 1px solid rgba(119, 9, 129, 0.18);
+    border: 1px solid rgba(107, 35, 216, 0.18);
     border-radius: var(--sf-radius);
     color: #2f2936;
     font: inherit;
@@ -314,7 +314,7 @@
     gap: 12px;
     flex-wrap: wrap;
     padding: 14px 20px;
-    border-top: 1px solid rgba(119, 9, 129, 0.10);
+    border-top: 1px solid rgba(107, 35, 216, 0.10);
     flex-shrink: 0;
 }
 
@@ -339,7 +339,7 @@
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 12px 26px rgba(119, 9, 129, 0.22);
+    box-shadow: 0 12px 26px rgba(107, 35, 216, 0.22);
     transition: transform 0.16s ease, opacity 0.16s ease;
 }
 
