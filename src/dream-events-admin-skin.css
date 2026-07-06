@@ -1,0 +1,480 @@
+/* ==========================================================================
+   Dream Events — AdminPanel Skin Global
+   Objetivo: llevar el lenguaje visual del Panel de Administración al resto
+   del sitio SIN tocar backend ni lógica. Mantiene el degradado de fondo.
+   ========================================================================== */
+
+:root {
+    --de-indigo: #2d0f73;
+    --de-purple: #5f16c9;
+    --de-violet: #6b23d8;
+    --de-bright: #8d39ff;
+    --de-magenta: #d827b7;
+    --de-gold: #ffd23f;
+
+    --de-ink: #1a1030;
+    --de-ink-soft: #5f5572;
+    --de-ink-faint: #8c829b;
+
+    --de-glass: rgba(255, 255, 255, 0.68);
+    --de-glass-strong: rgba(255, 255, 255, 0.78);
+    --de-glass-soft: rgba(255, 255, 255, 0.46);
+    --de-glass-inner: rgba(255, 255, 255, 0.36);
+    --de-line: rgba(255, 255, 255, 0.44);
+    --de-line-purple: rgba(95, 22, 201, 0.18);
+
+    --de-grad-admin: linear-gradient(135deg, #2d0f73 0%, #6b23d8 46%, #d827b7 100%);
+    --de-grad-admin-soft: linear-gradient(135deg, rgba(95, 22, 201, 0.88), rgba(216, 39, 183, 0.78));
+    --de-bg-gradient: linear-gradient(to right top, #770981, #732a95, #6c3fa7, #6350b9, #5761c8, #6b5cc2, #7b58bb, #8953b4, #a1358d, #a71261, #9f0035, #8b0a0a);
+
+    --de-radius-admin: 26px;
+    --de-radius-card: 20px;
+    --de-radius-control: 13px;
+    --de-shadow-admin: 0 30px 80px rgba(42, 16, 90, 0.22);
+    --de-shadow-card: 0 18px 44px rgba(31, 13, 48, 0.16);
+    --de-shadow-soft: 0 10px 28px rgba(31, 13, 48, 0.12);
+}
+
+body {
+    background-image: var(--de-bg-gradient) !important;
+    background-attachment: fixed !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.logo,
+.mis-reservas-titulo h1,
+.form-title h1,
+.admin-header h1 {
+    font-family: 'Raleway', 'Poppins', sans-serif !important;
+    letter-spacing: -0.035em;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Navbar: mismo espíritu AdminPanel, limpio y flotante
+────────────────────────────────────────────────────────────── */
+nav,
+.navbar,
+.nav-bar {
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-bottom: 1px solid rgba(95, 22, 201, 0.12) !important;
+    box-shadow: 0 14px 34px rgba(31, 13, 48, 0.08) !important;
+    backdrop-filter: blur(18px) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.2) !important;
+}
+
+nav button,
+nav a,
+.navbar button,
+.navbar a {
+    border-radius: 999px !important;
+    font-weight: 800 !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Shells / paneles principales transparentes
+────────────────────────────────────────────────────────────── */
+.form-container,
+.admin-panel,
+.cr-panel,
+.cr-calendario,
+.salon-form-page .form-container,
+.mi-salon-page,
+.mis-servicios-page,
+.salones-page,
+.mapa-salones-page,
+.evento-flujo-page,
+.carrito-drawer,
+.compare-bar,
+.modal-content,
+.modal-container,
+.reserva-detalle-modal,
+.reiterar-modal,
+.mapa-salon-modal {
+    background:
+        radial-gradient(900px 420px at 6% -14%, rgba(255, 255, 255, 0.42), transparent 62%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.50)) !important;
+    border: 1px solid var(--de-line) !important;
+    border-radius: var(--de-radius-admin) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        var(--de-shadow-admin) !important;
+    backdrop-filter: blur(22px) saturate(1.25) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(1.25) !important;
+}
+
+.form-container {
+    width: min(860px, calc(100vw - 32px)) !important;
+    padding: clamp(22px, 3vw, 34px) !important;
+    color: var(--de-ink) !important;
+    max-height: none !important;
+}
+
+.container {
+    min-height: calc(100vh - 86px) !important;
+    height: auto !important;
+    padding: 24px 0 48px !important;
+    align-items: flex-start !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Headers de pantalla: rótulo + bloque con profundidad
+────────────────────────────────────────────────────────────── */
+.cef-header-shell,
+.admin-header,
+.mis-reservas-header,
+.salon-head,
+.cr-panel-titulo {
+    position: relative;
+}
+
+.cef-header-shell {
+    overflow: hidden;
+    padding: 22px 24px !important;
+    margin: 0 0 22px !important;
+    border-radius: 20px !important;
+    background:
+        radial-gradient(circle at 88% -10%, rgba(255, 255, 255, 0.26), transparent 42%),
+        var(--de-grad-admin) !important;
+    border: 1px solid rgba(255, 255, 255, 0.24) !important;
+    box-shadow: 0 18px 40px rgba(91, 38, 180, 0.28) !important;
+}
+
+.cef-header-shell::before {
+    content: "✦ Evento";
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 7px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.cef-header-shell::after {
+    content: "";
+    position: absolute;
+    inset: auto -70px -90px auto;
+    width: 260px;
+    height: 180px;
+    border-radius: 999px;
+    background: rgba(255, 210, 63, 0.18);
+    filter: blur(18px);
+    pointer-events: none;
+}
+
+.cef-form-title,
+.form-title {
+    background: transparent !important;
+    display: block !important;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+    color: #fff !important;
+}
+
+.cef-form-title h1,
+.form-title h1 {
+    margin: 0 0 8px !important;
+    color: #fff !important;
+    font-size: clamp(1.75rem, 3vw, 2.45rem) !important;
+    font-weight: 900 !important;
+    line-height: 1.02 !important;
+    text-shadow: 0 10px 26px rgba(15, 5, 50, 0.22);
+}
+
+.cef-form-subtitle,
+.form-title p {
+    color: rgba(255, 255, 255, 0.84) !important;
+    font-weight: 500 !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Cards / estadísticas / calendarios: glass visible
+────────────────────────────────────────────────────────────── */
+.mis-reservas-stat,
+.mis-reservas-ayuda,
+.mis-reservas-vacio,
+.mis-reservas-valorar-banner,
+.cr-item,
+.mm-card,
+.cf-dia,
+.sugeridos-card,
+.sugerido-card,
+.card,
+.salon-card,
+.evento-card {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.46)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.46) !important;
+    border-radius: var(--de-radius-card) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.75),
+        var(--de-shadow-card) !important;
+    backdrop-filter: blur(18px) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.2) !important;
+}
+
+.mis-reservas-stat:hover,
+.cr-item:hover,
+.mm-card:hover,
+.salon-card:hover,
+.evento-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        0 24px 56px rgba(31, 13, 48, 0.22) !important;
+    border-color: rgba(255, 255, 255, 0.64) !important;
+}
+
+.mis-reservas-stat-label svg,
+.mis-reservas-titulo svg,
+.cr-panel-titulo svg,
+.cr-info-row svg,
+.mm-badge,
+.cr-total {
+    color: var(--de-bright) !important;
+}
+
+.cr-total,
+.mm-badge,
+.cr-btn-pagar,
+.btn-nueva-reserva,
+.cef-tutorial-btn {
+    background: var(--de-grad-admin) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.24) !important;
+    box-shadow: 0 14px 30px rgba(95, 22, 201, 0.22) !important;
+}
+
+.cr-panel-titulo {
+    background:
+        radial-gradient(circle at 90% -15%, rgba(255, 255, 255, 0.28), transparent 42%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.40)) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.36) !important;
+}
+
+.cr-filtros {
+    background: rgba(255, 255, 255, 0.36) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.30) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Formularios: inputs transparentes y bordes AdminPanel
+────────────────────────────────────────────────────────────── */
+.form-input label,
+.cef-tipo-evento-row > label,
+.form-toggle-grupo label,
+.form-input-bloque label {
+    color: var(--de-ink) !important;
+    font-weight: 800 !important;
+}
+
+.form-input input,
+.form-input textarea,
+.form-input select,
+.cef-tipo-evento-select,
+.cr-select,
+input,
+select,
+textarea {
+    background: rgba(255, 255, 255, 0.68) !important;
+    border: 1px solid rgba(95, 22, 201, 0.16) !important;
+    border-radius: var(--de-radius-control) !important;
+    color: var(--de-ink) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.form-input input:focus,
+.form-input textarea:focus,
+.form-input select:focus,
+.cef-tipo-evento-select:focus,
+.cr-select:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: rgba(141, 57, 255, 0.62) !important;
+    box-shadow:
+        0 0 0 4px rgba(141, 57, 255, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+    outline: none !important;
+}
+
+.cef-desc-wrapper textarea {
+    min-height: 128px !important;
+}
+
+.form-toggle-grupo,
+.form-input-hint,
+.cef-tipo-detectado,
+.cr-countdown,
+.cr-aviso-sena {
+    background: rgba(255, 255, 255, 0.34) !important;
+    border: 1px solid rgba(255, 255, 255, 0.34) !important;
+    border-radius: 14px !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.toggle-slider {
+    background: rgba(255, 255, 255, 0.64) !important;
+    border: 1px solid rgba(95, 22, 201, 0.16) !important;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--de-grad-admin) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Botones: pill, peso fuerte, gradiente del AdminPanel
+────────────────────────────────────────────────────────────── */
+button,
+.cr-btn,
+.cef-btn-generar,
+.cef-upload-btn,
+.cef-canva-btn,
+.cef-submit-btn,
+.cef-secondary-btn,
+.btn-google,
+.cr-btn-archivo,
+.cr-volver,
+.cr-nav-btn {
+    border-radius: 999px !important;
+    font-weight: 800 !important;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.16s ease !important;
+}
+
+button:hover,
+.cr-btn:hover,
+.cef-btn-generar:hover,
+.cef-upload-btn:hover,
+.cef-canva-btn:hover,
+.cef-submit-btn:hover,
+.cef-secondary-btn:hover {
+    transform: translateY(-1px);
+}
+
+.cef-submit-btn,
+button[type='submit'] {
+    background: var(--de-grad-admin) !important;
+    color: #fff !important;
+    box-shadow: 0 16px 34px rgba(95, 22, 201, 0.24) !important;
+}
+
+.cef-secondary-btn,
+.cr-btn-detalle,
+.cr-btn-archivo,
+.cr-volver,
+.cr-nav-btn,
+.btn-google {
+    background: rgba(255, 255, 255, 0.52) !important;
+    border: 1px solid rgba(255, 255, 255, 0.42) !important;
+    color: var(--de-ink) !important;
+    box-shadow: var(--de-shadow-soft) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Mis Reservas: que el panel se parezca al AdminPanel
+────────────────────────────────────────────────────────────── */
+.mis-reservas-page {
+    width: min(1280px, calc(100% - 48px)) !important;
+    color: #fff !important;
+}
+
+.mis-reservas-header {
+    padding: 24px 28px !important;
+    border-radius: 22px !important;
+    background:
+        radial-gradient(circle at 88% -10%, rgba(255, 255, 255, 0.22), transparent 40%),
+        linear-gradient(135deg, rgba(45, 15, 115, 0.58), rgba(107, 35, 216, 0.38), rgba(216, 39, 183, 0.42)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 18px 44px rgba(31, 13, 48, 0.18) !important;
+    backdrop-filter: blur(18px) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.2) !important;
+}
+
+.mis-reservas-titulo h1 {
+    font-weight: 900 !important;
+    text-shadow: 0 10px 26px rgba(15, 5, 50, 0.22);
+}
+
+.mis-reservas-ayuda {
+    color: rgba(255, 255, 255, 0.90) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.cr-wrapper {
+    gap: 24px !important;
+}
+
+.mm-cel {
+    background: rgba(255, 255, 255, 0.40) !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+}
+
+.mm-cel.mm-reservada,
+.cf-con-reserva {
+    background: var(--de-grad-admin) !important;
+}
+
+.cf-libre {
+    background: rgba(255, 255, 255, 0.42) !important;
+}
+
+.cf-pasada {
+    background: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Responsive: sin cajas gigantes en móvil
+────────────────────────────────────────────────────────────── */
+@media (max-width: 820px) {
+    .form-container {
+        width: min(100%, calc(100vw - 20px)) !important;
+        padding: 18px !important;
+        border-radius: 22px !important;
+    }
+
+    .cef-header-shell,
+    .mis-reservas-header {
+        padding: 20px !important;
+        border-radius: 20px !important;
+    }
+
+    .mis-reservas-page {
+        width: min(100%, calc(100% - 20px)) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .form-input,
+    .cef-tipo-evento-row,
+    .form-toggle-grupo {
+        align-items: stretch !important;
+    }
+
+    .form-input label,
+    .cef-tipo-evento-row > label {
+        flex: none !important;
+        width: 100% !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+        padding-right: 0 !important;
+    }
+
+    .form-input input,
+    .form-input textarea,
+    .form-input select,
+    .cef-tipo-evento-select-wrap {
+        max-width: none !important;
+        width: 100% !important;
+    }
+}

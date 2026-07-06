@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { GoogleMap, OverlayView, useLoadScript } from '@react-google-maps/api'
 import CreatableSelect from 'react-select/creatable'
 import Select from 'react-select'
+import { FiMaximize2, FiX, FiTrash2, FiMapPin, FiCheck } from 'react-icons/fi'
 import UploadImg from '../../../services/uploadimg'
 import { createSalon } from '../../../services/salonesServices'
 import { useTour } from '../../../hooks/useTour'
 import ContratoModal from '../../Modals/ContratoModal/ContratoModal'
 import '../Forms.css'
+import './CreateSalonForm.css'
 
 const LIBRARIES = ['places']
 const CENTRO_DEFAULT = { lat: -32.8908, lng: -68.8272 } // Mendoza, Argentina
@@ -16,7 +18,7 @@ const MAPA_MODAL_ESTILO = { width: '100%', height: '100%', borderRadius: '8px' }
 
 const PIN_STYLE = {
     width: 22, height: 22,
-    background: 'linear-gradient(135deg,#770981,#1882da)',
+    background: 'linear-gradient(135deg,#6b23d8,#d827b7)',
     border: '3px solid white',
     borderRadius: '50%',
     boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
@@ -49,15 +51,15 @@ const selectStyles = {
     container: (base) => ({ ...base, flex: 1, maxWidth: '400px' }),
     control: (base, state) => ({
         ...base,
-        borderColor: state.isFocused ? '#1882da' : '#ccc',
-        boxShadow: state.isFocused ? '0 0 0 1px #1882da' : 'none',
-        borderRadius: '4px',
-        minHeight: '38px',
-        '&:hover': { borderColor: '#1882da' },
+        borderColor: state.isFocused ? '#d827b7' : 'rgba(107,35,216,0.16)',
+        boxShadow: state.isFocused ? '0 0 0 3px rgba(216,39,183,0.13)' : 'none',
+        borderRadius: '12px',
+        minHeight: '42px',
+        '&:hover': { borderColor: '#d827b7' },
     }),
     multiValue: (base) => ({
         ...base,
-        background: 'linear-gradient(135deg,#770981,#1882da)',
+        background: 'linear-gradient(135deg,#6b23d8,#d827b7)',
         borderRadius: '12px',
     }),
     multiValueLabel: (base) => ({ ...base, color: 'white', fontSize: '0.8rem', padding: '2px 6px' }),
@@ -67,7 +69,7 @@ const selectStyles = {
     }),
     option: (base, state) => ({
         ...base,
-        background: state.isSelected ? '#1882da' : state.isFocused ? '#e8f4fd' : 'white',
+        background: state.isSelected ? '#d827b7' : state.isFocused ? '#e8f4fd' : 'white',
         color: state.isSelected ? 'white' : '#333',
         fontSize: '0.9rem',
     }),
@@ -339,7 +341,7 @@ const CreateSalonForm = () => {
     )
 
     return (
-        <div className='container'>
+        <div className='container salon-form-page'>
             {mostrarContrato && (
                 <ContratoModal
                     ambito='salon'
@@ -348,15 +350,23 @@ const CreateSalonForm = () => {
                 />
             )}
             <div className='form-container'>
-                <button
-                    onClick={() => startTour(crearSalonTour)}
-                    style={{ background: '#007bff', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '5px', cursor: 'pointer', margin: '50px 20px' }}
-                >
-                    🎓 Tutorial Registrar Salón
-                </button>
-                <div className='form-title'>
-                    <h1>Registrar Salón</h1>
+                <div className='salon-head'>
+                    <div className='salon-head-title'>
+                        <h1>Registrar salón</h1>
+                        <p className='salon-head-sub'>
+                            Cargá la información de tu salón para publicarlo en Dream Events y empezar a recibir reservas.
+                        </p>
+                    </div>
+                    <button
+                        type='button'
+                        className='cef-tutorial-btn cef-tutorial-btn--pulse'
+                        onClick={() => startTour(crearSalonTour)}
+                    >
+                        <span className='cef-tutorial-btn__icon'>🎓</span>
+                        Ver tutorial
+                    </button>
                 </div>
+
                 <form onSubmit={handleSubmit}>
                     <div className='form-input'>
                         <label htmlFor="nombre">Nombre</label>
@@ -443,70 +453,58 @@ const CreateSalonForm = () => {
                     {/* Selector de ubicación en mapa */}
                     <div className='form-input mapa-picker-container'>
                         <label>Ubicación en el mapa</label>
-                        <p style={{ fontSize: '0.8rem', color: '#666', margin: '2px 0 8px' }}>
-                            Hacé clic en el mapa para marcar la ubicación, o abrilo en grande para buscar por nombre
+                        <p className='salon-map-note'>
+                            Hacé clic en el mapa para marcar la ubicación, o abrilo en grande para buscar por nombre.
                         </p>
 
                         {/* Vista previa del mapa con overlay clickeable */}
-                        <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
+                        <div className='salon-map-preview'>
                             {isLoaded ? mapaContenido(false) : (
-                                <div style={{ height: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f0f0', borderRadius: '8px', color: '#666' }}>
-                                    Cargando mapa...
-                                </div>
+                                <div className='salon-map-loading'>Cargando mapa...</div>
                             )}
                             {/* Botón para abrir modal */}
                             <button
                                 type="button"
+                                className='salon-map-expand'
                                 onClick={() => setModalAbierto(true)}
-                                style={{
-                                    position: 'absolute', top: 8, right: 8,
-                                    background: 'white', border: '1px solid #ccc',
-                                    borderRadius: '6px', padding: '5px 10px',
-                                    cursor: 'pointer', fontSize: '0.8rem',
-                                    boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-                                    display: 'flex', alignItems: 'center', gap: '4px'
-                                }}
                             >
-                                ⛶ Ampliar mapa
+                                <FiMaximize2 size={14} /> Ampliar mapa
                             </button>
                         </div>
 
                         {/* Inputs de coordenadas */}
-                        <div style={{ display: 'flex', gap: '10px', marginTop: '10px', alignItems: 'flex-end' }}>
-                            <div style={{ flex: 1 }}>
-                                <label style={{ fontSize: '0.8rem', color: '#444', display: 'block', marginBottom: '4px' }}>Latitud</label>
+                        <div className='salon-coords-row'>
+                            <div className='salon-coord'>
+                                <label>Latitud</label>
                                 <input
                                     type="number" name="latitud" step="any" placeholder="Ej: -32.8908"
                                     value={form_values_state.latitud ?? ''}
                                     onChange={handleCoordChange}
-                                    style={{ width: '100%', padding: '6px 8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '0.85rem' }}
                                 />
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <label style={{ fontSize: '0.8rem', color: '#444', display: 'block', marginBottom: '4px' }}>Longitud</label>
+                            <div className='salon-coord'>
+                                <label>Longitud</label>
                                 <input
                                     type="number" name="longitud" step="any" placeholder="Ej: -68.8272"
                                     value={form_values_state.longitud ?? ''}
                                     onChange={handleCoordChange}
-                                    style={{ width: '100%', padding: '6px 8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '0.85rem' }}
                                 />
                             </div>
                             <button
-                                type="button" onClick={limpiarUbicacion}
-                                style={{ background: 'none', border: '1px solid #c0392b', color: '#c0392b', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer', fontSize: '0.78rem', whiteSpace: 'nowrap', marginBottom: '1px' }}
+                                type="button" className='salon-coord-clear' onClick={limpiarUbicacion}
                             >
-                                ✕ Limpiar
+                                <FiTrash2 size={13} /> Limpiar
                             </button>
                         </div>
                         {!marcadorPos && (
-                            <p style={{ fontSize: '0.78rem', color: '#888', marginTop: '6px', fontStyle: 'italic' }}>
+                            <p className='salon-coords-empty'>
                                 Sin ubicación seleccionada (opcional)
                             </p>
                         )}
                     </div>
 
                     <div className='form-input-button'>
-                        <button type="submit">Registrar Salón</button>
+                        <button type="submit">Registrar salón</button>
                     </div>
                 </form>
             </div>
@@ -514,71 +512,57 @@ const CreateSalonForm = () => {
             {/* Modal del mapa */}
             {modalAbierto && (
                 <div
+                    className='salon-map-modal-overlay'
                     onClick={(e) => { if (e.target === e.currentTarget) setModalAbierto(false) }}
-                    style={{
-                        position: 'fixed', inset: 0, zIndex: 9999,
-                        background: 'rgba(0,0,0,0.7)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        padding: '20px',
-                    }}
                 >
-                    <div style={{
-                        background: 'white', borderRadius: '12px',
-                        width: '90vw', height: '85vh',
-                        display: 'flex', flexDirection: 'column',
-                        overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
-                    }}>
+                    <div className='salon-map-modal'>
                         {/* Header del modal */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #eee', flexShrink: 0 }}>
-                            <span style={{ fontWeight: 600, fontSize: '1rem' }}>Seleccionar ubicación</span>
+                        <div className='salon-map-modal-head'>
+                            <span className='salon-map-modal-title'>Seleccionar ubicación</span>
                             <button
+                                type='button'
+                                className='salon-map-modal-close'
                                 onClick={() => setModalAbierto(false)}
-                                style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: '#555', lineHeight: 1 }}
+                                aria-label='Cerrar'
                             >
-                                ×
+                                <FiX size={20} />
                             </button>
                         </div>
 
                         {/* Buscador de Google Places */}
-                        <div style={{ padding: '10px 18px', borderBottom: '1px solid #eee', flexShrink: 0 }}>
+                        <div className='salon-map-modal-search'>
                             <input
                                 ref={searchInputRef}
                                 type="text"
                                 placeholder="Buscar lugar por nombre... (ej: Salentein, Mendoza)"
-                                style={{
-                                    width: '100%', padding: '9px 12px',
-                                    border: '1px solid #ccc', borderRadius: '6px',
-                                    fontSize: '0.9rem', boxSizing: 'border-box'
-                                }}
                             />
                         </div>
 
                         {/* Instrucción */}
-                        <p style={{ margin: '6px 18px', fontSize: '0.8rem', color: '#666', flexShrink: 0 }}>
-                            Buscá un lugar o hacé clic directamente en el mapa para colocar el pin
+                        <p className='salon-map-modal-hint'>
+                            Buscá un lugar o hacé clic directamente en el mapa para colocar el pin.
                         </p>
 
                         {/* Mapa grande */}
-                        <div style={{ flex: 1, padding: '0 18px 14px', minHeight: 0 }}>
+                        <div className='salon-map-modal-body'>
                             {isLoaded ? mapaContenido(true) : (
-                                <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f0f0', borderRadius: '8px', color: '#666' }}>
-                                    Cargando mapa...
-                                </div>
+                                <div className='salon-map-modal-loading'>Cargando mapa...</div>
                             )}
                         </div>
 
                         {/* Footer con coords y botón confirmar */}
-                        <div style={{ padding: '12px 18px', borderTop: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-                            <span style={{ fontSize: '0.85rem', color: '#444' }}>
+                        <div className='salon-map-modal-foot'>
+                            <span className='salon-map-modal-coords'>
                                 {marcadorPos
-                                    ? `📍 Lat: ${marcadorPos.lat.toFixed(6)} | Lng: ${marcadorPos.lng.toFixed(6)}`
+                                    ? <><FiMapPin size={13} /> Lat: {marcadorPos.lat.toFixed(6)} · Lng: {marcadorPos.lng.toFixed(6)}</>
                                     : 'Sin ubicación seleccionada'}
                             </span>
                             <button
+                                type='button'
+                                className='salon-map-modal-confirm'
                                 onClick={() => setModalAbierto(false)}
-                                style={{ background: '#1882da', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 20px', cursor: 'pointer', fontWeight: 600 }}
                             >
-                                Confirmar ubicación
+                                <FiCheck size={15} /> Confirmar ubicación
                             </button>
                         </div>
                     </div>

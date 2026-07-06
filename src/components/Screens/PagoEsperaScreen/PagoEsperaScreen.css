@@ -14,7 +14,7 @@
     width: 100%;
     text-align: center;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border-top: 6px solid #770981;
+    border-top: 6px solid #6b23d8;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -23,7 +23,7 @@
 
 .espera-icono {
     position: relative;
-    color: #770981;
+    color: #6b23d8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -34,8 +34,8 @@
     position: absolute;
     width: 84px;
     height: 84px;
-    border: 3px solid rgba(119, 9, 129, 0.15);
-    border-top-color: #770981;
+    border: 3px solid rgba(107, 35, 216, 0.15);
+    border-top-color: #6b23d8;
     border-radius: 50%;
     animation: espera-girar 1.2s linear infinite;
 }
@@ -91,13 +91,13 @@
 }
 
 .espera-btn-verificar {
-    background: linear-gradient(135deg, #770981, #a31bb5);
+    background: linear-gradient(135deg, #6b23d8, #a31bb5);
     color: white;
 }
 
 .espera-btn-verificar:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(119, 9, 129, 0.35);
+    box-shadow: 0 4px 14px rgba(107, 35, 216, 0.35);
 }
 
 .espera-btn-verificar:disabled {

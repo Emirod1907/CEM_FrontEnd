@@ -54,7 +54,7 @@
     max-width: 180px;
 }
 .cbar-item--evento {
-    border-color: rgba(24, 130, 218, 0.4);
+    border-color: rgba(216, 39, 183, 0.4);
 }
 
 .cbar-thumb {
@@ -114,7 +114,7 @@
     align-items: center;
     gap: 7px;
     padding: 9px 18px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 10px;

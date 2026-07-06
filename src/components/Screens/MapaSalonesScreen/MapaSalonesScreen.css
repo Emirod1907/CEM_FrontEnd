@@ -41,7 +41,7 @@
     color: #3a0a4a;
     margin: 0 0 8px 0;
     padding-bottom: 10px;
-    border-bottom: 2px solid rgba(119, 9, 129, 0.3);
+    border-bottom: 2px solid rgba(107, 35, 216, 0.3);
 }
 
 .mapa-seccion {
@@ -53,10 +53,10 @@
 .mapa-btn {
     width: 100%;
     padding: 10px 14px;
-    border: 2px solid #770981;
+    border: 2px solid #6b23d8;
     border-radius: 8px;
     background: transparent;
-    color: #770981;
+    color: #6b23d8;
     font-family: 'Poppins', sans-serif;
     font-size: 0.9rem;
     font-weight: 600;
@@ -69,7 +69,7 @@
 }
 
 .mapa-btn:hover:not(:disabled) {
-    background: #770981;
+    background: #6b23d8;
     color: white;
 }
 
@@ -79,7 +79,7 @@
 }
 
 .mapa-btn-activo {
-    background: #770981;
+    background: #6b23d8;
     color: white;
 }
 
@@ -102,7 +102,7 @@
 }
 
 .mapa-label input[type='checkbox'] {
-    accent-color: #770981;
+    accent-color: #6b23d8;
     width: 16px;
     height: 16px;
     cursor: pointer;
@@ -125,7 +125,7 @@
 
 .mapa-slider {
     width: 100%;
-    accent-color: #770981;
+    accent-color: #6b23d8;
     cursor: pointer;
 }
 
@@ -167,14 +167,14 @@
 }
 
 .mapa-lista-item:hover {
-    border-color: #770981;
-    box-shadow: 0 2px 8px rgba(119, 9, 129, 0.15);
+    border-color: #6b23d8;
+    box-shadow: 0 2px 8px rgba(107, 35, 216, 0.15);
     transform: translateY(-1px);
 }
 
 .mapa-lista-item-activo {
-    border-color: #770981;
-    background: rgba(119, 9, 129, 0.06);
+    border-color: #6b23d8;
+    background: rgba(107, 35, 216, 0.06);
 }
 
 .mapa-lista-nombre {
@@ -196,7 +196,7 @@
     font-family: 'Poppins', sans-serif;
     font-size: 0.8rem;
     font-weight: 600;
-    color: #770981;
+    color: #6b23d8;
     margin: 4px 0 0;
 }
 
@@ -230,14 +230,14 @@
 
 .mapa-infowindow-dist {
     font-weight: 600;
-    color: #770981;
+    color: #6b23d8;
 }
 
 .mapa-btn-reservar {
     margin-top: 8px;
     width: 100%;
     padding: 7px 12px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 8px;
@@ -262,7 +262,7 @@
 .mapa-rango-input {
     width: 58px;
     padding: 4px 6px;
-    border: 1px solid rgba(119, 9, 129, 0.4);
+    border: 1px solid rgba(107, 35, 216, 0.4);
     border-radius: 6px;
     font-family: 'Poppins', sans-serif;
     font-size: 0.85rem;
@@ -273,8 +273,8 @@
 }
 
 .mapa-rango-input:focus {
-    border-color: #770981;
-    box-shadow: 0 0 0 2px rgba(119, 9, 129, 0.15);
+    border-color: #6b23d8;
+    box-shadow: 0 0 0 2px rgba(107, 35, 216, 0.15);
 }
 
 .mapa-rango-input::-webkit-outer-spin-button,
@@ -326,7 +326,7 @@
 .mapa-tipo-limpiar {
     background: none;
     border: none;
-    color: #1882da;
+    color: #d827b7;
     font-size: 0.72rem;
     font-weight: 600;
     cursor: pointer;

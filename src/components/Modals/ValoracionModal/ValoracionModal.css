@@ -30,7 +30,7 @@
     align-items: flex-start;
     justify-content: space-between;
     padding: 20px 24px 16px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     flex-shrink: 0;
 }
@@ -90,14 +90,14 @@
     gap: 8px;
     flex-wrap: wrap;
 }
-.val-seccion-titulo em { font-style: normal; color: #770981; }
+.val-seccion-titulo em { font-style: normal; color: #6b23d8; }
 .val-seccion-num {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 22px;
     height: 22px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-radius: 50%;
     font-size: 0.72rem;
@@ -145,7 +145,7 @@
     transition: border-color 0.14s;
     background: white;
 }
-.val-textarea:focus { border-color: #770981; }
+.val-textarea:focus { border-color: #6b23d8; }
 .val-textarea:disabled { background: #f5f5f5; color: #aaa; }
 
 /* ── Lista de servicios ── */
@@ -202,7 +202,7 @@
     justify-content: center;
     gap: 8px;
     padding: 12px 24px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 10px;

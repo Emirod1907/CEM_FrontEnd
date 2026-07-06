@@ -24,7 +24,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: #fff;
 }
 .imx-header h2 {
@@ -65,7 +65,7 @@
     height: 26px;
     flex-shrink: 0;
     border-radius: 50%;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: #fff;
     font-weight: 700;
     font-size: 0.85rem;
@@ -92,11 +92,11 @@
 .imx-btn-outline {
     background: #fff;
     border: 1.5px solid #cbb6d6;
-    color: #770981;
+    color: #6b23d8;
 }
 .imx-btn-outline:hover { background: #faf4fc; }
 .imx-btn-primary {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: #fff;
     justify-content: center;
 }
@@ -148,7 +148,7 @@
 .imx-tabla th {
     text-align: left;
     background: #f6f1fa;
-    color: #770981;
+    color: #6b23d8;
     padding: 8px 10px;
     position: sticky;
     top: 0;

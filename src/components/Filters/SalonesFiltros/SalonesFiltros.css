@@ -23,12 +23,12 @@
 }
 
 .filtros-aside::-webkit-scrollbar-track {
-    background: rgba(119, 9, 129, 0.06);
+    background: rgba(107, 35, 216, 0.06);
     border-radius: 999px;
 }
 
 .filtros-aside::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #770981, #1882da);
+    background: linear-gradient(180deg, #6b23d8, #d827b7);
     border-radius: 999px;
 }
 
@@ -41,7 +41,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    border-bottom: 1px solid rgba(119, 9, 129, 0.12);
+    border-bottom: 1px solid rgba(107, 35, 216, 0.12);
     padding-bottom: 13px;
     margin-bottom: 8px;
 }
@@ -54,8 +54,8 @@
 }
 
 .filtros-limpiar-btn {
-    background: rgba(24, 130, 218, 0.08);
-    border: 1px solid rgba(24, 130, 218, 0.25);
+    background: rgba(216, 39, 183, 0.08);
+    border: 1px solid rgba(216, 39, 183, 0.25);
     color: #1268ad;
     border-radius: 999px;
     padding: 7px 11px;
@@ -66,12 +66,12 @@
 }
 
 .filtros-limpiar-btn:hover {
-    background: #1882da;
+    background: #d827b7;
     color: white;
 }
 
 .filtros-seccion {
-    border-bottom: 1px solid rgba(119, 9, 129, 0.08);
+    border-bottom: 1px solid rgba(107, 35, 216, 0.08);
 }
 
 .filtros-seccion-header {
@@ -107,7 +107,7 @@
 }
 
 .filtros-seccion-badge {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     font-size: 0.68rem;
     font-weight: 800;
@@ -139,7 +139,7 @@
 
 .filtros-checkbox {
     margin-top: 2px;
-    accent-color: #1882da;
+    accent-color: #d827b7;
     width: 16px;
     height: 16px;
     flex-shrink: 0;
@@ -153,7 +153,7 @@
 }
 
 .filtros-checkbox-label:hover .filtros-checkbox-texto {
-    color: #1882da;
+    color: #d827b7;
 }
 
 .filtros-sin-datos {
@@ -167,8 +167,8 @@
     flex-direction: column;
     gap: 3px;
     padding: 11px 12px;
-    background: rgba(24, 130, 218, 0.07);
-    border: 1px solid rgba(24, 130, 218, 0.16);
+    background: rgba(216, 39, 183, 0.07);
+    border: 1px solid rgba(216, 39, 183, 0.16);
     border-radius: 12px;
 }
 
@@ -213,7 +213,7 @@
 .filtros-input-number {
     width: 100%;
     padding: 9px 11px;
-    border: 1px solid rgba(119, 9, 129, 0.16);
+    border: 1px solid rgba(107, 35, 216, 0.16);
     border-radius: 11px;
     font-size: 0.9rem;
     color: #2f2936;
@@ -224,8 +224,8 @@
 }
 
 .filtros-input-number:focus {
-    border-color: #1882da;
-    box-shadow: 0 0 0 3px rgba(24, 130, 218, 0.13);
+    border-color: #d827b7;
+    box-shadow: 0 0 0 3px rgba(216, 39, 183, 0.13);
 }
 
 .filtros-input-number::placeholder {
@@ -233,7 +233,7 @@
 }
 
 .filtros-checkbox--servicio {
-    accent-color: #1882da;
+    accent-color: #d827b7;
 }
 
 .filtros-tag-servicio {
@@ -246,12 +246,12 @@
 }
 
 .filtros-checkbox--tipo {
-    accent-color: #770981;
+    accent-color: #6b23d8;
 }
 
 .filtros-tag-tipo {
     font-size: 0.82rem;
-    color: #770981;
+    color: #6b23d8;
 }
 
 .filtros-checkbox-label:has(.filtros-checkbox--tipo:checked) .filtros-tag-tipo {

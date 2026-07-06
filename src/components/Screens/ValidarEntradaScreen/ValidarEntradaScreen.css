@@ -76,11 +76,11 @@
 }
 
 .validar-input:focus {
-    border-color: #1882da;
+    border-color: #d827b7;
 }
 
 .validar-btn {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     padding: 12px 20px;
@@ -200,8 +200,8 @@
 
 .validar-btn-nuevo {
     background: none;
-    border: 2px solid #1882da;
-    color: #1882da;
+    border: 2px solid #d827b7;
+    color: #d827b7;
     padding: 8px 20px;
     border-radius: 8px;
     font-size: 0.85rem;
@@ -216,7 +216,7 @@
 }
 
 .validar-btn-nuevo:hover {
-    background: #1882da;
+    background: #d827b7;
     color: white;
 }
 

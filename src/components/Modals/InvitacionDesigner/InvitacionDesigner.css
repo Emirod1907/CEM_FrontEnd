@@ -30,7 +30,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 18px 24px 15px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     flex-shrink: 0;
     gap: 12px;
@@ -104,7 +104,7 @@
     transition: border-color 0.14s, transform 0.12s;
 }
 .ivd-tpl-thumb:hover { transform: translateY(-2px); border-color: #c4b5fd; }
-.ivd-tpl-thumb--active { border-color: #770981; }
+.ivd-tpl-thumb--active { border-color: #6b23d8; }
 .ivd-tpl-thumb-bg {
     display: block;
     width: 100%;
@@ -139,7 +139,7 @@
     transition: border-color 0.12s, background 0.12s, transform 0.1s;
 }
 .ivd-deco-tab:hover { border-color: #c4b5fd; background: #faf5ff; transform: translateY(-1px); }
-.ivd-deco-tab--active { border-color: #770981; background: #f5f0ff; }
+.ivd-deco-tab--active { border-color: #6b23d8; background: #f5f0ff; }
 
 /* ── Ícono central: grid 4 col ── */
 .ivd-deco-grid {
@@ -161,7 +161,7 @@
     line-height: 1;
 }
 .ivd-deco-btn:hover { border-color: #c4b5fd; background: #f0e8ff; transform: scale(1.12); }
-.ivd-deco-btn--active { border-color: #770981; background: #ede9fe; box-shadow: 0 0 0 2px #77098122; }
+.ivd-deco-btn--active { border-color: #6b23d8; background: #ede9fe; box-shadow: 0 0 0 2px #6b23d822; }
 
 .ivd-deco-reset {
     margin-top: 7px;
@@ -199,7 +199,7 @@
     transition: border-color 0.12s, background 0.12s;
 }
 .ivd-marco-btn:hover { background: #f5f0ff; border-color: #c4b5fd; }
-.ivd-marco-btn--active { border-color: #770981; background: #faf5ff; }
+.ivd-marco-btn--active { border-color: #6b23d8; background: #faf5ff; }
 
 /* Thumbnail del marco: mini card con inner border */
 .ivd-marco-thumb {
@@ -252,7 +252,7 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.18);
 }
 .ivd-color-swatch:hover { transform: scale(1.2); }
-.ivd-color-swatch--active { border-color: #770981; transform: scale(1.18); }
+.ivd-color-swatch--active { border-color: #6b23d8; transform: scale(1.18); }
 
 /* ── Mapa de esquinas: 2x2 grid de botones ── */
 .ivd-corners-map {
@@ -266,7 +266,7 @@
 .ivd-corners-map-label {
     grid-column: 1 / -1;
     font-size: 0.68rem;
-    color: #770981;
+    color: #6b23d8;
     font-weight: 700;
     text-align: center;
     padding: 2px 0;
@@ -284,7 +284,7 @@
     transition: border-color 0.12s, background 0.12s;
 }
 .ivd-corner-map-btn:hover { border-color: #c4b5fd; background: #f0e8ff; }
-.ivd-corner-map-btn--active { border-color: #770981; background: #ede9fe; }
+.ivd-corner-map-btn--active { border-color: #6b23d8; background: #ede9fe; }
 .ivd-corner-map-plus {
     font-size: 1.1rem;
     color: #c4b5fd;
@@ -312,7 +312,7 @@
     line-height: 1;
 }
 .ivd-corner-btn:hover { border-color: #c4b5fd; background: #f0e8ff; transform: scale(1.15); }
-.ivd-corner-btn--active { border-color: #770981; background: #ede9fe; }
+.ivd-corner-btn--active { border-color: #6b23d8; background: #ede9fe; }
 
 /* ── Campos de texto ── */
 .ivd-campos {
@@ -345,7 +345,7 @@
     resize: vertical;
 }
 .ivd-campo input:focus,
-.ivd-campo textarea:focus { border-color: #770981; }
+.ivd-campo textarea:focus { border-color: #6b23d8; }
 
 /* ── Preview area ── */
 .ivd-preview-area {
@@ -524,7 +524,7 @@
     align-items: center;
     gap: 8px;
     padding: 10px 22px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 10px;
@@ -533,7 +533,7 @@
     cursor: pointer;
     transition: opacity 0.14s, transform 0.14s;
     font-family: 'Poppins', sans-serif;
-    box-shadow: 0 4px 14px rgba(119,9,129,0.3);
+    box-shadow: 0 4px 14px rgba(107,35,216,0.3);
 }
 .ivd-btn-exportar:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
 .ivd-btn-exportar:disabled { opacity: 0.55; cursor: wait; }

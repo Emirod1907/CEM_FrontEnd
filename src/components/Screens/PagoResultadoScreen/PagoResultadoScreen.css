@@ -108,7 +108,7 @@
 }
 
 .btn-home {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
 }
 
@@ -144,14 +144,14 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #770981;
+    color: #6b23d8;
 }
 
 .resultado-invitacion-titulo h3 {
     margin: 0;
     font-family: 'Raleway', sans-serif;
     font-size: 1rem;
-    color: #770981;
+    color: #6b23d8;
 }
 
 .resultado-invitacion-desc {
@@ -174,7 +174,7 @@
 .resultado-link-texto {
     flex: 1;
     font-size: 0.78rem;
-    color: #1882da;
+    color: #d827b7;
     word-break: break-all;
     font-family: monospace;
 }
@@ -183,7 +183,7 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     padding: 6px 12px;
@@ -222,7 +222,7 @@
     align-items: center;
     gap: 8px;
     justify-content: center;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     padding: 10px 20px;

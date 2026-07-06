@@ -15,7 +15,7 @@
 .card-container:hover {
     transform: translateY(-3px);
     box-shadow: 0 22px 48px rgba(24, 10, 45, 0.22);
-    border-color: rgba(24, 130, 218, 0.24);
+    border-color: rgba(216, 39, 183, 0.24);
 }
 
 .card-box {
@@ -36,7 +36,7 @@
     font-weight: 800;
     margin: 0;
     padding-bottom: 10px;
-    border-bottom: 1px solid rgba(119, 9, 129, 0.10);
+    border-bottom: 1px solid rgba(107, 35, 216, 0.10);
 }
 
 .card-fields h2,
@@ -71,7 +71,7 @@
     object-fit: cover;
     border-radius: 16px;
     display: block;
-    background: rgba(119, 9, 129, 0.06);
+    background: rgba(107, 35, 216, 0.06);
 }
 
 /* Contenedor de imagen: recorta el zoom sutil al hacer hover sobre la card */
@@ -93,7 +93,7 @@
     display: inline-flex;
     align-items: baseline;
     gap: 2px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -140,7 +140,7 @@
 }
 
 .salon-tag--tipo {
-    background: #770981;
+    background: #6b23d8;
     color: #ffffff;
     text-transform: uppercase;
     font-size: 0.62rem;
@@ -184,7 +184,7 @@
     gap: 8px;
     padding-top: 12px;
     margin-top: auto;
-    border-top: 1px solid rgba(119, 9, 129, 0.10);
+    border-top: 1px solid rgba(107, 35, 216, 0.10);
     flex-wrap: wrap;
 }
 
@@ -205,30 +205,30 @@
 }
 
 .salon-ver-detalle-btn {
-    background: rgba(24, 130, 218, 0.08);
-    border: 1px solid rgba(24, 130, 218, 0.28);
+    background: rgba(216, 39, 183, 0.08);
+    border: 1px solid rgba(216, 39, 183, 0.28);
     color: #1268ad;
 }
 
 .salon-ver-detalle-btn:hover {
-    background: #1882da;
+    background: #d827b7;
     color: white;
     transform: translateY(-1px);
 }
 
 .salon-comparar-btn {
-    background: rgba(119, 9, 129, 0.07);
-    border: 1px solid rgba(119, 9, 129, 0.18);
-    color: #770981;
+    background: rgba(107, 35, 216, 0.07);
+    border: 1px solid rgba(107, 35, 216, 0.18);
+    color: #6b23d8;
 }
 
 .salon-comparar-btn:hover:not(:disabled) {
-    background: rgba(119, 9, 129, 0.12);
+    background: rgba(107, 35, 216, 0.12);
     transform: translateY(-1px);
 }
 
 .salon-comparar-btn--activo {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-color: transparent;
 }

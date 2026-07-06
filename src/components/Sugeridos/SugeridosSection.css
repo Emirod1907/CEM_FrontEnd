@@ -1,7 +1,7 @@
 /* ── Sección Sugeridos ── */
 .sug-section {
-    background: linear-gradient(135deg, rgba(119,9,129,0.05), rgba(24,130,218,0.04));
-    border: 1.5px solid rgba(119,9,129,0.18);
+    background: linear-gradient(135deg, rgba(107,35,216,0.05), rgba(216,39,183,0.04));
+    border: 1.5px solid rgba(107,35,216,0.18);
     border-radius: 16px;
     padding: 18px 20px;
     margin-bottom: 24px;
@@ -17,14 +17,14 @@
     flex-wrap: wrap;
 }
 .sug-titulo-icon {
-    color: #770981;
+    color: #6b23d8;
     flex-shrink: 0;
 }
 .sug-titulo {
     margin: 0;
     font-size: 1rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -50,11 +50,11 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 2px 10px rgba(119,9,129,0.06);
+    box-shadow: 0 2px 10px rgba(107,35,216,0.06);
     transition: box-shadow 0.14s, transform 0.14s;
 }
 .sug-card:hover {
-    box-shadow: 0 6px 20px rgba(119,9,129,0.12);
+    box-shadow: 0 6px 20px rgba(107,35,216,0.12);
     transform: translateY(-2px);
 }
 .sug-card-img {
@@ -81,7 +81,7 @@
 .sug-rank {
     font-size: 0.68rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-radius: 6px;
     padding: 1px 7px;
@@ -161,7 +161,7 @@
     justify-content: center;
     gap: 6px;
     padding: 8px 14px;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     border-radius: 9px;

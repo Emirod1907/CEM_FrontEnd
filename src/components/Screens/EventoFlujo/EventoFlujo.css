@@ -15,7 +15,7 @@
     letter-spacing: 0.5px;
     text-transform: uppercase;
     color: #fff;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     padding: 3px 12px;
     border-radius: 12px;
     margin-bottom: 10px;
@@ -54,16 +54,16 @@
     transition: all 0.16s;
 }
 .flujo-btn--primary {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: #fff;
 }
-.flujo-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(119, 9, 129, 0.28); }
+.flujo-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(107, 35, 216, 0.28); }
 .flujo-btn--ghost {
     background: #fff;
     color: #555;
     border: 1.5px solid #d9d4e2;
 }
-.flujo-btn--ghost:hover { background: #f6f4fa; color: #770981; border-color: #cbb6d6; }
+.flujo-btn--ghost:hover { background: #f6f4fa; color: #6b23d8; border-color: #cbb6d6; }
 
 /* Estado sin reserva */
 .flujo-vacio {
@@ -89,10 +89,10 @@
     padding: 16px 18px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
-.salon-fecha-head { display: flex; align-items: center; gap: 8px; color: #770981; }
+.salon-fecha-head { display: flex; align-items: center; gap: 8px; color: #6b23d8; }
 .salon-fecha-head h3 { margin: 0; font-size: 1.05rem; font-family: 'Raleway', sans-serif; color: #2d2a33; }
 .salon-fecha-actual { margin: 10px 0 4px; color: #555; font-size: 0.92rem; text-transform: capitalize; }
-.salon-fecha-precio { color: #770981; font-weight: 600; }
+.salon-fecha-precio { color: #6b23d8; font-weight: 600; }
 .salon-fecha-hint { margin: 6px 0 12px; color: #888; font-size: 0.85rem; }
 .salon-fecha-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .salon-fecha-input {
@@ -104,7 +104,7 @@
     color: #3a0a4a;
     outline: none;
 }
-.salon-fecha-input:focus { border-color: #770981; box-shadow: 0 0 0 2px rgba(119, 9, 129, 0.15); }
+.salon-fecha-input:focus { border-color: #6b23d8; box-shadow: 0 0 0 2px rgba(107, 35, 216, 0.15); }
 .salon-fecha-preview {
     display: flex;
     align-items: center;
@@ -177,7 +177,7 @@
     transition: box-shadow 0.15s, transform 0.1s;
 }
 .salon-detalle-minimapa:hover {
-    box-shadow: 0 4px 16px rgba(119, 9, 129, 0.2);
+    box-shadow: 0 4px 16px rgba(107, 35, 216, 0.2);
     transform: translateY(-1px);
 }
 .salon-detalle-minimapa img {
@@ -193,7 +193,7 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    background: rgba(119, 9, 129, 0.92);
+    background: rgba(107, 35, 216, 0.92);
     color: #fff;
     font-size: 0.75rem;
     font-weight: 600;

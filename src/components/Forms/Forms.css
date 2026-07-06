@@ -26,8 +26,8 @@
 }
 
 .form-title {
-    background-color: #1882da;
-    /* background-color: #136385; */
+    background-color: #d827b7;
+    /* background-color: #5f16c9; */
     display: flex;
     justify-content: center;
     border-radius: 5px;
@@ -69,8 +69,8 @@
 
 .salon-tipo-select:focus {
     outline: none;
-    border-color: #1882da;
-    box-shadow: 0 0 0 1px #1882da;
+    border-color: #d827b7;
+    box-shadow: 0 0 0 1px #d827b7;
 }
 
 .form-input-button {
@@ -189,7 +189,7 @@
 }
 
 .cef-tipo-evento-select:focus {
-    border-color: #770981;
+    border-color: #6b23d8;
 }
 
 .cef-tipo-detectado {
@@ -252,7 +252,7 @@
 }
 
 .cef-desc-wrapper textarea:focus {
-    border-color: #770981;
+    border-color: #6b23d8;
 }
 
 .cef-btn-generar {
@@ -338,7 +338,7 @@
 }
 
 .toggle-switch input:checked+.toggle-slider {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
 }
 
 .toggle-switch input:checked+.toggle-slider::before {
@@ -353,7 +353,7 @@
 }
 
 .toggle-valor.activo {
-    color: #1882da;
+    color: #d827b7;
     font-weight: 600;
 }
 
@@ -434,13 +434,13 @@
 .cef-timepicker-sep {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #770981;
+    color: #6b23d8;
     line-height: 1;
 }
 
 .cef-timepicker:focus-within {
-    border-color: #770981;
-    box-shadow: 0 0 0 2px rgba(119, 9, 129, 0.15);
+    border-color: #6b23d8;
+    box-shadow: 0 0 0 2px rgba(107, 35, 216, 0.15);
 }
 
 /* ── Preview de precio según fecha del evento ── */
@@ -594,7 +594,7 @@
 }
 
 .cef-btn-comparar--activo {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-color: transparent;
 }
@@ -605,7 +605,7 @@
 
 /* Agregar al carrito — principal */
 .cef-btn-carrito {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
 }
@@ -703,7 +703,7 @@
     border-radius: 12px;
     padding: 14px 16px;
     margin: 12px 0;
-    background: linear-gradient(135deg, rgba(119, 9, 129, 0.03), rgba(24, 130, 218, 0.02));
+    background: linear-gradient(135deg, rgba(107, 35, 216, 0.03), rgba(216, 39, 183, 0.02));
 }
 
 .cef-servicios-aviso {
@@ -714,8 +714,8 @@
     border-radius: 12px;
     padding: 12px 16px;
     margin: 12px 0;
-    background: linear-gradient(135deg, rgba(119, 9, 129, 0.04), rgba(24, 130, 218, 0.03));
-    color: #770981;
+    background: linear-gradient(135deg, rgba(107, 35, 216, 0.04), rgba(216, 39, 183, 0.03));
+    color: #6b23d8;
     font-size: 0.86rem;
 }
 
@@ -799,7 +799,7 @@
 
 .cef-serv-precio {
     font-weight: 800;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -897,14 +897,14 @@
 }
 
 .cef-imagen-canva-btn--primary {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-color: transparent;
-    box-shadow: 0 3px 10px rgba(119, 9, 129, 0.25);
+    box-shadow: 0 3px 10px rgba(107, 35, 216, 0.25);
 }
 
 .cef-imagen-canva-btn--primary:hover {
-    background: linear-gradient(135deg, #5e0668, #1368b8);
+    background: linear-gradient(135deg, #5f16c9, #b7269f);
     border-color: transparent;
     opacity: 0.92;
 }
@@ -1080,7 +1080,7 @@
     justify-content: center;
     align-items: flex-start;
     padding: 52px;
-    background: linear-gradient(135deg, rgba(119, 9, 129, 0.92), rgba(24, 130, 218, 0.90));
+    background: linear-gradient(135deg, rgba(107, 35, 216, 0.92), rgba(216, 39, 183, 0.90));
     color: #ffffff;
 }
 
@@ -1162,8 +1162,8 @@
 }
 
 .auth-field input:focus {
-    border-color: #1882da;
-    box-shadow: 0 0 0 3px rgba(24, 130, 218, 0.14);
+    border-color: #d827b7;
+    box-shadow: 0 0 0 3px rgba(216, 39, 183, 0.14);
 }
 
 .auth-submit {
@@ -1173,18 +1173,18 @@
     border: 0;
     border-radius: 6px;
     color: #ffffff;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     font: inherit;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 10px 24px rgba(119, 9, 129, 0.24);
+    box-shadow: 0 10px 24px rgba(107, 35, 216, 0.24);
     transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
 }
 
 .auth-submit:hover {
     transform: translateY(-1px);
     opacity: 0.95;
-    box-shadow: 0 14px 30px rgba(24, 130, 218, 0.22);
+    box-shadow: 0 14px 30px rgba(216, 39, 183, 0.22);
 }
 
 .auth-divider {
@@ -1271,7 +1271,7 @@
     justify-content: flex-start;
     margin: 0 0 22px;
     padding: 0 0 16px;
-    border-bottom: 1px solid rgba(119, 9, 129, 0.12);
+    border-bottom: 1px solid rgba(107, 35, 216, 0.12);
 }
 
 .form-title h1,
@@ -1304,7 +1304,7 @@
 .cef-tipo-evento-select,
 .cef-desc-wrapper textarea {
     min-height: 42px;
-    border: 1px solid rgba(119, 9, 129, 0.16);
+    border: 1px solid rgba(107, 35, 216, 0.16);
     border-radius: 12px;
     background: #ffffff;
     color: #2f2936;
@@ -1319,8 +1319,8 @@
 .salon-tipo-select:focus,
 .cef-tipo-evento-select:focus,
 .cef-desc-wrapper textarea:focus {
-    border-color: #1882da;
-    box-shadow: 0 0 0 3px rgba(24, 130, 218, 0.13);
+    border-color: #d827b7;
+    box-shadow: 0 0 0 3px rgba(216, 39, 183, 0.13);
     outline: none;
 }
 
@@ -1333,9 +1333,9 @@
     border-radius: 999px;
     min-height: 42px;
     padding: 10px 18px;
-    border: 1px solid rgba(119, 9, 129, 0.16);
-    background: rgba(119, 9, 129, 0.07);
-    color: #770981;
+    border: 1px solid rgba(107, 35, 216, 0.16);
+    background: rgba(107, 35, 216, 0.07);
+    color: #6b23d8;
     font-weight: 800;
     cursor: pointer;
     transition: transform 0.16s ease, background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
@@ -1348,22 +1348,22 @@
 .cef-imagen-upload-btn:hover,
 .cef-imagen-canva-btn:hover {
     transform: translateY(-1px);
-    background: rgba(119, 9, 129, 0.12);
+    background: rgba(107, 35, 216, 0.12);
 }
 
 .form-input-button button[type='submit'],
 .form-container form>.form-input-button button,
 .cef-imagen-canva-btn--primary {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: #fff;
     border-color: transparent;
-    box-shadow: 0 14px 28px rgba(119, 9, 129, 0.20);
+    box-shadow: 0 14px 28px rgba(107, 35, 216, 0.20);
 }
 
 .btn-google {
     min-height: 44px;
     border-radius: 999px;
-    border: 1px solid rgba(119, 9, 129, 0.13);
+    border: 1px solid rgba(107, 35, 216, 0.13);
     color: #342d3a;
     background: #fff;
     font-weight: 800;
@@ -1382,7 +1382,7 @@
 
 .form-divider::before,
 .form-divider::after {
-    border-bottom-color: rgba(119, 9, 129, 0.14);
+    border-bottom-color: rgba(107, 35, 216, 0.14);
 }
 
 .auth-page {
@@ -1421,7 +1421,7 @@
     justify-content: center;
     align-items: flex-start;
     padding: 52px;
-    background: linear-gradient(135deg, rgba(119, 9, 129, 0.94), rgba(24, 130, 218, 0.90));
+    background: linear-gradient(135deg, rgba(107, 35, 216, 0.94), rgba(216, 39, 183, 0.90));
     color: #ffffff;
     overflow: hidden;
 }
@@ -1523,7 +1523,7 @@
     min-height: 46px;
     box-sizing: border-box;
     padding: 12px 14px;
-    border: 1px solid rgba(119, 9, 129, 0.16);
+    border: 1px solid rgba(107, 35, 216, 0.16);
     border-radius: 13px;
     background: #ffffff;
     color: #2f2936;
@@ -1537,8 +1537,8 @@
 }
 
 .auth-field input:focus {
-    border-color: #1882da;
-    box-shadow: 0 0 0 3px rgba(24, 130, 218, 0.13);
+    border-color: #d827b7;
+    box-shadow: 0 0 0 3px rgba(216, 39, 183, 0.13);
 }
 
 .auth-submit {
@@ -1549,18 +1549,18 @@
     border: 0;
     border-radius: 999px;
     color: #ffffff;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     font: inherit;
     font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 15px 32px rgba(119, 9, 129, 0.24);
+    box-shadow: 0 15px 32px rgba(107, 35, 216, 0.24);
     transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
 }
 
 .auth-submit:hover {
     transform: translateY(-1px);
     opacity: 0.96;
-    box-shadow: 0 19px 38px rgba(24, 130, 218, 0.22);
+    box-shadow: 0 19px 38px rgba(216, 39, 183, 0.22);
 }
 
 .auth-divider {
@@ -1666,7 +1666,7 @@
     gap: 8px;
     margin: 0;
     padding: 0 0 18px;
-    border-bottom: 1px solid rgba(119, 9, 129, 0.10);
+    border-bottom: 1px solid rgba(107, 35, 216, 0.10);
     width: 100%;
 }
 
@@ -1695,21 +1695,21 @@
     align-items: center;
     gap: 10px;
     padding: 12px 18px;
-    border: 1px solid rgba(24, 130, 218, 0.24);
+    border: 1px solid rgba(216, 39, 183, 0.24);
     border-radius: 14px;
-    background: linear-gradient(135deg, rgba(119, 9, 129, 0.92), rgba(24, 130, 218, 0.92));
+    background: linear-gradient(135deg, rgba(107, 35, 216, 0.92), rgba(216, 39, 183, 0.92));
     color: #fff;
     font-family: 'Poppins', sans-serif;
     font-size: 0.92rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 10px 24px rgba(24, 130, 218, 0.20);
+    box-shadow: 0 10px 24px rgba(216, 39, 183, 0.20);
     transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
 }
 
 .cef-tutorial-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 30px rgba(24, 130, 218, 0.28);
+    box-shadow: 0 16px 30px rgba(216, 39, 183, 0.28);
     opacity: 0.96;
 }
 
@@ -1724,17 +1724,17 @@
 @keyframes cefPulse {
     0% {
         transform: scale(1);
-        box-shadow: 0 10px 24px rgba(24, 130, 218, 0.20);
+        box-shadow: 0 10px 24px rgba(216, 39, 183, 0.20);
     }
 
     50% {
         transform: scale(1.025);
-        box-shadow: 0 0 0 10px rgba(24, 130, 218, 0.06), 0 14px 30px rgba(24, 130, 218, 0.25);
+        box-shadow: 0 0 0 10px rgba(216, 39, 183, 0.06), 0 14px 30px rgba(216, 39, 183, 0.25);
     }
 
     100% {
         transform: scale(1);
-        box-shadow: 0 10px 24px rgba(24, 130, 218, 0.20);
+        box-shadow: 0 10px 24px rgba(216, 39, 183, 0.20);
     }
 }
 
@@ -1788,7 +1788,7 @@
 }
 
 .toggle-valor.activo {
-    color: #1882da;
+    color: #d827b7;
     font-weight: 600;
 }
 
@@ -1848,7 +1848,7 @@
 }
 
 .cef-btn-comparar--activo {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-color: transparent;
 }
@@ -1866,7 +1866,7 @@
 
 .cef-btn-carrito {
     justify-self: end;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     min-width: 250px;
@@ -1947,7 +1947,7 @@
     gap: 8px;
     margin: 0;
     padding: 0 0 18px;
-    border-bottom: 1px solid rgba(119, 9, 129, 0.10);
+    border-bottom: 1px solid rgba(107, 35, 216, 0.10);
     width: 100%;
 }
 
@@ -1976,21 +1976,21 @@
     align-items: center;
     gap: 10px;
     padding: 12px 18px;
-    border: 1px solid rgba(24, 130, 218, 0.24);
+    border: 1px solid rgba(216, 39, 183, 0.24);
     border-radius: 14px;
-    background: linear-gradient(135deg, rgba(119, 9, 129, 0.92), rgba(24, 130, 218, 0.92));
+    background: linear-gradient(135deg, rgba(107, 35, 216, 0.92), rgba(216, 39, 183, 0.92));
     color: #fff;
     font-family: 'Poppins', sans-serif;
     font-size: 0.92rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 10px 24px rgba(24, 130, 218, 0.20);
+    box-shadow: 0 10px 24px rgba(216, 39, 183, 0.20);
     transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
 }
 
 .cef-tutorial-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 30px rgba(24, 130, 218, 0.28);
+    box-shadow: 0 16px 30px rgba(216, 39, 183, 0.28);
     opacity: 0.96;
 }
 
@@ -2005,17 +2005,17 @@
 @keyframes cefPulse {
     0% {
         transform: scale(1);
-        box-shadow: 0 10px 24px rgba(24, 130, 218, 0.20);
+        box-shadow: 0 10px 24px rgba(216, 39, 183, 0.20);
     }
 
     50% {
         transform: scale(1.025);
-        box-shadow: 0 0 0 10px rgba(24, 130, 218, 0.06), 0 14px 30px rgba(24, 130, 218, 0.25);
+        box-shadow: 0 0 0 10px rgba(216, 39, 183, 0.06), 0 14px 30px rgba(216, 39, 183, 0.25);
     }
 
     100% {
         transform: scale(1);
-        box-shadow: 0 10px 24px rgba(24, 130, 218, 0.20);
+        box-shadow: 0 10px 24px rgba(216, 39, 183, 0.20);
     }
 }
 
@@ -2069,7 +2069,7 @@
 }
 
 .toggle-valor.activo {
-    color: #1882da;
+    color: #d827b7;
     font-weight: 600;
 }
 
@@ -2129,7 +2129,7 @@
 }
 
 .cef-btn-comparar--activo {
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border-color: transparent;
 }
@@ -2147,7 +2147,7 @@
 
 .cef-btn-carrito {
     justify-self: end;
-    background: linear-gradient(135deg, #770981, #1882da);
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
     color: white;
     border: none;
     min-width: 250px;
