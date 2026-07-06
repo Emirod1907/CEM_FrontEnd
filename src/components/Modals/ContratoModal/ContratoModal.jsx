@@ -3,7 +3,7 @@ import { FiX, FiCheck, FiFileText } from 'react-icons/fi'
 import { getTerminosActuales, aceptarContrato } from '../../../services/contratoServices'
 import './ContratoModal.css'
 
-const ContratoModal = ({ onClose, onAceptado, ambito = 'salon' }) => {
+const ContratoModal = ({ onClose, onAceptado, ambito = 'salon', motivoComision = false }) => {
     const [terminos, setTerminos] = useState(null)
     const [cargando, setCargando] = useState(true)
     const [aceptando, setAceptando] = useState(false)
@@ -50,6 +50,13 @@ const ContratoModal = ({ onClose, onAceptado, ambito = 'salon' }) => {
 
                 <div className='contrato-body'>
                     {cargando && <p className='contrato-loading'>Cargando términos...</p>}
+
+                    {!cargando && motivoComision && (
+                        <p className='contrato-aviso-comision'>
+                            La comisión de tu contrato fue actualizada por la administración.
+                            Revisá y aceptá los nuevos términos para que se apliquen a tus precios.
+                        </p>
+                    )}
 
                     {!cargando && terminos && (
                         <>

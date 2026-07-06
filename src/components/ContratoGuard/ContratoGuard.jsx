@@ -16,6 +16,7 @@ const AMBITO_POR_ROL = {
 const ContratoGuard = () => {
     const { persona, isAuthenticated, loading } = useAuth()
     const [mostrar, setMostrar] = useState(false)
+    const [motivoComision, setMotivoComision] = useState(false)
     const chequeadoPara = useRef(null)
 
     const ambito = AMBITO_POR_ROL[persona?.rol]
@@ -31,7 +32,13 @@ const ContratoGuard = () => {
         if (chequeadoPara.current === clave) return
         chequeadoPara.current = clave
         getMiContrato(ambito)
-            .then((data) => { if (data?.requiere_nueva_aceptacion) setMostrar(true) })
+            .then((data) => {
+                if (data?.requiere_nueva_aceptacion) {
+                    // Distinguir: re-aceptación por cambio de comisión (ya tenía contrato)
+                    setMotivoComision(!!data?.comision_desactualizada)
+                    setMostrar(true)
+                }
+            })
             .catch(() => {})
     }, [loading, isAuthenticated, persona?.id_persona, ambito])
 
@@ -39,6 +46,7 @@ const ContratoGuard = () => {
     return (
         <ContratoModal
             ambito={ambito}
+            motivoComision={motivoComision}
             onClose={() => setMostrar(false)}
             onAceptado={() => setMostrar(false)}
         />
