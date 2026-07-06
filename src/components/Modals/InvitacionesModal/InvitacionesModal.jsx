@@ -567,6 +567,10 @@ export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, evento
         e.preventDefault(); setFormError('')
         if (!form.telefono.trim())    return setFormError('El teléfono es requerido.')
         if (!form.num_invitados || form.num_invitados < 1) return setFormError('Indicá cuántos invitados tiene esta persona.')
+        // Bloqueo de cupo: no permitir crear invitaciones que superen el cupo del evento
+        if (cupo > 0 && (totalInvitados + Number(form.num_invitados)) > cupo) {
+            return setFormError(`Superás el cupo (${cupo}). Ya invitaste a ${totalInvitados}; quedan ${Math.max(0, restanteCupo)} lugar(es). Ampliá el cupo del evento para invitar a más.`)
+        }
         setCreando(true)
         try {
             const data = await crearInvitacion({
