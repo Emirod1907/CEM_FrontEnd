@@ -152,18 +152,23 @@ const CalendarioReservas = ({
             .filter(Boolean)
     )
 
-    // Reservas activas del período (sin canceladas)
+    // "Hoy" a medianoche para separar futuro/pasado
+    const hoyCero = new Date(); hoyCero.setHours(0, 0, 0, 0)
+    const esPasada = (r) => r.fecha && new Date(r.fecha.split('T')[0] + 'T00:00:00') < hoyCero
+
+    // Reservas activas del período (sin canceladas y de hoy en adelante)
     const reservasActivas = reservas.filter(r => {
         if (!r.fecha || r.estado === 'cancelada') return false
+        if (esPasada(r)) return false   // los eventos pasados van al archivo
         const [y, m] = r.fecha.split('T')[0].split('-').map(Number)
         if (y !== anio) return false
         if (mesZoom !== null && m !== mesZoom + 1) return false
         return true
     })
 
-    // Reservas canceladas (archivo — todas, no filtradas por año/mes)
+    // Archivo: canceladas + pasadas (todas, sin filtrar por año/mes)
     const reservasArchivadas = reservas
-        .filter(r => r.estado === 'cancelada')
+        .filter(r => r.estado === 'cancelada' || esPasada(r))
         .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
 
     // Aplicar filtro de estado sobre activas

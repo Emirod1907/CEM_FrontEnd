@@ -421,18 +421,23 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     }
 
 
-    // Reservas activas del período (sin canceladas)
+    // "Hoy" a medianoche para separar futuro/pasado
+    const hoyCero = new Date(); hoyCero.setHours(0, 0, 0, 0)
+    const esPasada = (r) => r.fecha && new Date(r.fecha.split('T')[0] + 'T00:00:00') < hoyCero
+
+    // Reservas activas del período (sin canceladas y de hoy en adelante)
     const reservasActivas = reservas.filter(r => {
         if (!r.fecha || r.estado === 'cancelada') return false
+        if (esPasada(r)) return false   // las pasadas van al archivo
         const [y, m] = r.fecha.split('T')[0].split('-').map(Number)
         if (y !== año) return false
         if (mesZoom !== null && m !== mesZoom + 1) return false
         return true
     })
 
-    // Reservas canceladas de todo el año (archivo)
+    // Archivo: canceladas + pasadas (de todo el año)
     const reservasArchivadas = reservas
-        .filter(r => r.estado === 'cancelada')
+        .filter(r => r.estado === 'cancelada' || esPasada(r))
         .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
 
     // Aplicar filtros tipo + estado sobre activas
