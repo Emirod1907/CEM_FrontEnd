@@ -1,0 +1,389 @@
+/* ==========================================================================
+   CreateSalonForm — Dream Events
+   Estilos propios del formulario de alta de salón. Todo va scopeado bajo
+   .salon-form-page para no pisar auth / evento / resto de Forms.css.
+   Paleta de marca del sitio: #770981 → #1882da.
+   ========================================================================== */
+
+.salon-form-page {
+    --sf-magenta: #770981;
+    --sf-blue: #1882da;
+    --sf-grad: linear-gradient(135deg, #770981, #1882da);
+    --sf-ink: #2a2030;
+    --sf-ink-soft: #6f6577;
+    --sf-line: rgba(119, 9, 129, 0.14);
+    --sf-focus-ring: 0 0 0 3px rgba(24, 130, 218, 0.13);
+    --sf-radius: 12px;
+}
+
+/* ── Encabezado ────────────────────────────────────────────────────────── */
+.salon-form-page .salon-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 0 0 22px;
+    padding: 0 0 18px;
+    border-bottom: 1px solid rgba(119, 9, 129, 0.12);
+}
+
+.salon-form-page .salon-head-title {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.salon-form-page .salon-head-title h1 {
+    margin: 0;
+    color: var(--sf-ink);
+    font-size: clamp(1.7rem, 2.8vw, 2.3rem);
+    font-weight: 800;
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+}
+
+.salon-form-page .salon-head-sub {
+    margin: 0;
+    max-width: 540px;
+    color: var(--sf-ink-soft);
+    font-size: 0.96rem;
+    line-height: 1.5;
+}
+
+/* ── Nota del selector de mapa ─────────────────────────────────────────── */
+.salon-form-page .salon-map-note {
+    margin: 2px 0 10px;
+    font-size: 0.82rem;
+    color: var(--sf-ink-soft);
+    line-height: 1.45;
+}
+
+/* ── Vista previa del mapa ─────────────────────────────────────────────── */
+.salon-form-page .salon-map-preview {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--sf-line);
+    box-shadow: 0 6px 18px rgba(24, 10, 45, 0.06);
+}
+
+.salon-form-page .salon-map-loading {
+    height: 250px;
+    display: grid;
+    place-items: center;
+    background: #f4f1f7;
+    color: var(--sf-ink-soft);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.salon-form-page .salon-map-expand {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 13px;
+    border: 1px solid var(--sf-line);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--sf-magenta);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(24, 10, 45, 0.14);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.salon-form-page .salon-map-expand:hover {
+    background: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(24, 10, 45, 0.18);
+}
+
+/* ── Coordenadas ───────────────────────────────────────────────────────── */
+.salon-form-page .salon-coords-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.salon-form-page .salon-coord {
+    flex: 1;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.salon-form-page .salon-coord label {
+    flex: none;
+    text-align: left;
+    padding: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #5f5667;
+}
+
+.salon-form-page .salon-coord input {
+    width: 100%;
+    max-width: none;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid var(--sf-line);
+    border-radius: var(--sf-radius);
+    background: #fff;
+    color: #2f2936;
+    font: inherit;
+    outline: none;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.salon-form-page .salon-coord input:focus {
+    border-color: var(--sf-blue);
+    box-shadow: var(--sf-focus-ring);
+}
+
+.salon-form-page .salon-coord-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 42px;
+    padding: 0 15px;
+    border: 1px solid rgba(192, 57, 43, 0.5);
+    border-radius: var(--sf-radius);
+    background: #fff;
+    color: #c0392b;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.salon-form-page .salon-coord-clear:hover {
+    background: #fff5f4;
+    border-color: #c0392b;
+}
+
+.salon-form-page .salon-coords-empty {
+    margin: 8px 0 0;
+    font-size: 0.78rem;
+    color: #8d8496;
+}
+
+/* ── Modal del mapa ────────────────────────────────────────────────────── */
+.salon-form-page .salon-map-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(20, 8, 38, 0.62);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: salonFade 0.2s ease;
+}
+
+@keyframes salonFade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.salon-form-page .salon-map-modal {
+    display: flex;
+    flex-direction: column;
+    width: min(920px, 92vw);
+    height: min(640px, 85vh);
+    overflow: hidden;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 30px 80px rgba(20, 8, 38, 0.4);
+    animation: salonRise 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes salonRise {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.salon-form-page .salon-map-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    color: #fff;
+    background: var(--sf-grad);
+    flex-shrink: 0;
+}
+
+.salon-form-page .salon-map-modal-title {
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+}
+
+.salon-form-page .salon-map-modal-close {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.16s ease;
+}
+
+.salon-form-page .salon-map-modal-close:hover {
+    background: rgba(255, 255, 255, 0.30);
+}
+
+.salon-form-page .salon-map-modal-search {
+    padding: 14px 20px 8px;
+    flex-shrink: 0;
+}
+
+.salon-form-page .salon-map-modal-search input {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid rgba(119, 9, 129, 0.18);
+    border-radius: var(--sf-radius);
+    color: #2f2936;
+    font: inherit;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.salon-form-page .salon-map-modal-search input:focus {
+    border-color: var(--sf-blue);
+    box-shadow: var(--sf-focus-ring);
+}
+
+.salon-form-page .salon-map-modal-hint {
+    margin: 0 20px 8px;
+    font-size: 0.8rem;
+    color: var(--sf-ink-soft);
+    flex-shrink: 0;
+}
+
+.salon-form-page .salon-map-modal-body {
+    flex: 1;
+    min-height: 0;
+    padding: 0 20px 14px;
+}
+
+.salon-form-page .salon-map-modal-loading {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: #f4f1f7;
+    border-radius: 12px;
+    color: var(--sf-ink-soft);
+    font-weight: 600;
+}
+
+.salon-form-page .salon-map-modal-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 20px;
+    border-top: 1px solid rgba(119, 9, 129, 0.10);
+    flex-shrink: 0;
+}
+
+.salon-form-page .salon-map-modal-coords {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #403647;
+    font-variant-numeric: tabular-nums;
+}
+
+.salon-form-page .salon-map-modal-confirm {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 22px;
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    background: var(--sf-grad);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 12px 26px rgba(119, 9, 129, 0.22);
+    transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+.salon-form-page .salon-map-modal-confirm:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .salon-form-page .salon-head {
+        flex-direction: column;
+    }
+
+    .salon-form-page .cef-tutorial-btn {
+        width: fit-content;
+    }
+}
+
+@media (max-width: 560px) {
+    .salon-form-page .salon-coords-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .salon-form-page .salon-coord-clear {
+        justify-content: center;
+    }
+
+    .salon-form-page .salon-map-modal {
+        height: min(90vh, 640px);
+        width: calc(100% - 16px);
+    }
+}
+
+/* ── Accesibilidad: movimiento reducido ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+    .salon-form-page .salon-map-modal-overlay,
+    .salon-form-page .salon-map-modal,
+    .salon-form-page .salon-map-expand,
+    .salon-form-page .salon-map-modal-confirm,
+    .salon-form-page .salon-coord-clear {
+        animation: none !important;
+        transition: none !important;
+    }
+}
