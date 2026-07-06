@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { crearInvitacion, getMisInvitaciones } from '../../../services/invitacionServices'
-import { FiX, FiPlus, FiSend, FiUsers, FiPhone, FiCopy, FiCheck, FiCalendar, FiImage, FiBook } from 'react-icons/fi'
+import { FiX, FiPlus, FiSend, FiUsers, FiPhone, FiCopy, FiCheck, FiCalendar, FiImage, FiBook, FiAlertTriangle } from 'react-icons/fi'
 import './InvitacionesModal.css'
 import { BACKEND_URL } from '../../../config/api'
 
@@ -519,7 +519,7 @@ const fmtFecha = (f) => f
     : null
 
 // ── Panel reutilizable (sin overlay) ─────────────────────────────────────────
-export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, eventoPrecio, eventoFecha }) => {
+export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, eventoPrecio, eventoFecha, eventoCupo }) => {
     const [invitaciones,      setInvitaciones]      = useState([])
     const [cargando,          setCargando]          = useState(true)
     const [error,             setError]             = useState(null)
@@ -591,6 +591,13 @@ export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, evento
 
     const fechaStr = fmtFecha(eventoFecha)
 
+    // Control de cupo: suma de entradas de todas las invitaciones vs cupo del evento
+    const cupo = Number(eventoCupo) || 0
+    const totalInvitados = invitaciones.reduce((acc, i) => acc + (Number(i.num_invitados) || 0), 0)
+    const restanteCupo = cupo - totalInvitados
+    const excedeCupo = cupo > 0 && totalInvitados > cupo
+    const pctCupo = cupo > 0 ? Math.min(100, (totalInvitados / cupo) * 100) : 0
+
     if (!eventoId) {
         return (
             <div className='inv-panel'>
@@ -653,6 +660,32 @@ export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, evento
                     )}
                 </div>
             </div>
+
+            {/* Control de cupo */}
+            {cupo > 0 && (
+                <div className={`inv-cupo ${excedeCupo ? 'inv-cupo--excede' : ''}`}>
+                    <div className='inv-cupo-head'>
+                        <span className='inv-cupo-label'>
+                            <FiUsers size={14}/> Invitados: <strong>{totalInvitados}</strong> de <strong>{cupo}</strong>
+                        </span>
+                        <span className='inv-cupo-restante'>
+                            {excedeCupo
+                                ? `Excede el cupo en ${totalInvitados - cupo}`
+                                : `${restanteCupo} lugar${restanteCupo !== 1 ? 'es' : ''} disponible${restanteCupo !== 1 ? 's' : ''}`}
+                        </span>
+                    </div>
+                    <div className='inv-cupo-track'>
+                        <div className='inv-cupo-fill' style={{ width: `${pctCupo}%` }}/>
+                    </div>
+                    {excedeCupo && (
+                        <p className='inv-cupo-warn'>
+                            <FiAlertTriangle size={14}/>
+                            Estás invitando a {totalInvitados} personas pero el cupo del evento es {cupo}.
+                            Reducí invitaciones o ampliá el cupo del evento.
+                        </p>
+                    )}
+                </div>
+            )}
 
             {/* Importar desde contactos */}
             <ContactPickerFlow eventoId={eventoId} onDone={cargar}/>
@@ -770,7 +803,7 @@ export const InvitacionesPanel = ({ eventoId, eventoNombre, eventoImagen, evento
 }
 
 // ── Modal con overlay (para uso standalone) ───────────────────────────────────
-const InvitacionesModal = ({ eventoId, eventoNombre, eventoImagen, eventoPrecio, eventoFecha, onClose }) => createPortal(
+const InvitacionesModal = ({ eventoId, eventoNombre, eventoImagen, eventoPrecio, eventoFecha, eventoCupo, onClose }) => createPortal(
     <div className='inv-overlay' onClick={e => { if (e.target === e.currentTarget) onClose() }}>
         <div className='inv-modal'>
             <div className='inv-header'>
@@ -788,6 +821,7 @@ const InvitacionesModal = ({ eventoId, eventoNombre, eventoImagen, eventoPrecio,
                     eventoImagen={eventoImagen}
                     eventoPrecio={eventoPrecio}
                     eventoFecha={eventoFecha}
+                    eventoCupo={eventoCupo}
                 />
             </div>
         </div>

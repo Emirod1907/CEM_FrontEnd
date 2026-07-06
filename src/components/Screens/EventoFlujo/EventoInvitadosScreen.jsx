@@ -105,6 +105,7 @@ const EventoInvitadosScreen = () => {
                 eventoImagen={de?.imagen || reserva?.Evento?.imagen || null}
                 eventoPrecio={de?.precio || reserva?.Evento?.precio || null}
                 eventoFecha={reserva?.fecha}
+                eventoCupo={de?.cupo || reserva?.Evento?.cupo || null}
             />
 
             <div className='flujo-nav'>

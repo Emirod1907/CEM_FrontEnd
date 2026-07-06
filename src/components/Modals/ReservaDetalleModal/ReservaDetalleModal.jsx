@@ -467,6 +467,7 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                         eventoImagen={de?.imagen || evento?.imagen || null}
                                         eventoPrecio={de?.precio || evento?.precio || null}
                                         eventoFecha={reserva.fecha}
+                                        eventoCupo={de?.cupo || evento?.cupo || null}
                                     />
                                 </div>
                             )}
