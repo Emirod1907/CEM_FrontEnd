@@ -1,4 +1,4 @@
-/* Barra superior — versión oscura para mejorar contraste sobre el fondo */
+/* Barra superior — versión CLARA (blanco esmerilado) sobre el fondo de marca */
 
 /* Alto de la navbar compartido con la sub-barra de progreso (ProgresoEvento.css)
    para que ninguna quede pisando a la otra. Si se cambia acá, se acomoda todo. */
@@ -22,41 +22,36 @@
     align-items: center;
     gap: 16px;
     padding: 10px 26px;
-    /* Fondo sólido: sin transparencia para que la botonera se lea igual de bien
-       sobre cualquier pantalla (antes el rgba dejaba ver el fondo y lavaba los botones) */
-    background: linear-gradient(90deg, #2a1749 0%, #4b1b60 45%, #5f104b 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 8px 26px rgba(13, 8, 27, 0.28);
+    /* Blanco esmerilado: translúcido + blur, toma un toque del degradado de atrás.
+       El blur necesita que NO haya un color sólido opaco encima. */
+    background: rgb(255, 255, 255);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow: 0 6px 20px rgba(76, 29, 149, 0.10);
 }
 
-/* Isotipo (la D del logo) sin cajita: en blanco sobre el degradado se lee
-   bien incluso chico, y no repite el texto de la marca que va al lado */
+/* Logo: wordmark "Dream Events" CON DEGRADADO (versión para fondo claro).
+   Apuntar el <img> a dream_events_logo.svg (el del degradado), NO al blanco.
+   Sin cajita cuadrada: manda el alto y el ancho lo define el propio SVG. */
 .logo {
-    width: 46px;
-    height: 46px;
-    flex: 0 0 46px;
+    height: 38px;
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
-    justify-content: center;
-    filter: drop-shadow(0 2px 6px rgba(13, 8, 27, 0.35));
 }
 
 .logo img {
-    width: 100%;
     height: 100%;
+    width: auto;
     object-fit: contain;
     display: block;
 }
 
+/* El texto ya viene dentro del SVG del logo: no repetir la marca al lado.
+   Si el componente aún renderiza <span class="navbar-brand">, ocultarlo o borrarlo. */
 .navbar-brand {
-    display: inline-flex;
-    align-items: center;
-    min-width: 145px;
-    color: #ffffff;
-    font-size: 1.08rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    white-space: nowrap;
+    display: none;
 }
 
 .app-header nav {
@@ -97,33 +92,36 @@
     transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 
+/* Botón secundario (fantasma): borde y texto oscuros sobre el navbar claro */
 .link {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.16);
-    border: 1px solid rgba(255, 255, 255, 0.30);
+    color: #1E1B2E;
+    background: transparent;
+    border: 1px solid rgba(30, 27, 46, 0.18);
 }
 
 .link:hover {
-    background: rgba(255, 255, 255, 0.26);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(124, 58, 237, 0.08);
+    color: #1E1B2E;
+    border-color: rgba(124, 58, 237, 0.40);
     transform: translateY(-1px);
 }
 
+/* CTA / activo: a color (degradado de acción violeta→azul) con texto blanco.
+   Sobre fondo blanco un botón blanco desaparecería. */
 .link-seleccionado {
-    background: linear-gradient(135deg, #ffffff, #ece4ff);
-    color: #57116f;
+    background: linear-gradient(100deg, #7C3AED, #2563EB);
+    color: #ffffff;
     border: 1px solid transparent;
-    box-shadow: 0 10px 20px rgba(16, 8, 29, 0.18);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
 }
 
 .link-admin {
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.18);
+    color: #1E1B2E;
+    border-color: rgba(30, 27, 46, 0.18);
 }
 
 .link-seleccionado.link-admin {
-    color: #57116f;
+    color: #ffffff;
 }
 
 .link-logout {
@@ -132,10 +130,10 @@
     justify-content: center;
     gap: 6px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.30);
+    border: 1px solid rgba(30, 27, 46, 0.18);
     padding: 8px 14px;
-    background: rgba(255, 255, 255, 0.14);
-    color: #ffffff;
+    background: transparent;
+    color: #1E1B2E;
     font-size: 0.84rem;
     font-weight: 800;
     cursor: pointer;
@@ -144,8 +142,8 @@
 }
 
 .link-logout:hover {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(219, 39, 119, 0.08);
+    border-color: rgba(219, 39, 119, 0.40);
     transform: translateY(-1px);
 }
 
@@ -156,9 +154,9 @@
     min-height: 30px;
     padding: 6px 12px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.18);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.34);
+    background: #F3F0FF;
+    color: #5B21B6;
+    border: 1px solid #E7E3F5;
     font-size: 0.75rem;
     font-weight: 800;
     white-space: nowrap;
@@ -171,21 +169,22 @@
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.30);
+    border: 1px solid rgba(30, 27, 46, 0.18);
     padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.16);
-    color: #ffffff;
+    background: transparent;
+    color: #1E1B2E;
     cursor: pointer;
     transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
 .carrito-nav-btn:hover {
-    background: rgba(255, 255, 255, 0.18);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.26);
+    background: rgba(124, 58, 237, 0.08);
+    color: #1E1B2E;
+    border-color: rgba(124, 58, 237, 0.40);
     transform: translateY(-1px);
 }
 
+/* Badge del carrito: a color sólido de marca para que resalte sobre claro */
 .carrito-badge {
     position: absolute;
     top: -5px;
@@ -196,11 +195,11 @@
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    background: linear-gradient(135deg, #ffd0f0, #ffffff);
-    color: #57116f;
+    background: linear-gradient(135deg, #DB2777, #7C3AED);
+    color: #ffffff;
     font-size: 0.66rem;
     font-weight: 800;
-    border: 2px solid rgba(53, 21, 72, 0.92);
+    border: 2px solid #ffffff;
 }
 
 @media (max-width: 920px) {
@@ -213,15 +212,8 @@
         gap: 10px;
     }
 
-    .navbar-brand {
-        min-width: auto;
-        font-size: 1rem;
-    }
-
     .logo {
-        width: 40px;
-        height: 40px;
-        flex-basis: 40px;
+        height: 30px;
     }
 
     .link,

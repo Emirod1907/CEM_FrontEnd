@@ -2204,3 +2204,24 @@
         justify-content: center;
     }
 }
+
+.auth-shell--login-only {
+    width: min(520px, calc(100% - 32px));
+    min-height: auto;
+    grid-template-columns: 1fr;
+}
+
+.auth-shell--login-only .auth-form-panel {
+    padding: 56px 52px;
+    border-radius: 28px;
+}
+
+@media (max-width: 640px) {
+    .auth-shell--login-only {
+        width: min(100%, calc(100% - 24px));
+    }
+
+    .auth-shell--login-only .auth-form-panel {
+        padding: 36px 24px;
+    }
+}

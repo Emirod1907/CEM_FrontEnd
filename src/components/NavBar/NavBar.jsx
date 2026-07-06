@@ -32,7 +32,7 @@ const NavBar = () => {
     ) : null
 
     const handleLogout = async () => {
-        try { await axios.post('auth/logout') } catch (_) {}
+        try { await axios.post('auth/logout') } catch (_) { }
         setIsAuthenticated(false)
         setPersona(null)
         navigate('/login')
@@ -190,13 +190,13 @@ const NavBar = () => {
 }
 
 const LABEL_POR_ROL = {
-    entusiasta:           'Entusiasta',
-    organizador:          'Organizador',
-    dueno_salon:          'Dueño de Salón',
-    proveedor_servicios:  'Proveedor de Servicios',
-    proveedor_insumos:    'Proveedor de Insumos',
-    admin:                'Admin',
-    cliente:              'Cliente',
+    entusiasta: 'Entusiasta',
+    organizador: 'Organizador',
+    dueno_salon: 'Dueño de Salón',
+    proveedor_servicios: 'Proveedor de Servicios',
+    proveedor_insumos: 'Proveedor de Insumos',
+    admin: 'Admin',
+    cliente: 'Cliente',
 }
 
 export default NavBar
