@@ -6,12 +6,14 @@ import {
     getMiSalonReservas,
     actualizarPreciosSalon,
     gestionarReservaDueno,
-    crearReservaManual
+    crearReservaManual,
+    getGoogleCalendarStatus,
+    disconnectGoogleCalendar,
+    googleCalendarConnectUrl
 } from '../../../services/salonesServices'
-import {
-    FiHome, FiEdit2, FiX, FiMapPin, FiUsers, FiDollarSign,
-    FiCalendar, FiCheck, FiSlash, FiPlus, FiTrash2, FiSave, FiChevronLeft, FiChevronRight
-} from 'react-icons/fi'
+import { FiHome, FiEdit2, FiX, FiMapPin, FiUsers, FiDollarSign,
+         FiCalendar, FiCheck, FiSlash, FiPlus, FiTrash2, FiSave, FiChevronLeft, FiChevronRight,
+         FiInfo, FiLink, FiExternalLink } from 'react-icons/fi'
 import PreciosConfigPanel from '../../PreciosConfigPanel/PreciosConfigPanel'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MiSalonScreen.css'
@@ -24,20 +26,20 @@ const parseJson = (val, fallback = []) => {
 
 const ESTADO_LABEL = {
     pendiente_pago: 'Pendiente de pago',
-    seña_abonada: 'Seña abonada',
-    confirmada: 'Confirmada',
-    cancelada: 'Cancelada',
+    seña_abonada:   'Seña abonada',
+    confirmada:     'Confirmada',
+    cancelada:      'Cancelada',
 }
 const ESTADO_CLASS = {
     pendiente_pago: 'estado-pendiente',
-    seña_abonada: 'estado-sena',
-    confirmada: 'estado-confirmada',
-    cancelada: 'estado-cancelada',
+    seña_abonada:   'estado-sena',
+    confirmada:     'estado-confirmada',
+    cancelada:      'estado-cancelada',
 }
 
-const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-const DIAS_SEMANA = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+               'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+const DIAS_SEMANA = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom']
 
 const CONFIG_DEFAULT = {
     turnos: ['4 horas', '5 horas'],
@@ -84,7 +86,7 @@ const Calendario = ({ reservas, mes, año, diaSeleccionado, onDiaClick, popoverD
                 {celdas.map((dia, i) => {
                     const reserva = dia ? reservaPorDia(dia) : null
                     const esHoy = dia && hoy.getFullYear() === año &&
-                        hoy.getMonth() === mes && hoy.getDate() === dia
+                                  hoy.getMonth() === mes && hoy.getDate() === dia
                     const pasado = esPasado(dia)
                     const tienePopover = dia && !reserva && !pasado && dia === popoverDia
                     return (
@@ -94,7 +96,7 @@ const Calendario = ({ reservas, mes, año, diaSeleccionado, onDiaClick, popoverD
                                 'cal-celda',
                                 !dia ? 'cal-vacia' : '',
                                 pasado ? 'cal-pasado' : '',
-                                !pasado && reserva ? (esBloqueo(reserva) ? 'cal-bloqueada' : `cal-${reserva.estado}`) : '',
+                                !pasado && reserva ? `cal-${reserva.estado}` : '',
                                 dia === diaSeleccionado ? 'cal-seleccionada' : '',
                                 esHoy ? 'cal-hoy' : '',
                                 dia && !reserva && !pasado ? 'cal-libre' : '',
@@ -108,7 +110,7 @@ const Calendario = ({ reservas, mes, año, diaSeleccionado, onDiaClick, popoverD
                                         className='cal-popover-btn'
                                         onClick={() => onAgregarReserva(dia)}
                                     >
-                                        <FiPlus size={12} /> Agregar reserva /<br />Bloquear fecha
+                                        <FiPlus size={12}/> Agregar reserva /<br/>Bloquear fecha
                                     </button>
                                 </div>
                             )}
@@ -117,11 +119,10 @@ const Calendario = ({ reservas, mes, año, diaSeleccionado, onDiaClick, popoverD
                 })}
             </div>
             <div className='cal-leyenda'>
-                <span className='cal-leyenda-item'><span className='cal-dot cal-pendiente_pago' />Pendiente de pago</span>
-                <span className='cal-leyenda-item'><span className='cal-dot cal-seña_abonada' />Seña abonada</span>
-                <span className='cal-leyenda-item'><span className='cal-dot cal-confirmada' />Confirmada</span>
-                <span className='cal-leyenda-item'><span className='cal-dot cal-cancelada' />Cancelada</span>
-                <span className='cal-leyenda-item'><span className='cal-dot cal-bloqueada' />Bloqueada</span>
+                <span className='cal-leyenda-item'><span className='cal-dot cal-pendiente_pago'/>Pendiente de pago</span>
+                <span className='cal-leyenda-item'><span className='cal-dot cal-seña_abonada'/>Seña abonada</span>
+                <span className='cal-leyenda-item'><span className='cal-dot cal-confirmada'/>Confirmada</span>
+                <span className='cal-leyenda-item'><span className='cal-dot cal-cancelada'/>Cancelada</span>
             </div>
         </div>
     )
@@ -133,8 +134,8 @@ const DIAS_MINI = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 
 const MiniMesSalon = ({ año, mes, reservasPorFecha, onClick }) => {
     const inicioSemana = (new Date(año, mes, 1).getDay() + 6) % 7   // lunes=0
-    const diasEnMes = new Date(año, mes + 1, 0).getDate()
-    const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
+    const diasEnMes    = new Date(año, mes + 1, 0).getDate()
+    const hoy          = new Date(); hoy.setHours(0, 0, 0, 0)
 
     const reservasMes = Object.entries(reservasPorFecha).filter(([f, r]) => {
         const [y, m] = f.split('-').map(Number)
@@ -144,9 +145,9 @@ const MiniMesSalon = ({ año, mes, reservasPorFecha, onClick }) => {
     const celdas = []
     for (let i = 0; i < inicioSemana; i++) celdas.push(null)
     for (let d = 1; d <= diasEnMes; d++) {
-        const fStr = `${año}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+        const fStr   = `${año}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
         const reserva = reservasPorFecha[fStr] || null
-        const esHoy = new Date(año, mes, d).getTime() === hoy.getTime()
+        const esHoy  = new Date(año, mes, d).getTime() === hoy.getTime()
         celdas.push({ reserva, esHoy })
     }
 
@@ -172,11 +173,10 @@ const MiniMesSalon = ({ año, mes, reservasPorFecha, onClick }) => {
                     const { reserva, esHoy } = celda
                     let cls = 'mm-salon-cel'
                     if (reserva) {
-                        if (esBloqueo(reserva)) cls += ' mm-salon-bloqueada'
-                        else if (reserva.estado === 'confirmada') cls += ' mm-salon-confirmada'
-                        else if (reserva.estado === 'seña_abonada') cls += ' mm-salon-sena'
-                        else if (reserva.estado === 'pendiente_pago') cls += ' mm-salon-pendiente'
-                        else cls += ' mm-salon-cancelada'
+                        if      (reserva.estado === 'confirmada')      cls += ' mm-salon-confirmada'
+                        else if (reserva.estado === 'seña_abonada')    cls += ' mm-salon-sena'
+                        else if (reserva.estado === 'pendiente_pago')  cls += ' mm-salon-pendiente'
+                        else                                           cls += ' mm-salon-cancelada'
                     }
                     if (esHoy) cls += ' mm-salon-hoy'
                     return <div key={i} className={cls} />
@@ -230,7 +230,7 @@ const TabInfo = ({ salon, onEditar }) => {
                     </div>
                     <div className='mi-salon-datos-grid'>
                         <div className='dato-item'>
-                            <FiMapPin size={15} className='dato-icon' />
+                            <FiMapPin size={15} className='dato-icon'/>
                             <div>
                                 <span className='dato-label'>Ubicación</span>
                                 <span className='dato-val'>
@@ -239,14 +239,14 @@ const TabInfo = ({ salon, onEditar }) => {
                             </div>
                         </div>
                         <div className='dato-item'>
-                            <FiUsers size={15} className='dato-icon' />
+                            <FiUsers size={15} className='dato-icon'/>
                             <div>
                                 <span className='dato-label'>Aforo</span>
                                 <span className='dato-val'>{salon.aforo} personas</span>
                             </div>
                         </div>
                         <div className='dato-item'>
-                            <FiDollarSign size={15} className='dato-icon' />
+                            <FiDollarSign size={15} className='dato-icon'/>
                             <div>
                                 <span className='dato-label'>Precio base de alquiler</span>
                                 <span className='dato-val'>${Number(salon.precio_alquiler).toLocaleString('es-AR')} ARS</span>
@@ -324,9 +324,9 @@ const TabPrecios = ({ salon, onGuardado }) => {
                 {error && <p className='precios-error'>{error}</p>}
 
                 <div className='precios-footer'>
-                    {exito && <span className='precios-exito'><FiCheck size={14} /> Guardado</span>}
+                    {exito && <span className='precios-exito'><FiCheck size={14}/> Guardado</span>}
                     <button className='btn-guardar-precios' onClick={guardar} disabled={guardando}>
-                        <FiSave size={15} /> {guardando ? 'Guardando...' : 'Guardar precios'}
+                        <FiSave size={15}/> {guardando ? 'Guardando...' : 'Guardar precios'}
                     </button>
                 </div>
             </div>
@@ -347,60 +347,103 @@ const emailOrganizador = (r) =>
         : (r.Persona?.email || '—')
 
 const FORM_MANUAL_VACIO = {
-    tipo_registro: 'reserva',   // 'reserva' | 'bloqueo' (mantenimiento, uso propio, etc.)
     nombre_organizador: '',
     email_organizador: '',
     tipo_evento: '',
     estado: 'confirmada',
-    motivo_bloqueo: '',
     notas: '',
     enviar_notificacion: false,
 }
 
-const esBloqueo = (r) => Boolean(r?.datos_evento?.bloqueo)
-
 // ─── Tab Reservas ─────────────────────────────────────────────────────────────
 
-const TabReservas = ({ reservas, onActualizar }) => {
+const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const hoy = new Date()
-    const [año, setAño] = useState(hoy.getFullYear())
-    const [mesZoom, setMesZoom] = useState(null)    // null = vista anual
-    const [vistaKey, setVistaKey] = useState(0)
+    const [año,       setAño]       = useState(hoy.getFullYear())
+    const [mesZoom,   setMesZoom]   = useState(null)    // null = vista anual
+    const [vistaKey,  setVistaKey]  = useState(0)
     const [zoomOrigin, setZoomOrigin] = useState('center center')
 
-    const [diaSeleccionado, setDiaSeleccionado] = useState(null)
+    const [diaSeleccionado,   setDiaSeleccionado]   = useState(null)
     const [reservaSeleccionada, setReservaSeleccionada] = useState(null)
-    const [accionando, setAccionando] = useState(false)
-    const [confirmando, setConfirmando] = useState(null)
+    const [accionando,        setAccionando]        = useState(false)
+    const [confirmando,       setConfirmando]       = useState(null)
 
-    const [popoverDia, setPopoverDia] = useState(null)
+    const [popoverDia,       setPopoverDia]       = useState(null)
     const [mostrarFormManual, setMostrarFormManual] = useState(false)
-    const [fechaManual, setFechaManual] = useState(null)
-    const [formManual, setFormManual] = useState(FORM_MANUAL_VACIO)
-    const [guardandoManual, setGuardandoManual] = useState(false)
-    const [errorManual, setErrorManual] = useState(null)
-    const [filtroEstado, setFiltroEstado] = useState('')
-    const [filtroTipo, setFiltroTipo] = useState('')   // '' | 'interna' | 'externa'
-    const [mostrarArchivo, setMostrarArchivo] = useState(false)
+    const [fechaManual,      setFechaManual]      = useState(null)
+    const [formManual,       setFormManual]       = useState(FORM_MANUAL_VACIO)
+    const [guardandoManual,  setGuardandoManual]  = useState(false)
+    const [errorManual,      setErrorManual]      = useState(null)
+    const [filtroEstado,     setFiltroEstado]     = useState('')
+    const [filtroTipo,       setFiltroTipo]       = useState('')   // '' | 'interna' | 'externa'
+    const [mostrarArchivo,   setMostrarArchivo]   = useState(false)
+    const [mostrarCal,   setMostrarCal]   = useState(false)   // modal de Google Calendar
+    const [calConectado, setCalConectado] = useState(false)
+    const [calCargando,  setCalCargando]  = useState(false)
+    const [calMsg,       setCalMsg]       = useState(null)    // feedback tras el callback
 
-    // Reservas activas del período (sin canceladas)
+    // Al montar: estado de conexión + leer el resultado del callback (?calendar=...)
+    useEffect(() => {
+        getGoogleCalendarStatus().then(setCalConectado)
+        const params = new URLSearchParams(window.location.search)
+        const r = params.get('calendar')
+        if (r) {
+            const mapa = {
+                conectado:  { tipo: 'ok',  texto: '¡Google Calendar conectado! Tus reservas se sincronizarán automáticamente.' },
+                cancelado:  { tipo: 'err', texto: 'Cancelaste la conexión con Google Calendar.' },
+                sin_refresh:{ tipo: 'err', texto: 'Google no devolvió el permiso de sincronización. Probá de nuevo y aceptá todos los accesos.' },
+                error:      { tipo: 'err', texto: 'No se pudo conectar con Google Calendar. Intentá de nuevo.' },
+            }
+            setCalMsg(mapa[r] || null)
+            if (r === 'conectado') { setMostrarCal(true); getGoogleCalendarStatus().then(setCalConectado) }
+            // limpiar el query param de la URL
+            window.history.replaceState({}, '', window.location.pathname)
+        }
+    }, [])
+
+    const aceptarYConectar = () => {
+        // Navegación top-level: manda la cookie de sesión y va a la pantalla de Google
+        window.location.href = googleCalendarConnectUrl()
+    }
+
+    const desconectarCalendario = async () => {
+        setCalCargando(true)
+        try {
+            await disconnectGoogleCalendar()
+            setCalConectado(false)
+            setCalMsg({ tipo: 'ok', texto: 'Google Calendar desconectado.' })
+        } catch {
+            setCalMsg({ tipo: 'err', texto: 'No se pudo desconectar. Intentá de nuevo.' })
+        } finally {
+            setCalCargando(false)
+        }
+    }
+
+
+    // "Hoy" a medianoche para separar futuro/pasado
+    const hoyCero = new Date(); hoyCero.setHours(0, 0, 0, 0)
+    const esPasada = (r) => r.fecha && new Date(r.fecha.split('T')[0] + 'T00:00:00') < hoyCero
+
+    // Reservas activas del período (sin canceladas y de hoy en adelante)
     const reservasActivas = reservas.filter(r => {
         if (!r.fecha || r.estado === 'cancelada') return false
+        if (esPasada(r)) return false   // las pasadas van al archivo
         const [y, m] = r.fecha.split('T')[0].split('-').map(Number)
         if (y !== año) return false
         if (mesZoom !== null && m !== mesZoom + 1) return false
         return true
     })
 
-    // Reservas canceladas de todo el año (archivo)
+    // Archivo: canceladas + pasadas (de todo el año)
     const reservasArchivadas = reservas
-        .filter(r => r.estado === 'cancelada')
+        .filter(r => r.estado === 'cancelada' || esPasada(r))
         .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
 
     // Aplicar filtros tipo + estado sobre activas
     const reservasFiltradas = reservasActivas
         .filter(r => {
-            if (filtroTipo === 'interna' && r.datos_evento?.manual) return false
+            if (filtroTipo === 'interna' &&  r.datos_evento?.manual) return false
             if (filtroTipo === 'externa' && !r.datos_evento?.manual) return false
             if (filtroEstado && r.estado !== filtroEstado) return false
             return true
@@ -411,8 +454,8 @@ const TabReservas = ({ reservas, onActualizar }) => {
 
     // ── Navegar al mes con zoom ──────────────────────────────────────────────
     const handleClickMes = (mes) => {
-        const col = mes % 4
-        const row = Math.floor(mes / 4)
+        const col  = mes % 4
+        const row  = Math.floor(mes / 4)
         const xPct = [12.5, 37.5, 62.5, 87.5][col]
         const yPct = [16.7, 50, 83.3][row]
         setZoomOrigin(`${xPct}% ${yPct}%`)
@@ -439,8 +482,8 @@ const TabReservas = ({ reservas, onActualizar }) => {
     }
 
     const onDiaClick = (dia, reserva) => {
-        if (diaSeleccionado === dia && reserva && reservaSeleccionada) { cerrarPaneles(); return }
-        if (diaSeleccionado === dia && !reserva && popoverDia === dia) { cerrarPaneles(); return }
+        if (diaSeleccionado === dia && reserva && reservaSeleccionada)  { cerrarPaneles(); return }
+        if (diaSeleccionado === dia && !reserva && popoverDia === dia)  { cerrarPaneles(); return }
         setDiaSeleccionado(dia)
         setConfirmando(null)
         if (reserva) {
@@ -545,11 +588,69 @@ const TabReservas = ({ reservas, onActualizar }) => {
                                 <option value='seña_abonada'>Seña abonada</option>
                                 <option value='confirmada'>Confirmada</option>
                             </select>
+                            <button
+                                className={`btn-exportar-cal ${calConectado ? 'conectado' : ''}`}
+                                onClick={() => setMostrarCal(true)}
+                                title='Sincronizar tus reservas con Google Calendar'
+                            >
+                                <FiCalendar size={13} /> {calConectado ? 'Calendar ✓' : 'Google Calendar'}
+                            </button>
                             <button className='btn-archivo' onClick={() => setMostrarArchivo(true)}>
                                 Archivo {reservasArchivadas.length > 0 && <span className='archivo-badge'>{reservasArchivadas.length}</span>}
                             </button>
                         </div>
                     </div>
+
+                    {/* Feedback tras el callback de Google */}
+                    {calMsg && (
+                        <div className={`cal-flash cal-flash--${calMsg.tipo}`}>
+                            {calMsg.tipo === 'ok' ? <FiCheck size={14} /> : <FiInfo size={14} />}
+                            <span>{calMsg.texto}</span>
+                            <button className='cal-flash-x' onClick={() => setCalMsg(null)}><FiX size={14} /></button>
+                        </div>
+                    )}
+
+                    {/* Modal: conectar Google Calendar (OAuth + T&C) */}
+                    {mostrarCal && (
+                        <div className='cal-ayuda-overlay' onClick={() => setMostrarCal(false)}>
+                            <div className='cal-ayuda-modal' onClick={e => e.stopPropagation()}>
+                                <div className='cal-ayuda-head'>
+                                    <FiCalendar size={18} />
+                                    <h3>Sincronizar con Google Calendar</h3>
+                                    <button className='cal-ayuda-x' onClick={() => setMostrarCal(false)}><FiX size={18} /></button>
+                                </div>
+
+                                {calConectado ? (
+                                    <>
+                                        <div className='cal-estado-ok'>
+                                            <FiCheck size={18} />
+                                            <span>Tu Google Calendar está <strong>conectado</strong> y todo se sincroniza <strong>automáticamente</strong>.</span>
+                                        </div>
+                                        <ul className='cal-auto-lista'>
+                                            <li><FiCheck size={13} /> Tus eventos de Google bloquean las fechas en Dream Events.</li>
+                                            <li><FiCheck size={13} /> Cada reserva nueva se agenda sola en tu calendario, con recordatorios.</li>
+                                            <li><FiCheck size={13} /> Cambios y cancelaciones se reflejan al instante.</li>
+                                        </ul>
+                                        <button className='cal-btn-desconectar' onClick={desconectarCalendario} disabled={calCargando}>
+                                            {calCargando ? 'Desconectando...' : 'Desconectar Google Calendar'}
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className='cal-ayuda-sub'>Conectá tu cuenta de Google para que las reservas de tu salón se agenden solas y bloqueen las fechas.</p>
+                                        <div className='cal-terminos'>
+                                            <FiInfo size={14} />
+                                            <span>Para sincronizar tu agenda, <strong>Dream Events se conectará a tu Google Calendar</strong>. Al continuar, autorizás esta integración; podés desconectarla cuando quieras desde acá.</span>
+                                        </div>
+                                        <button className='cal-btn-conectar' onClick={aceptarYConectar}>
+                                            <FiLink size={15} /> Conectar Google Calendar <FiExternalLink size={13} />
+                                        </button>
+                                        <p className='cal-ayuda-nota-min'>Se abrirá la pantalla de Google para autorizar (una sola vez).</p>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     {reservasFiltradas.length === 0 ? (
                         <p className='reservas-vacio'>{textoVacio}</p>
@@ -587,11 +688,11 @@ const TabReservas = ({ reservas, onActualizar }) => {
                                         </div>
                                     </div>
                                     <div className='reserva-item-right'>
-                                        <span className={`tipo-pill ${esBloqueo(r) ? 'tipo-bloqueo' : (r.datos_evento?.manual ? 'tipo-externa' : 'tipo-interna')}`}>
-                                            {esBloqueo(r) ? 'Bloqueo' : (r.datos_evento?.manual ? 'Externa' : 'Interna')}
+                                        <span className={`tipo-pill ${r.datos_evento?.manual ? 'tipo-externa' : 'tipo-interna'}`}>
+                                            {r.datos_evento?.manual ? 'Externa' : 'Interna'}
                                         </span>
-                                        <span className={`estado-badge ${esBloqueo(r) ? 'estado-bloqueada' : ESTADO_CLASS[r.estado]}`}>
-                                            {esBloqueo(r) ? 'Bloqueada' : ESTADO_LABEL[r.estado]}
+                                        <span className={`estado-badge ${ESTADO_CLASS[r.estado]}`}>
+                                            {ESTADO_LABEL[r.estado]}
                                         </span>
                                     </div>
                                 </div>
@@ -603,43 +704,28 @@ const TabReservas = ({ reservas, onActualizar }) => {
                     {reservaSeleccionada && (
                         <div className='reserva-detalle-panel'>
                             <div className='reserva-detalle-header'>
-                                <h4>
-                                    {esBloqueo(reservaSeleccionada) ? 'Fecha bloqueada' : 'Detalle'}
-                                    {' '}
-                                    {esBloqueo(reservaSeleccionada)
-                                        ? <span className='badge-manual badge-bloqueo'>Bloqueo</span>
-                                        : (reservaSeleccionada.datos_evento?.manual && <span className='badge-manual'>Manual</span>)}
-                                </h4>
-                                <button className='btn-cerrar-detalle' onClick={cerrarPaneles}><FiX size={18} /></button>
+                                <h4>Detalle {reservaSeleccionada.datos_evento?.manual && <span className='badge-manual'>Manual</span>}</h4>
+                                <button className='btn-cerrar-detalle' onClick={cerrarPaneles}><FiX size={18}/></button>
                             </div>
                             <div className='reserva-detalle-body'>
-                                {!esBloqueo(reservaSeleccionada) && <>
-                                    <div className='reserva-dato-row'>
-                                        <span className='reserva-dato-label'>Organizador</span>
-                                        <span>{nombreOrganizador(reservaSeleccionada)}</span>
-                                    </div>
-                                    <div className='reserva-dato-row'>
-                                        <span className='reserva-dato-label'>Email</span>
-                                        <span>{emailOrganizador(reservaSeleccionada)}</span>
-                                    </div>
-                                </>}
+                                <div className='reserva-dato-row'>
+                                    <span className='reserva-dato-label'>Organizador</span>
+                                    <span>{nombreOrganizador(reservaSeleccionada)}</span>
+                                </div>
+                                <div className='reserva-dato-row'>
+                                    <span className='reserva-dato-label'>Email</span>
+                                    <span>{emailOrganizador(reservaSeleccionada)}</span>
+                                </div>
                                 <div className='reserva-dato-row'>
                                     <span className='reserva-dato-label'>Fecha</span>
                                     <span>{fechaDisplay(reservaSeleccionada.fecha)}</span>
                                 </div>
-                                {esBloqueo(reservaSeleccionada) ? (
-                                    <div className='reserva-dato-row'>
-                                        <span className='reserva-dato-label'>Motivo</span>
-                                        <span>{reservaSeleccionada.datos_evento?.motivo_bloqueo || 'Bloqueo de agenda'}</span>
-                                    </div>
-                                ) : (
-                                    <div className='reserva-dato-row'>
-                                        <span className='reserva-dato-label'>Estado</span>
-                                        <span className={`estado-badge ${ESTADO_CLASS[reservaSeleccionada.estado]}`}>
-                                            {ESTADO_LABEL[reservaSeleccionada.estado]}
-                                        </span>
-                                    </div>
-                                )}
+                                <div className='reserva-dato-row'>
+                                    <span className='reserva-dato-label'>Estado</span>
+                                    <span className={`estado-badge ${ESTADO_CLASS[reservaSeleccionada.estado]}`}>
+                                        {ESTADO_LABEL[reservaSeleccionada.estado]}
+                                    </span>
+                                </div>
                                 {Number(reservaSeleccionada.monto_alquiler) > 0 && <>
                                     <div className='reserva-dato-row'>
                                         <span className='reserva-dato-label'>Alquiler</span>
@@ -677,23 +763,23 @@ const TabReservas = ({ reservas, onActualizar }) => {
                                                 <p>¿Confirmar esta reserva?</p>
                                                 <div className='confirm-btns'>
                                                     <button className='btn-accion btn-confirmar' onClick={() => ejecutarAccion(reservaSeleccionada.id_reserva, 'confirmada')} disabled={accionando}>
-                                                        {accionando ? '...' : <><FiCheck size={14} /> Sí, confirmar</>}
+                                                        {accionando ? '...' : <><FiCheck size={14}/> Sí, confirmar</>}
                                                     </button>
                                                     <button className='btn-accion btn-cancelar-accion' onClick={() => setConfirmando(null)}>No</button>
                                                 </div>
                                             </div>
                                         ) : (
                                             <button className='btn-accion btn-confirmar' onClick={() => setConfirmando('confirmar')}>
-                                                <FiCheck size={15} /> Confirmar reserva
+                                                <FiCheck size={15}/> Confirmar reserva
                                             </button>
                                         )
                                     )}
                                     {confirmando === 'cancelar' ? (
                                         <div className='confirm-overlay'>
-                                            <p>{esBloqueo(reservaSeleccionada) ? '¿Desbloquear esta fecha? Volverá a estar disponible para reservas.' : '¿Cancelar esta reserva? No se puede deshacer.'}</p>
+                                            <p>¿Cancelar esta reserva? No se puede deshacer.</p>
                                             <div className='confirm-btns'>
                                                 <button className='btn-accion btn-rechazar' onClick={() => ejecutarAccion(reservaSeleccionada.id_reserva, 'cancelada')} disabled={accionando}>
-                                                    {accionando ? '...' : <><FiSlash size={14} /> {esBloqueo(reservaSeleccionada) ? 'Sí, desbloquear' : 'Sí, cancelar'}</>}
+                                                    {accionando ? '...' : <><FiSlash size={14}/> Sí, cancelar</>}
                                                 </button>
                                                 <button className='btn-accion btn-cancelar-accion' onClick={() => setConfirmando(null)}>No</button>
                                             </div>
@@ -701,7 +787,7 @@ const TabReservas = ({ reservas, onActualizar }) => {
                                     ) : (
                                         confirmando !== 'confirmar' && (
                                             <button className='btn-accion btn-rechazar' onClick={() => setConfirmando('cancelar')}>
-                                                <FiSlash size={15} /> {esBloqueo(reservaSeleccionada) ? 'Desbloquear fecha' : 'Cancelar reserva'}
+                                                <FiSlash size={15}/> Cancelar reserva
                                             </button>
                                         )
                                     )}
@@ -717,11 +803,11 @@ const TabReservas = ({ reservas, onActualizar }) => {
                     <div className='mes-nav'>
                         {mesZoom !== null ? (
                             <button className='mes-btn' onClick={handleVolverAnual} title='Volver a vista anual'>
-                                <FiChevronLeft size={18} />
+                                <FiChevronLeft size={18}/>
                             </button>
                         ) : (
                             <button className='mes-btn' onClick={() => setAño(a => a - 1)}>
-                                <FiChevronLeft size={18} />
+                                <FiChevronLeft size={18}/>
                             </button>
                         )}
 
@@ -734,7 +820,7 @@ const TabReservas = ({ reservas, onActualizar }) => {
                             <span style={{ width: 36 }} />
                         ) : (
                             <button className='mes-btn' onClick={() => setAño(a => a + 1)}>
-                                <FiChevronRight size={18} />
+                                <FiChevronRight size={18}/>
                             </button>
                         )}
                     </div>
@@ -773,13 +859,13 @@ const TabReservas = ({ reservas, onActualizar }) => {
             {/* ── Modal: archivo de canceladas ── */}
             {mostrarArchivo && (
                 <div className='modal-overlay' onClick={() => setMostrarArchivo(false)}>
-                    <div className='modal-box modal-box--edit-info' onClick={e => e.stopPropagation()}>
+                    <div className='modal-box modal-box--wide' onClick={e => e.stopPropagation()}>
                         <div className='modal-header'>
                             <div>
                                 <h2>Archivo de reservas canceladas</h2>
                                 <span className='panel-fecha-subtitulo'>{reservasArchivadas.length} reserva(s) cancelada(s)</span>
                             </div>
-                            <button className='btn-cerrar-modal' onClick={() => setMostrarArchivo(false)}><FiX size={20} /></button>
+                            <button className='btn-cerrar-modal' onClick={() => setMostrarArchivo(false)}><FiX size={20}/></button>
                         </div>
                         <div className='archivo-lista'>
                             {reservasArchivadas.length === 0 ? (
@@ -801,8 +887,8 @@ const TabReservas = ({ reservas, onActualizar }) => {
                                         </div>
                                     </div>
                                     <div className='reserva-item-right'>
-                                        <span className={`tipo-pill ${esBloqueo(r) ? 'tipo-bloqueo' : (r.datos_evento?.manual ? 'tipo-externa' : 'tipo-interna')}`}>
-                                            {esBloqueo(r) ? 'Bloqueo' : (r.datos_evento?.manual ? 'Externa' : 'Interna')}
+                                        <span className={`tipo-pill ${r.datos_evento?.manual ? 'tipo-externa' : 'tipo-interna'}`}>
+                                            {r.datos_evento?.manual ? 'Externa' : 'Interna'}
                                         </span>
                                         <span className='estado-badge estado-cancelada'>Cancelada</span>
                                     </div>
@@ -819,138 +905,86 @@ const TabReservas = ({ reservas, onActualizar }) => {
                     <div className='modal-box' onClick={e => e.stopPropagation()}>
                         <div className='modal-header'>
                             <div>
-                                <h2>{formManual.tipo_registro === 'bloqueo' ? 'Bloquear fecha' : 'Agregar reserva / Bloquear fecha'}</h2>
+                                <h2>Agregar reserva / Bloquear fecha</h2>
                                 <span className='panel-fecha-subtitulo'>{fechaDisplay(fechaManual)}</span>
                             </div>
-                            <button className='btn-cerrar-modal' onClick={cerrarPaneles}><FiX size={20} /></button>
+                            <button className='btn-cerrar-modal' onClick={cerrarPaneles}><FiX size={20}/></button>
                         </div>
                         <form onSubmit={guardarManual} className='modal-form'>
-                            {/* Tipo de registro: reserva externa real o bloqueo de agenda */}
-                            <div className='mf-tipo-toggle' role='tablist'>
-                                <button
-                                    type='button'
-                                    className={`mf-tipo-btn ${formManual.tipo_registro === 'reserva' ? 'mf-tipo-activo' : ''}`}
-                                    onClick={() => setFormManual(prev => ({ ...prev, tipo_registro: 'reserva' }))}
-                                >
-                                    Reserva externa
-                                </button>
-                                <button
-                                    type='button'
-                                    className={`mf-tipo-btn ${formManual.tipo_registro === 'bloqueo' ? 'mf-tipo-activo mf-tipo-bloqueo' : ''}`}
-                                    onClick={() => setFormManual(prev => ({ ...prev, tipo_registro: 'bloqueo' }))}
-                                >
-                                    <FiSlash size={13} /> Bloquear fecha
-                                </button>
-                            </div>
-
-                            {formManual.tipo_registro === 'bloqueo' ? (
-                                <>
-                                    <p className='mf-bloqueo-hint'>
-                                        La fecha quedará no disponible: nadie va a poder reservar el salón ese día
-                                        (mantenimiento, uso propio, feriado, etc.). Podés desbloquearla cuando quieras
-                                        desde el detalle de la fecha.
-                                    </p>
-                                    <div className='mf-group'>
-                                        <label>Motivo del bloqueo (opcional)</label>
-                                        <input
-                                            type='text'
-                                            name='motivo_bloqueo'
-                                            value={formManual.motivo_bloqueo}
-                                            onChange={handleFormManualChange}
-                                            placeholder='Ej: Mantenimiento de instalaciones'
-                                            maxLength={120}
-                                        />
-                                    </div>
-                                    <div className='mf-group'>
-                                        <label>Notas internas (opcional)</label>
-                                        <textarea
-                                            name='notas'
-                                            value={formManual.notas}
-                                            onChange={handleFormManualChange}
-                                            placeholder='Detalles solo visibles para vos.'
-                                            rows={2}
-                                            maxLength={500}
-                                        />
-                                    </div>
-                                </>
-                            ) : (<>
-                                <div className='mf-row'>
-                                    <div className='mf-group'>
-                                        <label>Nombre del organizador / festejado</label>
-                                        <input
-                                            type='text'
-                                            name='nombre_organizador'
-                                            value={formManual.nombre_organizador}
-                                            onChange={handleFormManualChange}
-                                            placeholder='Ej: María García'
-                                            maxLength={100}
-                                        />
-                                    </div>
-                                    <div className='mf-group'>
-                                        <label>Email (para notificación)</label>
-                                        <input
-                                            type='email'
-                                            name='email_organizador'
-                                            value={formManual.email_organizador}
-                                            onChange={handleFormManualChange}
-                                            placeholder='ejemplo@gmail.com'
-                                        />
-                                    </div>
-                                </div>
-                                <div className='mf-row'>
-                                    <div className='mf-group'>
-                                        <label>Tipo de evento</label>
-                                        <input
-                                            type='text'
-                                            name='tipo_evento'
-                                            value={formManual.tipo_evento}
-                                            onChange={handleFormManualChange}
-                                            placeholder='Ej: Cumpleaños de 15, Boda...'
-                                            maxLength={80}
-                                        />
-                                    </div>
-                                    <div className='mf-group'>
-                                        <label>Estado de pago</label>
-                                        <select name='estado' value={formManual.estado} onChange={handleFormManualChange}>
-                                            <option value='pendiente_pago'>Pendiente de pago</option>
-                                            <option value='seña_abonada'>Seña abonada</option>
-                                            <option value='confirmada'>Confirmada (total abonado)</option>
-                                            <option value='cancelada'>Cancelada</option>
-                                        </select>
-                                    </div>
+                            <div className='mf-row'>
+                                <div className='mf-group'>
+                                    <label>Nombre del organizador / festejado</label>
+                                    <input
+                                        type='text'
+                                        name='nombre_organizador'
+                                        value={formManual.nombre_organizador}
+                                        onChange={handleFormManualChange}
+                                        placeholder='Ej: María García'
+                                        maxLength={100}
+                                    />
                                 </div>
                                 <div className='mf-group'>
-                                    <label>Notas (opcional)</label>
-                                    <textarea
-                                        name='notas'
-                                        value={formManual.notas}
+                                    <label>Email (para notificación)</label>
+                                    <input
+                                        type='email'
+                                        name='email_organizador'
+                                        value={formManual.email_organizador}
                                         onChange={handleFormManualChange}
-                                        placeholder='Detalles internos, condiciones pactadas, etc.'
-                                        rows={3}
-                                        maxLength={500}
+                                        placeholder='ejemplo@gmail.com'
                                     />
                                 </div>
-                                <label className='fm-checkbox'>
+                            </div>
+                            <div className='mf-row'>
+                                <div className='mf-group'>
+                                    <label>Tipo de evento</label>
                                     <input
-                                        type='checkbox'
-                                        name='enviar_notificacion'
-                                        checked={formManual.enviar_notificacion}
+                                        type='text'
+                                        name='tipo_evento'
+                                        value={formManual.tipo_evento}
                                         onChange={handleFormManualChange}
-                                        disabled={!formManual.email_organizador}
+                                        placeholder='Ej: Cumpleaños de 15, Boda...'
+                                        maxLength={80}
                                     />
-                                    <span>
-                                        Notificar al cliente sobre los servicios adicionales disponibles en Dream Events
-                                        {!formManual.email_organizador && <em className='fm-hint'> (ingresá un email primero)</em>}
-                                    </span>
-                                </label>
-                            </>)}
+                                </div>
+                                <div className='mf-group'>
+                                    <label>Estado de pago</label>
+                                    <select name='estado' value={formManual.estado} onChange={handleFormManualChange}>
+                                        <option value='pendiente_pago'>Pendiente de pago</option>
+                                        <option value='seña_abonada'>Seña abonada</option>
+                                        <option value='confirmada'>Confirmada (total abonado)</option>
+                                        <option value='cancelada'>Cancelada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className='mf-group'>
+                                <label>Notas (opcional)</label>
+                                <textarea
+                                    name='notas'
+                                    value={formManual.notas}
+                                    onChange={handleFormManualChange}
+                                    placeholder='Detalles internos, condiciones pactadas, etc.'
+                                    rows={3}
+                                    maxLength={500}
+                                />
+                            </div>
+                            <label className='fm-checkbox'>
+                                <input
+                                    type='checkbox'
+                                    name='enviar_notificacion'
+                                    checked={formManual.enviar_notificacion}
+                                    onChange={handleFormManualChange}
+                                    disabled={!formManual.email_organizador}
+                                />
+                                <span>
+                                    Notificar al cliente sobre los servicios adicionales disponibles en Dream Events
+                                    {!formManual.email_organizador && <em className='fm-hint'> (ingresá un email primero)</em>}
+                                </span>
+                            </label>
                             {errorManual && <p className='mf-error'>{errorManual}</p>}
                             <div className='mf-acciones'>
                                 <button type='button' className='btn-cancelar-modal' onClick={cerrarPaneles}>Cancelar</button>
                                 <button type='submit' className='btn-guardar-modal' disabled={guardandoManual}>
-                                    {guardandoManual
-                                        ? 'Guardando...'
-                                        : (formManual.tipo_registro === 'bloqueo' ? 'Bloquear fecha' : 'Guardar reserva')}
+                                    {guardandoManual ? 'Guardando...' : 'Guardar y bloquear fecha'}
                                 </button>
                             </div>
                         </form>
@@ -1014,31 +1048,31 @@ const ModalEditInfo = ({ salon, onGuardado, onCerrar }) => {
             <div className='modal-box' onClick={e => e.stopPropagation()}>
                 <div className='modal-header'>
                     <h2>Editar información del salón</h2>
-                    <button className='btn-cerrar-modal' onClick={onCerrar}><FiX size={20} /></button>
+                    <button className='btn-cerrar-modal' onClick={onCerrar}><FiX size={20}/></button>
                 </div>
                 <form onSubmit={guardar} className='modal-form'>
                     <div className='mf-group'>
                         <label>Nombre *</label>
-                        <input name='nombre' value={form.nombre} onChange={handleChange} maxLength={100} />
+                        <input name='nombre' value={form.nombre} onChange={handleChange} maxLength={100}/>
                     </div>
                     <div className='mf-group'>
                         <label>Domicilio *</label>
-                        <input name='domicilio' value={form.domicilio} onChange={handleChange} maxLength={100} />
+                        <input name='domicilio' value={form.domicilio} onChange={handleChange} maxLength={100}/>
                     </div>
                     <div className='mf-row'>
                         <div className='mf-group'>
                             <label>Departamento</label>
-                            <input name='departamento' value={form.departamento} onChange={handleChange} maxLength={50} />
+                            <input name='departamento' value={form.departamento} onChange={handleChange} maxLength={50}/>
                         </div>
                         <div className='mf-group'>
                             <label>Localidad</label>
-                            <input name='localidad' value={form.localidad} onChange={handleChange} maxLength={50} />
+                            <input name='localidad' value={form.localidad} onChange={handleChange} maxLength={50}/>
                         </div>
                     </div>
                     <div className='mf-row'>
                         <div className='mf-group'>
                             <label>Provincia</label>
-                            <input name='provincia' value={form.provincia} onChange={handleChange} maxLength={50} />
+                            <input name='provincia' value={form.provincia} onChange={handleChange} maxLength={50}/>
                         </div>
                         <div className='mf-group'>
                             <label>Tipo de salón</label>
@@ -1053,17 +1087,17 @@ const ModalEditInfo = ({ salon, onGuardado, onCerrar }) => {
                     <div className='mf-row'>
                         <div className='mf-group'>
                             <label>Aforo *</label>
-                            <input type='number' name='aforo' value={form.aforo} onChange={handleChange} min='1' />
+                            <input type='number' name='aforo' value={form.aforo} onChange={handleChange} min='1'/>
                         </div>
                         <div className='mf-group'>
                             <label>Precio base (ARS) *</label>
-                            <input type='number' name='precio_alquiler' value={form.precio_alquiler} onChange={handleChange} min='0' />
+                            <input type='number' name='precio_alquiler' value={form.precio_alquiler} onChange={handleChange} min='0'/>
                         </div>
                     </div>
                     <div className='mf-group'>
                         <label>URL de imagen</label>
-                        <input type='url' name='imagen' value={form.imagen} onChange={handleChange} placeholder='https://' />
-                        {form.imagen && <img src={form.imagen} alt='preview' className='mf-img-preview' />}
+                        <input type='url' name='imagen' value={form.imagen} onChange={handleChange} placeholder='https://'/>
+                        {form.imagen && <img src={form.imagen} alt='preview' className='mf-img-preview'/>}
                     </div>
                     {error && <p className='mf-error'>{error}</p>}
                     <div className='mf-acciones'>
@@ -1120,7 +1154,7 @@ const MiSalonScreen = () => {
     if (!salon) return (
         <div className='mi-salon-page'>
             <div className='ms-vacio'>
-                <FiHome size={56} />
+                <FiHome size={56}/>
                 <h3>Todavía no registraste tu salón</h3>
                 <p>Registrá tu espacio para que los organizadores puedan reservarlo.</p>
                 <button className='ms-btn-primario' onClick={() => navigate('/salones/new')}>
@@ -1135,7 +1169,7 @@ const MiSalonScreen = () => {
             {/* Header */}
             <div className='ms-header'>
                 <div className='ms-titulo'>
-                    <FiHome size={26} />
+                    <FiHome size={26}/>
                     <div>
                         <h1>Mi Salón</h1>
                         <p>Gestioná tu espacio, precios y reservas</p>
@@ -1159,9 +1193,9 @@ const MiSalonScreen = () => {
             {/* Tabs */}
             <div className='ms-tabs'>
                 {[
-                    { key: 'info', label: 'Información', icon: <FiHome size={15} /> },
-                    { key: 'precios', label: 'Precios', icon: <FiDollarSign size={15} /> },
-                    { key: 'reservas', label: `Reservas (${reservas.filter(r => r.estado !== 'cancelada').length})`, icon: <FiCalendar size={15} /> },
+                    { key: 'info', label: 'Información', icon: <FiHome size={15}/> },
+                    { key: 'precios', label: 'Precios', icon: <FiDollarSign size={15}/> },
+                    { key: 'reservas', label: `Reservas (${reservas.filter(r=>r.estado!=='cancelada').length})`, icon: <FiCalendar size={15}/> },
                 ].map(t => (
                     <button
                         key={t.key}
@@ -1187,6 +1221,7 @@ const MiSalonScreen = () => {
                 <TabReservas
                     reservas={reservas}
                     onActualizar={cargarReservas}
+                    nombreSalon={salon?.nombre}
                 />
             )}
 

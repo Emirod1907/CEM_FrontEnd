@@ -2,8 +2,146 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../Contexts/PersonaContextProvider'
 import { getRolesRequest, getPermisosRequest, updateRolPermisosRequest } from '../../../services/rbacServices'
+import { getComisionesRequest, updateComisionRequest } from '../../../services/comisionesServices'
 import { EMAILS_FULL_ACCESS } from '../../../config/fullAccessEmails'
 import './AdminPanel.css'
+
+const LABEL_PERFIL = {
+    salon:           'Salones',
+    catering:        'Catering',
+    decoracion:      'Decoración',
+    audio_video:     'Audio y Video',
+    seguridad:       'Seguridad',
+    mobiliario:      'Mobiliario',
+    entretenimiento: 'Entretenimiento',
+    otro:            'Otros',
+}
+
+// ── Panel de comisiones de contrato (cliente / proveedor por tipo de perfil) ──
+const ComisionesPanel = () => {
+    const [comisiones, setComisiones] = useState([])
+    const [edit,       setEdit]       = useState({})
+    const [cargando,   setCargando]   = useState(true)
+    const [guardando,  setGuardando]  = useState(null)
+    const [msg,        setMsg]        = useState(null)
+
+    const cargar = async () => {
+        setCargando(true)
+        try {
+            const r = await getComisionesRequest()
+            const list = r.data.comisiones || []
+            setComisiones(list)
+            const e = {}
+            for (const c of list) e[c.tipo_perfil] = {
+                cliente:   String(c.comision_cliente_porcentaje),
+                proveedor: String(c.comision_proveedor_porcentaje),
+            }
+            setEdit(e)
+        } catch {
+            setMsg({ tipo: 'error', texto: 'Error al cargar las comisiones' })
+        } finally { setCargando(false) }
+    }
+    useEffect(() => { cargar() }, [])
+
+    const setCampo = (tp, campo, val) => setEdit(prev => ({ ...prev, [tp]: { ...prev[tp], [campo]: val } }))
+    const cambiado = (c) => {
+        const e = edit[c.tipo_perfil]
+        if (!e) return false
+        return Number(e.cliente) !== Number(c.comision_cliente_porcentaje) ||
+               Number(e.proveedor) !== Number(c.comision_proveedor_porcentaje)
+    }
+
+    const guardar = async (c) => {
+        const e = edit[c.tipo_perfil]
+        const cli = Number(e.cliente), prov = Number(e.proveedor)
+        if ([cli, prov].some(v => isNaN(v) || v < 0 || v > 50)) {
+            setMsg({ tipo: 'error', texto: 'Los porcentajes deben estar entre 0 y 50.' }); return
+        }
+        setGuardando(c.tipo_perfil); setMsg(null)
+        try {
+            const r = await updateComisionRequest(c.tipo_perfil, {
+                comision_cliente_porcentaje: cli,
+                comision_proveedor_porcentaje: prov,
+            })
+            const n = r?.data?.notificados
+            setMsg({
+                tipo: 'exito',
+                texto: `Comisión de ${LABEL_PERFIL[c.tipo_perfil] || c.tipo_perfil} actualizada.` +
+                    (n ? ` Se notificó a ${n} usuario(s) del cambio en las condiciones del contrato.` : '')
+            })
+            await cargar()
+        } catch (err) {
+            setMsg({ tipo: 'error', texto: err?.response?.data?.message || 'Error al guardar la comisión' })
+        } finally { setGuardando(null) }
+    }
+
+    const fmtFecha = (f) => f ? new Date(f).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'
+
+    if (cargando) return <div className="admin-loading">Cargando comisiones...</div>
+
+    return (
+        <div className="admin-permisos-section">
+            <h2>Comisiones de contrato</h2>
+            <p className="admin-rol-descripcion">
+                Porcentaje que la plataforma aplica sobre el precio base. <strong>Cliente</strong>: se suma al precio que paga el organizador.
+                <strong> Proveedor</strong>: se descuenta al dueño de salón / proveedor. Al guardar, se <strong>notifica a los usuarios</strong> con contrato de ese tipo.
+            </p>
+
+            {msg && <div className={`admin-mensaje admin-mensaje-${mensajeClase(msg.tipo)}`}>{msg.texto}</div>}
+
+            <div className="admin-tabla-wrapper">
+                <table className="admin-tabla admin-tabla-comisiones">
+                    <thead>
+                        <tr>
+                            <th className="admin-th-entidad">Tipo de perfil</th>
+                            <th>Comisión cliente (%)</th>
+                            <th>Comisión proveedor (%)</th>
+                            <th>Última actualización</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {comisiones.map(c => {
+                            const e = edit[c.tipo_perfil] || {}
+                            const upd = c.AdminActualizador
+                            return (
+                                <tr key={c.tipo_perfil}>
+                                    <td className="admin-td-entidad">
+                                        <strong>{LABEL_PERFIL[c.tipo_perfil] || c.tipo_perfil}</strong>
+                                        {c.tipo_perfil === 'salon'
+                                            ? <span className="admin-perfil-hint">Dueños de salón</span>
+                                            : <span className="admin-perfil-hint">Proveedores</span>}
+                                    </td>
+                                    <td>
+                                        <input type="number" min="0" max="50" step="0.5" className="admin-com-input"
+                                            value={e.cliente ?? ''} onChange={ev => setCampo(c.tipo_perfil, 'cliente', ev.target.value)} />
+                                    </td>
+                                    <td>
+                                        <input type="number" min="0" max="50" step="0.5" className="admin-com-input"
+                                            value={e.proveedor ?? ''} onChange={ev => setCampo(c.tipo_perfil, 'proveedor', ev.target.value)} />
+                                    </td>
+                                    <td className="admin-com-meta">
+                                        {fmtFecha(c.fecha_actualizacion)}
+                                        {upd && <div className="admin-perfil-hint">por {upd.nombre} {upd.apellido}</div>}
+                                    </td>
+                                    <td>
+                                        <button className="admin-btn-guardar admin-btn-com"
+                                            onClick={() => guardar(c)}
+                                            disabled={guardando === c.tipo_perfil || !cambiado(c)}>
+                                            {guardando === c.tipo_perfil ? 'Guardando...' : 'Guardar'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    )
+}
+
+const mensajeClase = (tipo) => tipo === 'exito' ? 'exito' : tipo === 'error' ? 'error' : 'info'
 
 const ENTIDADES = ['cliente', 'organizador', 'salon']
 const ACCIONES  = ['ver', 'crear', 'editar', 'eliminar']
@@ -32,6 +170,7 @@ const AdminPanel = () => {
     const [guardando,       setGuardando]        = useState(false)
     const [mensaje,         setMensaje]          = useState(null)
     const [cargando,        setCargando]         = useState(true)
+    const [vista,           setVista]            = useState('permisos')  // 'permisos' | 'comisiones'
 
     // Redirigir si no tiene acceso admin
     useEffect(() => {
@@ -160,9 +299,22 @@ const AdminPanel = () => {
             <div className="admin-panel">
                 <div className="admin-header">
                     <h1>Panel de Administración</h1>
-                    <p>Gestioná los permisos de cada rol del sistema</p>
+                    <p>Gestioná los permisos de cada rol y las comisiones de contrato</p>
                 </div>
 
+                {/* Pestañas principales */}
+                <div className="admin-vista-tabs">
+                    <button className={`admin-vista-tab ${vista === 'permisos' ? 'activo' : ''}`} onClick={() => setVista('permisos')}>
+                        Permisos y roles
+                    </button>
+                    <button className={`admin-vista-tab ${vista === 'comisiones' ? 'activo' : ''}`} onClick={() => setVista('comisiones')}>
+                        Comisiones de contrato
+                    </button>
+                </div>
+
+                {vista === 'comisiones' && <ComisionesPanel />}
+
+                {vista === 'permisos' && (<>
                 {/* Selector de rol */}
                 <div className="admin-roles-selector">
                     <h2>Seleccionar Rol</h2>
@@ -267,6 +419,7 @@ const AdminPanel = () => {
                         </div>
                     </div>
                 )}
+                </>)}
             </div>
         </div>
     )
