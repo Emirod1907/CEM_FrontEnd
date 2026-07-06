@@ -9,8 +9,8 @@ const PASOS = [
     { n: 1, label: 'Salón' },
     { n: 2, label: 'Servicios' },
     { n: 3, label: 'Productos' },
-    { n: 4, label: 'Invitados' },
-    { n: 5, label: 'Pago' },
+    { n: 4, label: 'Pago' },
+    { n: 5, label: 'Invitaciones' },
 ]
 
 // Barra de progreso del flujo de organización de un evento.
@@ -43,28 +43,48 @@ const ProgresoEvento = () => {
     const tieneServicios = servicios.some((s) => (s.tipo_item || 'producto') === 'servicio')
     const tieneProductos = servicios.some((s) => (s.tipo_item || 'producto') === 'producto')
 
+    // El evento es privado (invitaciones personalizadas) vs público (cartelera)
+    const esPrivado = reservaOrganizador?.datos_evento?.es_publico === false
+    // El pago se considera hecho si la reserva ya está señada/confirmada, o si venimos
+    // de la pantalla de éxito, o si ya estamos en el paso de invitaciones.
+    const pagoHecho =
+        ['seña_abonada', 'confirmada'].includes(reservaOrganizador?.estado) ||
+        path.startsWith('/pago/exito') ||
+        path.startsWith('/organizar/invitados')
+
     // Un paso está completado cuando su acción ya se hizo
     const completado = {
         1: tieneReserva,
         2: tieneServicios,
         3: tieneProductos,
-        4: false, // se marca al gestionar invitaciones (fase a pulir)
-        5: false, // se marca al pagar
+        4: pagoHecho,
+        5: false, // informativo: se resalta al gestionar invitaciones
     }
 
-    // Del paso 2 en adelante hace falta haber reservado un salón
-    const disponible = (n) => n === 1 || tieneReserva
+    // Del paso 2 al 4 hace falta haber reservado un salón. El paso 5 (invitaciones)
+    // solo aplica a eventos privados y una vez acreditado el pago.
+    const disponible = (n) => {
+        if (n === 1) return true
+        if (n === 5) return tieneReserva && esPrivado && pagoHecho
+        return tieneReserva
+    }
+    const motivoBloqueo = (n) => {
+        if (n === 5 && tieneReserva && !esPrivado) return 'Las invitaciones son solo para eventos privados'
+        if (n === 5 && tieneReserva && !pagoHecho) return 'Primero completá el pago'
+        return 'Primero reservá un salón'
+    }
 
     // Paso actual a resaltar
     let actual
-    if (path.startsWith('/pago')) actual = 5
+    if (path.startsWith('/organizar/invitados')) actual = 5
+    else if (path.startsWith('/pago/exito')) actual = esPrivado ? 5 : 4
+    else if (path.startsWith('/pago')) actual = 4
     else if (path.startsWith('/organizar/salon')) actual = 1
     else if (path.startsWith('/organizar/servicios')) actual = 2
     else if (path.startsWith('/organizar/productos')) actual = 3
-    else if (path.startsWith('/organizar/invitados')) actual = 4
     else if (!tieneReserva) actual = 1
     else if (path.startsWith('/eventos/new')) actual = 1
-    else actual = [2, 3, 4, 5].find((n) => !completado[n]) || 5
+    else actual = [2, 3, 4, 5].find((n) => !completado[n] && disponible(n)) || 4
 
     const irAPaso = (n) => {
         if (!disponible(n)) return
@@ -76,8 +96,8 @@ const ProgresoEvento = () => {
                 break
             case 2: navigate('/organizar/servicios'); break
             case 3: navigate('/organizar/productos'); break
-            case 4: navigate('/mis-reservas'); break
-            case 5: setIsCartOpen(true); break
+            case 4: setIsCartOpen(true); break
+            case 5: navigate('/organizar/invitados'); break
             default: break
         }
     }
@@ -106,7 +126,7 @@ const ProgresoEvento = () => {
                                 className={clase}
                                 onClick={() => irAPaso(paso.n)}
                                 disabled={!disp}
-                                title={!disp ? 'Primero reservá un salón' : (isAqui ? `Estás en: ${paso.label}` : paso.label)}
+                                title={!disp ? motivoBloqueo(paso.n) : (isAqui ? `Estás en: ${paso.label}` : paso.label)}
                                 aria-current={isAqui ? 'step' : undefined}
                             >
                                 <span className="prog-circulo">

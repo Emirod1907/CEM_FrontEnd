@@ -4,7 +4,7 @@ import { useCarrito } from '../../../Contexts/CarritoContextProvider'
 import { useAuth } from '../../../Contexts/PersonaContextProvider'
 import { generarLinkPorReserva } from '../../../services/invitacionServices'
 import { confirmarPago } from '../../../services/pagoServices'
-import { FiCheckCircle, FiXCircle, FiClock, FiHome, FiShoppingCart, FiLink, FiCopy, FiRefreshCw, FiCalendar } from 'react-icons/fi'
+import { FiCheckCircle, FiXCircle, FiClock, FiHome, FiShoppingCart, FiLink, FiCopy, FiRefreshCw, FiCalendar, FiSend } from 'react-icons/fi'
 import './PagoResultadoScreen.css'
 
 const ESTADOS = {
@@ -134,6 +134,17 @@ const PagoResultadoScreen = ({ tipo }) => {
                         <p className='resultado-invitacion-desc'>
                             Tu evento es <strong>privado</strong>. Compartí este link para que tus invitados confirmen asistencia y reciban su entrada con QR.
                         </p>
+
+                        {/* Paso 5 del flujo: gestión completa de invitaciones (WhatsApp masivo,
+                            importar contactos, etc.). No vaciamos el carrito para que la pantalla
+                            tenga la reserva en contexto. */}
+                        <button
+                            className='resultado-btn-generar'
+                            style={{ marginBottom: 12 }}
+                            onClick={() => navigate('/organizar/invitados')}
+                        >
+                            <FiSend size={15} /> Gestionar invitaciones (Paso 5)
+                        </button>
 
                         {linkInvitacion ? (
                             <div className='resultado-link-box'>
