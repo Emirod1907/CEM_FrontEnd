@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
-import { getMisReservas, cancelarReserva } from '../../../services/reservaServices'
+import { getMisReservas } from '../../../services/reservaServices'
 import { getValoracionesReserva } from '../../../services/valoracionServices'
 import { useCarrito } from '../../../Contexts/CarritoContextProvider'
 import { useNavigate } from 'react-router-dom'
@@ -7,6 +7,7 @@ import { FiCalendar, FiStar, FiClock, FiCheckCircle, FiLayers } from 'react-icon
 import ReservaDetalleModal from '../../Modals/ReservaDetalleModal/ReservaDetalleModal'
 import ReiterarReservaModal from '../../Modals/ReiterarReservaModal/ReiterarReservaModal'
 import ValoracionModal from '../../Modals/ValoracionModal/ValoracionModal'
+import CancelarReservaModal from '../../Modals/CancelarReservaModal/CancelarReservaModal'
 import CalendarioReservas from '../../CalendarioReservas/CalendarioReservas'
 import './MisReservasScreen.css'
 
@@ -17,6 +18,7 @@ const MisReservasScreen = () => {
     const [detalleId,       setDetalleId]       = useState(null)
     const [reservaAReiterar, setReservaAReiterar] = useState(null)
     const [reservaAValorar, setReservaAValorar] = useState(null)
+    const [reservaACancelar, setReservaACancelar] = useState(null)
     const [yaCalificadas,   setYaCalificadas]   = useState(new Set())
 
     const { agregarReservaOrganizador, reservaOrganizador, setIsCartOpen } = useCarrito()
@@ -102,19 +104,10 @@ const MisReservasScreen = () => {
         setTimeout(() => setIsCartOpen(true), 100)
     }
 
-    const handleCancelar = async (id_reserva) => {
-        if (!confirm('¿Cancelar esta reserva? Esta acción no se puede deshacer.')) return
-        setCancelando(id_reserva)
-        try {
-            await cancelarReserva(id_reserva)
-            setReservas(prev =>
-                prev.map(r => r.id_reserva === id_reserva ? { ...r, estado: 'cancelada' } : r)
-            )
-        } catch (err) {
-            alert(err?.response?.data?.message || 'Error al cancelar la reserva')
-        } finally {
-            setCancelando(null)
-        }
+    // Abre el modal de cancelación (que muestra el reembolso según la escala/motivo)
+    const handleCancelar = (id_reserva) => {
+        const r = reservas.find(x => x.id_reserva === id_reserva)
+        if (r) setReservaACancelar(r)
     }
 
     const pendientesValorar = reservas.filter(
@@ -255,6 +248,19 @@ const MisReservasScreen = () => {
                     reserva={reservaAReiterar}
                     onClose={() => setReservaAReiterar(null)}
                     onExito={handleReiterar}
+                />
+            )}
+
+            {reservaACancelar && (
+                <CancelarReservaModal
+                    reserva={reservaACancelar}
+                    onClose={() => setReservaACancelar(null)}
+                    onCancelada={() => {
+                        setReservas(prev => prev.map(r =>
+                            r.id_reserva === reservaACancelar.id_reserva ? { ...r, estado: 'cancelada' } : r
+                        ))
+                        setReservaACancelar(null)
+                    }}
                 />
             )}
 

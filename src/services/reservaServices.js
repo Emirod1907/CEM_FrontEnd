@@ -66,10 +66,16 @@ export const eliminarReservaCancelada = async (id) => {
     }
 }
 
-// DELETE /api/reservas/:id/cancelar
-export const cancelarReserva = async (id) => {
+// GET /api/reservas/:id/cancelacion-preview?motivo=
+export const getCancelacionPreview = async (id, motivo = 'voluntaria') => {
+    const response = await axios.get(`reservas/${id}/cancelacion-preview`, { params: { motivo } })
+    return response.data
+}
+
+// DELETE /api/reservas/:id/cancelar  (motivo: voluntaria | fuerza_mayor | arrepentimiento)
+export const cancelarReserva = async (id, motivo = 'voluntaria') => {
     try {
-        const response = await axios.delete(`reservas/${id}/cancelar`)
+        const response = await axios.delete(`reservas/${id}/cancelar`, { data: { motivo } })
         return response.data
     } catch (error) {
         console.error('Error al cancelar reserva:', error)

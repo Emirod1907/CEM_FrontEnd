@@ -1,0 +1,95 @@
+.cxl-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.6);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1500; padding: 16px;
+}
+.cxl-modal {
+    background: #1a1230;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 16px;
+    width: 100%; max-width: 520px;
+    max-height: 90vh; display: flex; flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0,0,0,.55); overflow: hidden;
+}
+.cxl-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #b91c1c, #770981);
+    flex-shrink: 0;
+}
+.cxl-header-titulo { display: flex; align-items: center; gap: 10px; color: #fff; }
+.cxl-header-titulo h2 { margin: 0; font-size: 1.05rem; }
+.cxl-cerrar {
+    background: rgba(255,255,255,.18); border: none; color: #fff; cursor: pointer;
+    border-radius: 8px; padding: 6px; display: flex; align-items: center;
+}
+.cxl-cerrar:hover { background: rgba(255,255,255,.3); }
+
+.cxl-body { padding: 18px 20px; overflow-y: auto; }
+.cxl-intro { color: rgba(255,255,255,.75); font-size: .9rem; margin: 0 0 14px; line-height: 1.5; }
+.cxl-intro strong { color: #fff; }
+.cxl-sinpago {
+    display: flex; align-items: center; gap: 8px;
+    color: #cbd5e1; background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 12px 14px; margin: 0;
+    font-size: .9rem;
+}
+
+.cxl-motivos { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.cxl-motivo {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 11px 13px; border-radius: 10px; cursor: pointer;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+    transition: background .15s, border-color .15s;
+}
+.cxl-motivo:hover { background: rgba(255,255,255,.08); }
+.cxl-motivo--sel { border-color: #c084fc; background: rgba(119,9,129,.25); }
+.cxl-motivo input { margin-top: 3px; accent-color: #c084fc; }
+.cxl-motivo div { display: flex; flex-direction: column; gap: 2px; }
+.cxl-motivo-label { color: #fff; font-size: .92rem; font-weight: 600; }
+.cxl-motivo-desc { color: rgba(255,255,255,.6); font-size: .8rem; line-height: 1.4; }
+
+.cxl-cargando { color: rgba(255,255,255,.6); text-align: center; padding: 14px; }
+
+.cxl-resumen {
+    display: flex; gap: 16px; align-items: center;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px; padding: 16px;
+}
+.cxl-resumen--full { border-color: rgba(22,163,74,.5); background: rgba(22,163,74,.12); }
+.cxl-resumen--none { border-color: rgba(220,38,38,.5); background: rgba(220,38,38,.12); }
+.cxl-resumen-pct {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-width: 90px; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15);
+}
+.cxl-resumen-num { font-size: 2rem; font-weight: 800; color: #fff; line-height: 1; }
+.cxl-resumen-cap { font-size: .72rem; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .04em; }
+.cxl-resumen-detalle { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.cxl-resumen-detalle > div { display: flex; justify-content: space-between; font-size: .88rem; color: rgba(255,255,255,.8); }
+.cxl-resumen-detalle strong { color: #fff; }
+.cxl-verde { color: #4ade80 !important; }
+.cxl-rojo { color: #f87171 !important; }
+.cxl-tramo {
+    justify-content: flex-start !important; gap: 5px; align-items: center;
+    color: rgba(255,255,255,.55) !important; font-size: .76rem !important;
+    margin-top: 4px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,.1);
+}
+
+.cxl-error { color: #f87171; font-size: .88rem; margin: 12px 0 0; }
+
+.cxl-footer {
+    display: flex; justify-content: flex-end; gap: 10px;
+    padding: 14px 20px; border-top: 1px solid rgba(255,255,255,.1); flex-shrink: 0;
+}
+.cxl-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: none; border-radius: 9px; padding: 9px 16px;
+    font-family: inherit; font-size: .9rem; font-weight: 600; cursor: pointer;
+    transition: filter .15s, background .15s;
+}
+.cxl-btn--ghost { background: rgba(255,255,255,.1); color: #fff; }
+.cxl-btn--ghost:hover { background: rgba(255,255,255,.18); }
+.cxl-btn--peligro { background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff; }
+.cxl-btn--peligro:hover { filter: brightness(1.08); }
+.cxl-btn:disabled { opacity: .55; cursor: default; }
