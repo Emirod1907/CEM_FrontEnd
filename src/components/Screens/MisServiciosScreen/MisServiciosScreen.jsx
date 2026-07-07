@@ -19,6 +19,7 @@ import PreciosConfigPanel from '../../PreciosConfigPanel/PreciosConfigPanel'
 import ImportarExcelModal from '../../Modals/ImportarExcelModal/ImportarExcelModal'
 import ContratoModal from '../../Modals/ContratoModal/ContratoModal'
 import { getMiContrato } from '../../../services/contratoServices'
+import MpConnectButton from '../../MpConnectButton/MpConnectButton'
 import UploadImg from '../../../services/uploadimg'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MisServiciosScreen.css'
@@ -1225,16 +1226,19 @@ const MisServiciosScreen = () => {
                         <p>Gestioná tu tiendita y revisá las reservas donde contrataron tus servicios</p>
                     </div>
                 </div>
-                {tabActiva === 'tiendita' && (
-                    <div className='mis-servicios-acciones'>
-                        <button className='btn-importar-excel' onClick={() => setMostrarImportar(true)}>
-                            <FiUploadCloud size={17} /> Importar Excel
-                        </button>
-                        <button className='btn-nuevo-servicio' onClick={abrirNuevo}>
-                            <FiPlus size={18} /> Agregar ítem
-                        </button>
-                    </div>
-                )}
+                <div className='mis-servicios-acciones'>
+                    <MpConnectButton />
+                    {tabActiva === 'tiendita' && (
+                        <>
+                            <button className='btn-importar-excel' onClick={() => setMostrarImportar(true)}>
+                                <FiUploadCloud size={17} /> Importar Excel
+                            </button>
+                            <button className='btn-nuevo-servicio' onClick={abrirNuevo}>
+                                <FiPlus size={18} /> Agregar ítem
+                            </button>
+                        </>
+                    )}
+                </div>
             </div>
 
             {mostrarImportar && (

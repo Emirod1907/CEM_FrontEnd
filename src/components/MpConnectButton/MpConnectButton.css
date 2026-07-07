@@ -1,0 +1,22 @@
+.mp-connect-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #009ee3;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .15s, background .15s;
+}
+.mp-connect-btn:hover { filter: brightness(1.06); }
+.mp-connect-btn:disabled { opacity: .6; cursor: default; }
+.mp-connect-btn.conectado {
+    background: #e6f7ec;
+    color: #157347;
+    border: 1px solid #a3e4bf;
+}
