@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../Contexts/PersonaContextProvider'
 import { getRolesRequest, getPermisosRequest, updateRolPermisosRequest } from '../../../services/rbacServices'
 import { getComisionesRequest, updateComisionRequest } from '../../../services/comisionesServices'
+import { getLiquidaciones, liquidarDesglose } from '../../../services/liquidacionesServices'
 import { EMAILS_FULL_ACCESS } from '../../../config/fullAccessEmails'
 import './AdminPanel.css'
 
@@ -278,6 +279,91 @@ const ComisionesPanel = () => {
     )
 }
 
+const fmtMoney = (n) => `$${Number(n || 0).toLocaleString('es-AR')}`
+
+// Panel de liquidaciones: reparto (settlement) del neto a cada vendedor. Muestra si
+// el vendedor conectó su MercadoPago (para pagarle directo) y permite marcar liquidado.
+const LiquidacionesPanel = () => {
+    const [filas, setFilas]       = useState([])
+    const [cargando, setCargando] = useState(true)
+    const [filtro, setFiltro]     = useState('')
+    const [procesando, setProcesando] = useState(null)
+    const [msg, setMsg]           = useState(null)
+
+    const cargar = () => {
+        setCargando(true)
+        getLiquidaciones(filtro)
+            .then(setFilas)
+            .catch(() => setMsg({ tipo: 'error', texto: 'No se pudieron cargar las liquidaciones.' }))
+            .finally(() => setCargando(false))
+    }
+    useEffect(() => { cargar() }, [filtro])
+
+    const handleLiquidar = async (orden_id) => {
+        setProcesando(orden_id); setMsg(null)
+        try {
+            const r = await liquidarDesglose(orden_id)
+            setMsg({ tipo: 'ok', texto: r.mp_conectado
+                ? 'Liquidado. El vendedor tiene MercadoPago conectado: el pago se acredita en su cuenta.'
+                : 'Liquidado. El vendedor no conectó MercadoPago; coordiná el pago manualmente.' })
+            cargar()
+        } catch (e) {
+            setMsg({ tipo: 'error', texto: e?.response?.data?.message || 'No se pudo liquidar.' })
+        } finally { setProcesando(null) }
+    }
+
+    return (
+        <section className="admin-card">
+            <div className="admin-section-heading compact">
+                <h2>Liquidaciones a vendedores</h2>
+                <select value={filtro} onChange={e => setFiltro(e.target.value)} className="admin-select">
+                    <option value="">Todas</option>
+                    <option value="pendiente">Pendientes</option>
+                    <option value="liquidado">Liquidadas</option>
+                    <option value="facturado">Facturadas</option>
+                </select>
+            </div>
+            {msg && <p className={`admin-flash ${msg.tipo}`}>{msg.texto}</p>}
+            {cargando ? <p className="admin-muted">Cargando…</p> : filas.length === 0 ? (
+                <p className="admin-muted">No hay liquidaciones para este filtro.</p>
+            ) : (
+                <div className="admin-tabla-wrapper">
+                    <table className="admin-tabla">
+                        <thead><tr>
+                            <th>Orden</th><th>Beneficiario</th><th>MercadoPago</th>
+                            <th>Bruto</th><th>Neto vendedor</th><th>Estado</th><th></th>
+                        </tr></thead>
+                        <tbody>
+                            {filas.map(f => (
+                                <tr key={f.orden_id}>
+                                    <td>#{f.orden_id}</td>
+                                    <td>{f.beneficiario?.nombre || '—'}</td>
+                                    <td>
+                                        {f.beneficiario?.mp_conectado
+                                            ? <span className="lq-badge lq-ok">✓ Conectado</span>
+                                            : <span className="lq-badge lq-no">Sin conectar</span>}
+                                    </td>
+                                    <td>{fmtMoney(f.monto_bruto)}</td>
+                                    <td>{fmtMoney(f.monto_neto_proveedor)}</td>
+                                    <td><span className={`lq-estado lq-${f.estado_liquidacion}`}>{f.estado_liquidacion}</span></td>
+                                    <td>
+                                        {f.estado_liquidacion === 'pendiente' && (
+                                            <button className="admin-btn-mini" disabled={procesando === f.orden_id}
+                                                onClick={() => handleLiquidar(f.orden_id)}>
+                                                {procesando === f.orden_id ? '…' : 'Liquidar'}
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+        </section>
+    )
+}
+
 const AdminPanel = () => {
     const { persona } = useAuth()
     const navigate = useNavigate()
@@ -433,9 +519,14 @@ const AdminPanel = () => {
                         <Glyph name="package" className="admin-tab-glyph" />
                         Comisiones de contrato
                     </button>
+                    <button className={`admin-vista-tab ${vista === 'liquidaciones' ? 'activo' : ''}`} onClick={() => setVista('liquidaciones')}>
+                        <Glyph name="package" className="admin-tab-glyph" />
+                        Liquidaciones
+                    </button>
                 </nav>
 
                 {vista === 'comisiones' && <ComisionesPanel />}
+                {vista === 'liquidaciones' && <LiquidacionesPanel />}
 
                 {vista === 'permisos' && (<>
                     <section className="admin-card admin-roles-selector">

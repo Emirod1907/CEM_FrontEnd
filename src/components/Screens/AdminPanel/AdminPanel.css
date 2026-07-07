@@ -892,3 +892,34 @@
         transition: none !important;
     }
 }
+/* ── Liquidaciones ── */
+.admin-select {
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-family: inherit;
+    font-size: .88rem;
+}
+.admin-muted { color: #6b7280; padding: 14px 0; }
+.admin-flash { padding: 10px 14px; border-radius: 8px; font-size: .88rem; margin: 8px 0; }
+.admin-flash.ok { background: #dcfce7; color: #166534; }
+.admin-flash.error { background: #fee2e2; color: #991b1b; }
+.admin-btn-mini {
+    padding: 6px 12px;
+    border-radius: 7px;
+    border: none;
+    background: #009ee3;
+    color: #fff;
+    font-weight: 600;
+    font-size: .82rem;
+    cursor: pointer;
+}
+.admin-btn-mini:hover { filter: brightness(1.07); }
+.admin-btn-mini:disabled { opacity: .55; cursor: default; }
+.lq-badge { padding: 2px 9px; border-radius: 12px; font-size: .76rem; font-weight: 600; }
+.lq-ok { background: #dcfce7; color: #166534; }
+.lq-no { background: #f3f4f6; color: #6b7280; }
+.lq-estado { padding: 2px 9px; border-radius: 12px; font-size: .76rem; font-weight: 600; text-transform: capitalize; }
+.lq-pendiente { background: #fef3c7; color: #92400e; }
+.lq-liquidado { background: #dcfce7; color: #166534; }
+.lq-facturado { background: #e0edff; color: #1e40af; }
