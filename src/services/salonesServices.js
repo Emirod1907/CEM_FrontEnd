@@ -68,6 +68,22 @@ export const disconnectGoogleCalendar = async () => {
     await axios.post('salones/google/disconnect', {}, { withCredentials: true })
 }
 
+// ── MercadoPago Marketplace (vendedor) ──────────────────────────────────────
+export const mpConnectUrl = () => `${BACKEND_URL}/api/salones/mp/connect`
+
+export const getMpStatus = async () => {
+    try {
+        const r = await axios.get('salones/mp/status', { withCredentials: true })
+        return { connected: !!r.data?.connected, mp_user_id: r.data?.mp_user_id ?? null }
+    } catch {
+        return { connected: false, mp_user_id: null }
+    }
+}
+
+export const disconnectMp = async () => {
+    await axios.post('salones/mp/disconnect', {}, { withCredentials: true })
+}
+
 // Vía B (punto cero): importa los eventos del Google Calendar y bloquea esas fechas
 export const importarGoogleCalendar = async () => {
     const r = await axios.post('salones/google/importar', {}, { withCredentials: true })

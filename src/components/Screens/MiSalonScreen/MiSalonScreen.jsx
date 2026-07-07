@@ -9,7 +9,10 @@ import {
     crearReservaManual,
     getGoogleCalendarStatus,
     disconnectGoogleCalendar,
-    googleCalendarConnectUrl
+    googleCalendarConnectUrl,
+    getMpStatus,
+    disconnectMp,
+    mpConnectUrl
 } from '../../../services/salonesServices'
 import { FiHome, FiEdit2, FiX, FiMapPin, FiUsers, FiDollarSign,
          FiCalendar, FiCheck, FiSlash, FiPlus, FiTrash2, FiSave, FiChevronLeft, FiChevronRight,
@@ -382,11 +385,26 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const [calConectado, setCalConectado] = useState(false)
     const [calCargando,  setCalCargando]  = useState(false)
     const [calMsg,       setCalMsg]       = useState(null)    // feedback tras el callback
+    const [mpConectado,  setMpConectado]  = useState(false)   // MercadoPago Marketplace
+    const [mpCargando,   setMpCargando]   = useState(false)
+    const [mpMsg,        setMpMsg]        = useState(null)
 
-    // Al montar: estado de conexión + leer el resultado del callback (?calendar=...)
+    // Al montar: estado de conexión + leer el resultado del callback (?calendar= / ?mp=)
     useEffect(() => {
         getGoogleCalendarStatus().then(setCalConectado)
+        getMpStatus().then(s => setMpConectado(s.connected))
         const params = new URLSearchParams(window.location.search)
+        const mp = params.get('mp')
+        if (mp) {
+            const mapaMp = {
+                conectado: { tipo: 'ok',  texto: '¡MercadoPago conectado! Vas a cobrar el alquiler directo en tu cuenta.' },
+                cancelado: { tipo: 'err', texto: 'Cancelaste la conexión con MercadoPago.' },
+                error:     { tipo: 'err', texto: 'No se pudo conectar con MercadoPago. Intentá de nuevo.' },
+            }
+            setMpMsg(mapaMp[mp] || null)
+            if (mp === 'conectado') getMpStatus().then(s => setMpConectado(s.connected))
+            window.history.replaceState({}, '', window.location.pathname)
+        }
         const r = params.get('calendar')
         if (r) {
             const mapa = {
@@ -417,6 +435,20 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
             setCalMsg({ tipo: 'err', texto: 'No se pudo desconectar. Intentá de nuevo.' })
         } finally {
             setCalCargando(false)
+        }
+    }
+
+    const conectarMp = () => { window.location.href = mpConnectUrl() }
+    const desconectarMp = async () => {
+        setMpCargando(true)
+        try {
+            await disconnectMp()
+            setMpConectado(false)
+            setMpMsg({ tipo: 'ok', texto: 'MercadoPago desvinculado.' })
+        } catch {
+            setMpMsg({ tipo: 'err', texto: 'No se pudo desvincular. Intentá de nuevo.' })
+        } finally {
+            setMpCargando(false)
         }
     }
 
@@ -595,6 +627,16 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                             >
                                 <FiCalendar size={13} /> {calConectado ? 'Calendar ✓' : 'Google Calendar'}
                             </button>
+                            <button
+                                className={`btn-exportar-cal ${mpConectado ? 'conectado' : ''}`}
+                                onClick={mpConectado ? desconectarMp : conectarMp}
+                                disabled={mpCargando}
+                                title={mpConectado
+                                    ? 'Tu MercadoPago está conectado: cobrás el alquiler directo en tu cuenta. Clic para desvincular.'
+                                    : 'Conectá tu MercadoPago para cobrar el alquiler directo en tu cuenta'}
+                            >
+                                <FiDollarSign size={13} /> {mpConectado ? 'MercadoPago ✓' : 'Conectar MercadoPago'}
+                            </button>
                             <button className='btn-archivo' onClick={() => setMostrarArchivo(true)}>
                                 Archivo {reservasArchivadas.length > 0 && <span className='archivo-badge'>{reservasArchivadas.length}</span>}
                             </button>
@@ -607,6 +649,15 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                             {calMsg.tipo === 'ok' ? <FiCheck size={14} /> : <FiInfo size={14} />}
                             <span>{calMsg.texto}</span>
                             <button className='cal-flash-x' onClick={() => setCalMsg(null)}><FiX size={14} /></button>
+                        </div>
+                    )}
+
+                    {/* Feedback tras el callback de MercadoPago */}
+                    {mpMsg && (
+                        <div className={`cal-flash cal-flash--${mpMsg.tipo}`}>
+                            {mpMsg.tipo === 'ok' ? <FiCheck size={14} /> : <FiInfo size={14} />}
+                            <span>{mpMsg.texto}</span>
+                            <button className='cal-flash-x' onClick={() => setMpMsg(null)}><FiX size={14} /></button>
                         </div>
                     )}
 
