@@ -1,0 +1,74 @@
+.tcg {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 10px 0;
+}
+.tcg-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    cursor: pointer;
+    font-size: .86rem;
+    color: rgba(255,255,255,.88);
+    line-height: 1.45;
+}
+.tcg-check input { margin-top: 3px; accent-color: #c084fc; flex-shrink: 0; }
+.tcg-check b { color: #fff; }
+.tcg-check svg { vertical-align: -2px; color: #4ade80; margin-right: 2px; }
+
+.tcg-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    color: #c084fc;
+    cursor: pointer;
+    font-size: .8rem;
+    font-family: inherit;
+    padding: 6px 0 0;
+}
+.tcg-toggle:hover { color: #d8b4fe; }
+
+.tcg-detalle { margin-top: 10px; }
+.tcg-nota {
+    font-size: .8rem;
+    color: rgba(255,255,255,.75);
+    line-height: 1.5;
+    margin: 0 0 8px;
+}
+.tcg-nota b { color: #fff; }
+.tcg-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .8rem;
+    color: rgba(255,255,255,.85);
+}
+.tcg-tabla th, .tcg-tabla td {
+    padding: 5px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.tcg-tabla th { color: #c084fc; font-weight: 600; }
+.tcg-texto { margin-top: 10px; }
+.tcg-texto summary {
+    cursor: pointer;
+    color: #c084fc;
+    font-size: .8rem;
+}
+.tcg-texto pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 240px;
+    overflow-y: auto;
+    background: rgba(0,0,0,.25);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: .72rem;
+    color: rgba(255,255,255,.7);
+    margin-top: 8px;
+    font-family: 'Consolas', monospace;
+    line-height: 1.5;
+}

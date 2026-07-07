@@ -18,3 +18,14 @@ export const getMiContrato = async (ambito) => {
     })
     return response.data
 }
+
+// Bases y condiciones del consumidor + política de cancelación (checkout)
+export const getTerminosConsumidor = async () => {
+    const response = await axios.get('contratos/terminos-consumidor')
+    return response.data
+}
+
+export const aceptarTerminosConsumidor = async () => {
+    const response = await axios.post('contratos/aceptar-consumidor', { acepto: true }, { withCredentials: true })
+    return response.data
+}

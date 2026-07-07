@@ -2,9 +2,11 @@ import React, { useRef, useState } from 'react'
 import { useCarrito } from '../../Contexts/CarritoContextProvider'
 import { useAuth } from '../../Contexts/PersonaContextProvider'
 import { crearPreferenciaPago, crearPreferenciaOrganizador } from '../../services/pagoServices'
+import { aceptarTerminosConsumidor } from '../../services/contratoServices'
 import { useNavigate } from 'react-router-dom'
 import { FiX, FiTrash2, FiMinus, FiPlus, FiShoppingCart, FiCalendar, FiMapPin, FiUsers, FiClock, FiRepeat, FiBookmark } from 'react-icons/fi'
 import ServiciosModal from '../Modals/ServiciosModal/ServiciosModal'
+import TerminosConsumidorGate from './TerminosConsumidorGate'
 import './CarritoDrawer.css'
 
 const CarritoDrawer = () => {
@@ -37,6 +39,7 @@ const CarritoDrawer = () => {
     const navigate = useNavigate()
     const [loadingPago, setLoadingPago] = useState(false)
     const [errorPago, setErrorPago] = useState(null)
+    const [aceptoTerminos, setAceptoTerminos] = useState(false)
     const [mostrarServiciosModal, setMostrarServiciosModal] = useState(false)
     const precioEntradaRef = useRef(null)
 
@@ -69,9 +72,15 @@ const CarritoDrawer = () => {
             setIsCartOpen(false)
             return
         }
+        if (!aceptoTerminos) {
+            setErrorPago('Debés aceptar las bases y condiciones para continuar.')
+            return
+        }
         setLoadingPago(true)
         setErrorPago(null)
         try {
+            // Firma electrónica del consumidor antes de pagar (Ley 24.240)
+            await aceptarTerminosConsumidor().catch(() => {})
             const data = await crearPreferenciaPago(items)
             if (!data) {
                 setErrorPago('No se pudo iniciar el pago. Intenta de nuevo.')
@@ -92,9 +101,15 @@ const CarritoDrawer = () => {
             setIsCartOpen(false)
             return
         }
+        if (!aceptoTerminos) {
+            setErrorPago('Debés aceptar las bases y condiciones para continuar.')
+            return
+        }
         setLoadingPago(true)
         setErrorPago(null)
         try {
+            // Firma electrónica del consumidor antes de pagar (Ley 24.240)
+            await aceptarTerminosConsumidor().catch(() => {})
             const data = await crearPreferenciaOrganizador({
                 reserva_id: reservaOrganizador.id_reserva,
                 tipo_pago,
@@ -409,20 +424,22 @@ const CarritoDrawer = () => {
                                     <div ref={precioEntradaRef} id='carrito-precio-entrada' />
                                 )}
 
+                                <TerminosConsumidorGate checked={aceptoTerminos} onChange={setAceptoTerminos} />
+
                                 <div className='org-botones-pago'>
                                     <button
                                         className='btn-pagar-sena'
                                         onClick={() => handleCheckoutOrganizador('seña')}
-                                        disabled={loadingPago}
-                                        title='Abona el 30% y el evento queda reservado. El saldo se paga luego.'
+                                        disabled={loadingPago || !aceptoTerminos}
+                                        title={!aceptoTerminos ? 'Aceptá las bases y condiciones para continuar' : 'Abona el 30% y el evento queda reservado. El saldo se paga luego.'}
                                     >
                                         {loadingPago ? 'Procesando...' : `Abonar Seña ($${montoSena.toLocaleString('es-AR')})`}
                                     </button>
                                     <button
                                         className='btn-pagar-total-org'
                                         onClick={() => handleCheckoutOrganizador('total')}
-                                        disabled={loadingPago}
-                                        title='Pago completo: el evento queda confirmado de inmediato.'
+                                        disabled={loadingPago || !aceptoTerminos}
+                                        title={!aceptoTerminos ? 'Aceptá las bases y condiciones para continuar' : 'Pago completo: el evento queda confirmado de inmediato.'}
                                     >
                                         {loadingPago ? 'Procesando...' : `Pagar Total ($${totalOrganizador.toLocaleString('es-AR')})`}
                                     </button>
@@ -487,10 +504,15 @@ const CarritoDrawer = () => {
                                         <span>Total entradas</span>
                                         <strong>${totalPrecio.toFixed(2)}</strong>
                                     </div>
+                                    {!tieneCarritoOrg && (
+                                        <TerminosConsumidorGate checked={aceptoTerminos} onChange={setAceptoTerminos} />
+                                    )}
+                                    {errorPago && <p className='carrito-error'>{errorPago}</p>}
                                     <button
                                         className='btn-pagar'
                                         onClick={handleCheckoutCliente}
-                                        disabled={loadingPago}
+                                        disabled={loadingPago || !aceptoTerminos}
+                                        title={!aceptoTerminos ? 'Aceptá las bases y condiciones para continuar' : undefined}
                                     >
                                         {loadingPago ? 'Procesando...' : 'Pagar con MercadoPago'}
                                     </button>
