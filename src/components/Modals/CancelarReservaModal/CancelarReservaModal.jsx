@@ -18,6 +18,7 @@ const CancelarReservaModal = ({ reserva, onClose, onCancelada }) => {
     const [cargando, setCargando] = useState(true)
     const [confirmando, setConfirmando] = useState(false)
     const [error, setError]       = useState(null)
+    const [resultado, setResultado] = useState(null)
 
     const esPaga = reserva?.estado === 'seña_abonada' || reserva?.estado === 'confirmada'
 
@@ -36,12 +37,21 @@ const CancelarReservaModal = ({ reserva, onClose, onCancelada }) => {
         setConfirmando(true); setError(null)
         try {
             const res = await cancelarReserva(reserva.id_reserva, motivo)
-            onCancelada?.(res)
+            // Mostrar el resultado de la ejecución del reembolso antes de cerrar
+            setResultado(res)
         } catch (err) {
             setError(err?.response?.data?.message || 'Error al cancelar la reserva.')
             setConfirmando(false)
         }
     }
+
+    // Etiqueta legible del estado de ejecución del reembolso real (MercadoPago)
+    const estadoEjecucionTexto = (est) => ({
+        ejecutado: '✅ Reembolso ejecutado y acreditándose',
+        parcial:   '⚠️ Reembolso parcial: algunos pagos no se pudieron devolver',
+        error:     '⚠️ No se pudo ejecutar el reembolso automático; quedó pendiente de revisión',
+        sin_pagos: 'Sin pagos a reembolsar',
+    }[est] || 'Reembolso pendiente de ejecución')
 
     const pct = preview?.porcentaje_reembolso
 
@@ -57,7 +67,22 @@ const CancelarReservaModal = ({ reserva, onClose, onCancelada }) => {
                 </div>
 
                 <div className='cxl-body'>
-                    {!esPaga ? (
+                    {resultado ? (
+                        <div className='cxl-final'>
+                            <FiCheck size={40} className='cxl-final-icon' />
+                            <h3>Reserva cancelada</h3>
+                            {resultado.requiere_reembolso ? (
+                                <>
+                                    <p className='cxl-final-monto'>
+                                        Reembolso: <strong>{resultado.reembolso?.porcentaje_reembolso}%</strong> · {fmt(resultado.reembolso?.monto_reembolso)}
+                                    </p>
+                                    <p className='cxl-final-estado'>{estadoEjecucionTexto(resultado.ejecucion?.estado)}</p>
+                                </>
+                            ) : (
+                                <p className='cxl-final-estado'>No había pagos que reembolsar.</p>
+                            )}
+                        </div>
+                    ) : !esPaga ? (
                         <p className='cxl-sinpago'>
                             <FiInfo size={16} /> Esta reserva no tiene pagos acreditados: se cancela sin reembolso.
                         </p>
@@ -105,12 +130,20 @@ const CancelarReservaModal = ({ reserva, onClose, onCancelada }) => {
                 </div>
 
                 <div className='cxl-footer'>
-                    <button className='cxl-btn cxl-btn--ghost' onClick={onClose} disabled={confirmando}>
-                        No cancelar
-                    </button>
-                    <button className='cxl-btn cxl-btn--peligro' onClick={handleConfirmar} disabled={confirmando || (esPaga && cargando)}>
-                        {confirmando ? 'Cancelando…' : <><FiCheck size={15} /> Confirmar cancelación</>}
-                    </button>
+                    {resultado ? (
+                        <button className='cxl-btn cxl-btn--peligro' onClick={() => onCancelada?.(resultado)}>
+                            <FiCheck size={15} /> Cerrar
+                        </button>
+                    ) : (
+                        <>
+                            <button className='cxl-btn cxl-btn--ghost' onClick={onClose} disabled={confirmando}>
+                                No cancelar
+                            </button>
+                            <button className='cxl-btn cxl-btn--peligro' onClick={handleConfirmar} disabled={confirmando || (esPaga && cargando)}>
+                                {confirmando ? 'Cancelando…' : <><FiCheck size={15} /> Confirmar cancelación</>}
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>,

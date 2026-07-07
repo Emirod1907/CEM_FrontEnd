@@ -78,6 +78,13 @@
 
 .cxl-error { color: #f87171; font-size: .88rem; margin: 12px 0 0; }
 
+.cxl-final { text-align: center; padding: 12px 6px; }
+.cxl-final-icon { color: #4ade80; margin-bottom: 8px; }
+.cxl-final h3 { margin: 0 0 8px; color: #fff; font-size: 1.15rem; }
+.cxl-final-monto { color: rgba(255,255,255,.85); font-size: .95rem; margin: 0 0 6px; }
+.cxl-final-monto strong { color: #4ade80; }
+.cxl-final-estado { color: rgba(255,255,255,.7); font-size: .88rem; margin: 0; }
+
 .cxl-footer {
     display: flex; justify-content: flex-end; gap: 10px;
     padding: 14px 20px; border-top: 1px solid rgba(255,255,255,.1); flex-shrink: 0;
