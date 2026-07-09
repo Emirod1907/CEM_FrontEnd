@@ -20,6 +20,7 @@ import ImportarExcelModal from '../../Modals/ImportarExcelModal/ImportarExcelMod
 import ContratoModal from '../../Modals/ContratoModal/ContratoModal'
 import { getMiContrato } from '../../../services/contratoServices'
 import MpConnectButton from '../../MpConnectButton/MpConnectButton'
+import GoogleCalendarConnectButton from '../../MpConnectButton/GoogleCalendarConnectButton'
 import UploadImg from '../../../services/uploadimg'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MisServiciosScreen.css'
@@ -1227,6 +1228,7 @@ const MisServiciosScreen = () => {
                     </div>
                 </div>
                 <div className='mis-servicios-acciones'>
+                    <GoogleCalendarConnectButton origen={typeof window !== 'undefined' && window.location.pathname.includes('catalogo') ? 'mi-catalogo' : 'mis-servicios'} />
                     <MpConnectButton />
                     {tabActiva === 'tiendita' && (
                         <>

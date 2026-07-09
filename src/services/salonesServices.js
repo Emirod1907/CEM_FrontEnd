@@ -53,7 +53,7 @@ export const getMiSalonReservas = async () => {
 
 // ── Google Calendar (OAuth) ──────────────────────────────────────────────────
 // URL a la que se navega para iniciar el consentimiento (envía la cookie de sesión)
-export const googleCalendarConnectUrl = () => `${BACKEND_URL}/api/salones/google/connect`
+export const googleCalendarConnectUrl = (origen) => `${BACKEND_URL}/api/salones/google/connect${origen ? `?origen=${origen}` : ''}`
 
 export const getGoogleCalendarStatus = async () => {
     try {

@@ -20,3 +20,7 @@
     color: #157347;
     border: 1px solid #a3e4bf;
 }
+
+/* Variante Google Calendar */
+.gcal-connect-btn { background: #4285f4; }
+.gcal-connect-btn.conectado { background: #e6f0fe; color: #1a56c4; border: 1px solid #a9c7fb; }
