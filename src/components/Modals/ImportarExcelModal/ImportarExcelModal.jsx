@@ -98,7 +98,7 @@ const ImportarExcelModal = ({ onClose, onImportado }) => {
                                 <span className="imx-paso-num">1</span>
                                 <div className="imx-paso-body">
                                     <strong>Descargá la plantilla de ejemplo</strong>
-                                    <p className="imx-hint">Columnas: producto, presentación, precio, categoría, cantidad mínima y % de descuento.</p>
+                                    <p className="imx-hint">Columnas: producto, marca, presentación, precio, categoría, cantidad mínima y % de descuento.</p>
                                     <div className="imx-plantilla-btns">
                                         <button className="imx-btn imx-btn-outline" onClick={descargar}>
                                             <FiDownload size={15} /> Descargar plantilla
@@ -151,6 +151,7 @@ const ImportarExcelModal = ({ onClose, onImportado }) => {
                                                 <thead>
                                                     <tr>
                                                         <th>Producto</th>
+                                                        <th>Marca</th>
                                                         <th>Precio</th>
                                                         <th>Categoría</th>
                                                         <th>Descuento</th>
@@ -163,6 +164,7 @@ const ImportarExcelModal = ({ onClose, onImportado }) => {
                                                                 <strong>{f.nombre}</strong>
                                                                 {f.descripcion && <div className="imx-desc">{f.descripcion}</div>}
                                                             </td>
+                                                            <td>{f.marca || '—'}</td>
                                                             <td>${Number(f.precio_base).toLocaleString('es-AR')}</td>
                                                             <td>{f.categoria}</td>
                                                             <td>
