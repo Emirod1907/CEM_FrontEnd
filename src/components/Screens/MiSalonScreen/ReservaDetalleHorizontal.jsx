@@ -63,7 +63,7 @@ const ReservaDetalleHorizontal = ({ reserva, onCerrar, onAccion, accionando }) =
 
             <div className='rdh-cols'>
                 <div className='rdh-col rdh-col-ancha'>
-                    <span className='rdh-label'><FiUser size={12} /> Huésped / Organizador</span>
+                    <span className='rdh-label'><FiUser size={12} /> Organizador</span>
                     <span className='rdh-val rdh-val-fuerte'>{nombreDe(r)}</span>
                     <span className='rdh-sub'>{emailDe(r)}</span>
                 </div>

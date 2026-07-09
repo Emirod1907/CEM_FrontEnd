@@ -376,8 +376,7 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const [zoomOrigin, setZoomOrigin] = useState('center center')
 
     const [diaSeleccionado,   setDiaSeleccionado]   = useState(null)
-    const [reservaSeleccionada, setReservaSeleccionada] = useState(null)  // detalle horizontal arriba (click lista)
-    const [detalleModal,      setDetalleModal]      = useState(null)      // modal (click calendario)
+    const [reservaSeleccionada, setReservaSeleccionada] = useState(null)  // detalle horizontal arriba (lista o calendario)
     const [accionando,        setAccionando]        = useState(false)
     const [confirmando,       setConfirmando]       = useState(null)
 
@@ -485,7 +484,6 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const cerrarPaneles = () => {
         setDiaSeleccionado(null)
         setReservaSeleccionada(null)
-        setDetalleModal(null)
         setConfirmando(null)
         setPopoverDia(null)
         setMostrarFormManual(false)
@@ -494,17 +492,19 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
         setErrorManual(null)
     }
 
-    // Click desde el CALENDARIO: si hay reserva → abre modal; si no, popover de día vacío
+    // Click desde el CALENDARIO: si hay reserva → muestra el detalle horizontal arriba;
+    // si no, popover de día vacío (crear reserva manual).
     const onDiaClick = (dia, reserva) => {
         if (diaSeleccionado === dia && !reserva && popoverDia === dia)  { cerrarPaneles(); return }
         setDiaSeleccionado(dia)
         setConfirmando(null)
         if (reserva) {
-            setDetalleModal(reserva)
+            setReservaSeleccionada(reserva)
             setPopoverDia(null)
             setMostrarFormManual(false)
             setFechaManual(null)
         } else {
+            setReservaSeleccionada(null)
             setPopoverDia(dia)
             setMostrarFormManual(false)
         }
@@ -791,20 +791,6 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                     )}
                 </div>
             </div>
-
-            {/* ── Modal de detalle (al tocar una reserva en el calendario) ── */}
-            {detalleModal && (
-                <div className='rdh-modal-overlay' onClick={e => { if (e.target === e.currentTarget) setDetalleModal(null) }}>
-                    <div className='rdh-modal'>
-                        <ReservaDetalleHorizontal
-                            reserva={detalleModal}
-                            onCerrar={() => setDetalleModal(null)}
-                            onAccion={ejecutarAccion}
-                            accionando={accionando}
-                        />
-                    </div>
-                </div>
-            )}
 
             {/* ── Modal: archivo de canceladas ── */}
             {mostrarArchivo && (
