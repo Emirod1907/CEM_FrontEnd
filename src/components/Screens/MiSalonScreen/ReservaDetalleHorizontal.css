@@ -1,0 +1,117 @@
+.rdh {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: #fff;
+}
+.rdh-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.rdh-head-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.98rem;
+}
+.rdh-tipo {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.rdh-tipo-int { background: rgba(30,140,255,0.2); color: #7cc0ff; }
+.rdh-tipo-ext { background: rgba(168,85,247,0.22); color: #d0a6ff; }
+.rdh-cerrar {
+    background: rgba(255,255,255,0.12);
+    border: none; color: #fff; cursor: pointer;
+    border-radius: 8px; padding: 5px; display: flex; align-items: center;
+}
+.rdh-cerrar:hover { background: rgba(255,255,255,0.22); }
+
+/* Fila horizontal de columnas (estilo tabla booking) */
+.rdh-cols {
+    display: flex;
+    gap: 14px;
+    align-items: stretch;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+.rdh-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
+    flex: 1;
+    padding-right: 14px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+}
+.rdh-col:last-child { border-right: none; padding-right: 0; }
+.rdh-col-ancha { min-width: 180px; flex: 1.6; }
+.rdh-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.rdh-val { font-size: 0.9rem; color: #fff; }
+.rdh-val-fuerte { font-weight: 700; }
+.rdh-sub { font-size: 0.78rem; color: rgba(255,255,255,0.6); word-break: break-all; }
+.rdh-verde { color: #4ade80; }
+.rdh-rojo  { color: #f87171; }
+
+.rdh-badge {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+.rdh-b-confirmada { background: rgba(22,163,74,0.22);  color: #4ade80; }
+.rdh-b-sena       { background: rgba(230,126,0,0.22);  color: #fbbf24; }
+.rdh-b-pendiente  { background: rgba(255,200,0,0.18);  color: #ffd600; }
+.rdh-b-cancelada  { background: rgba(220,38,38,0.22);  color: #f87171; }
+
+.rdh-acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+.rdh-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: none; border-radius: 9px; padding: 9px 16px;
+    font-family: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+}
+.rdh-btn-ok { background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; }
+.rdh-btn-no { background: rgba(220,38,38,0.18); border: 1px solid rgba(248,113,113,0.4); color: #f87171; }
+.rdh-btn:hover { filter: brightness(1.08); }
+.rdh-btn:disabled { opacity: 0.55; cursor: default; }
+
+/* Modal (click desde el calendario) */
+.rdh-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1400; padding: 16px;
+}
+.rdh-modal {
+    background: #1a1230;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 16px;
+    width: 100%; max-width: 880px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+    padding: 6px;
+}
+.rdh-modal .rdh { background: transparent; border: none; }

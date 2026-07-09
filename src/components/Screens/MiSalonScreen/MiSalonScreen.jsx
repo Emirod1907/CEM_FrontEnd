@@ -16,6 +16,7 @@ import { FiHome, FiEdit2, FiX, FiMapPin, FiUsers, FiDollarSign,
          FiInfo, FiLink, FiExternalLink } from 'react-icons/fi'
 import PreciosConfigPanel from '../../PreciosConfigPanel/PreciosConfigPanel'
 import MpConnectButton from '../../MpConnectButton/MpConnectButton'
+import ReservaDetalleHorizontal from './ReservaDetalleHorizontal'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MiSalonScreen.css'
 
@@ -375,7 +376,8 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const [zoomOrigin, setZoomOrigin] = useState('center center')
 
     const [diaSeleccionado,   setDiaSeleccionado]   = useState(null)
-    const [reservaSeleccionada, setReservaSeleccionada] = useState(null)
+    const [reservaSeleccionada, setReservaSeleccionada] = useState(null)  // detalle horizontal arriba (click lista)
+    const [detalleModal,      setDetalleModal]      = useState(null)      // modal (click calendario)
     const [accionando,        setAccionando]        = useState(false)
     const [confirmando,       setConfirmando]       = useState(null)
 
@@ -483,6 +485,7 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const cerrarPaneles = () => {
         setDiaSeleccionado(null)
         setReservaSeleccionada(null)
+        setDetalleModal(null)
         setConfirmando(null)
         setPopoverDia(null)
         setMostrarFormManual(false)
@@ -491,21 +494,28 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
         setErrorManual(null)
     }
 
+    // Click desde el CALENDARIO: si hay reserva → abre modal; si no, popover de día vacío
     const onDiaClick = (dia, reserva) => {
-        if (diaSeleccionado === dia && reserva && reservaSeleccionada)  { cerrarPaneles(); return }
         if (diaSeleccionado === dia && !reserva && popoverDia === dia)  { cerrarPaneles(); return }
         setDiaSeleccionado(dia)
         setConfirmando(null)
         if (reserva) {
-            setReservaSeleccionada(reserva)
+            setDetalleModal(reserva)
             setPopoverDia(null)
             setMostrarFormManual(false)
             setFechaManual(null)
         } else {
-            setReservaSeleccionada(null)
             setPopoverDia(dia)
             setMostrarFormManual(false)
         }
+    }
+
+    // Click desde el LISTADO: muestra el detalle horizontal arriba y achica el calendario
+    const onReservaListaClick = (reserva) => {
+        if (reservaSeleccionada?.id_reserva === reserva.id_reserva) { setReservaSeleccionada(null); return }
+        setReservaSeleccionada(reserva)
+        setConfirmando(null)
+        if (mesZoom === null) handleClickMes(new Date(reserva.fecha).getUTCMonth())
     }
 
     const abrirModalManual = (dia) => {
@@ -561,7 +571,17 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
 
     return (
         <div className='tab-reservas'>
-            <div className='reservas-layout'>
+            {/* Detalle horizontal arriba (al tocar una reserva del listado) */}
+            {reservaSeleccionada && (
+                <ReservaDetalleHorizontal
+                    reserva={reservaSeleccionada}
+                    onCerrar={() => setReservaSeleccionada(null)}
+                    onAccion={ejecutarAccion}
+                    accionando={accionando}
+                />
+            )}
+
+            <div className={`reservas-layout ${reservaSeleccionada ? 'reservas-layout--con-detalle' : ''}`}>
 
                 {/* ── Columna izquierda: lista + filtro ── */}
                 <div className='reservas-col-izq'>
@@ -677,14 +697,7 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                                 <div
                                     key={r.id_reserva}
                                     className={`reserva-item ${r.id_reserva === reservaSeleccionada?.id_reserva ? 'reserva-item-activa' : ''}`}
-                                    onClick={() => {
-                                        if (mesZoom === null) {
-                                            // En vista anual: hacer zoom al mes de la reserva
-                                            handleClickMes(new Date(r.fecha).getUTCMonth())
-                                        } else {
-                                            onDiaClick(new Date(r.fecha).getUTCDate(), r)
-                                        }
-                                    }}
+                                    onClick={() => onReservaListaClick(r)}
                                 >
                                     <div className='reserva-item-left'>
                                         <div className='reserva-item-fecha-col'>
@@ -717,101 +730,7 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                         </div>
                     )}
 
-                    {/* Panel de detalle */}
-                    {reservaSeleccionada && (
-                        <div className='reserva-detalle-panel'>
-                            <div className='reserva-detalle-header'>
-                                <h4>Detalle {reservaSeleccionada.datos_evento?.manual && <span className='badge-manual'>Manual</span>}</h4>
-                                <button className='btn-cerrar-detalle' onClick={cerrarPaneles}><FiX size={18}/></button>
-                            </div>
-                            <div className='reserva-detalle-body'>
-                                <div className='reserva-dato-row'>
-                                    <span className='reserva-dato-label'>Organizador</span>
-                                    <span>{nombreOrganizador(reservaSeleccionada)}</span>
-                                </div>
-                                <div className='reserva-dato-row'>
-                                    <span className='reserva-dato-label'>Email</span>
-                                    <span>{emailOrganizador(reservaSeleccionada)}</span>
-                                </div>
-                                <div className='reserva-dato-row'>
-                                    <span className='reserva-dato-label'>Fecha</span>
-                                    <span>{fechaDisplay(reservaSeleccionada.fecha)}</span>
-                                </div>
-                                <div className='reserva-dato-row'>
-                                    <span className='reserva-dato-label'>Estado</span>
-                                    <span className={`estado-badge ${ESTADO_CLASS[reservaSeleccionada.estado]}`}>
-                                        {ESTADO_LABEL[reservaSeleccionada.estado]}
-                                    </span>
-                                </div>
-                                {Number(reservaSeleccionada.monto_alquiler) > 0 && <>
-                                    <div className='reserva-dato-row'>
-                                        <span className='reserva-dato-label'>Alquiler</span>
-                                        <span>${Number(reservaSeleccionada.monto_alquiler).toLocaleString('es-AR')} ARS</span>
-                                    </div>
-                                    <div className='reserva-dato-row'>
-                                        <span className='reserva-dato-label'>Seña (30%)</span>
-                                        <span>${Number(reservaSeleccionada.monto_sena).toLocaleString('es-AR')} ARS</span>
-                                    </div>
-                                </>}
-                                {(reservaSeleccionada.datos_evento?.tipo_evento || reservaSeleccionada.datos_evento?.tipoEvento) && (
-                                    <div className='reserva-dato-row'>
-                                        <span className='reserva-dato-label'>Tipo de evento</span>
-                                        <span>{reservaSeleccionada.datos_evento.tipo_evento || reservaSeleccionada.datos_evento.tipoEvento}</span>
-                                    </div>
-                                )}
-                                {reservaSeleccionada.datos_evento?.numInvitados && (
-                                    <div className='reserva-dato-row'>
-                                        <span className='reserva-dato-label'>Invitados</span>
-                                        <span>{reservaSeleccionada.datos_evento.numInvitados}</span>
-                                    </div>
-                                )}
-                                {reservaSeleccionada.datos_evento?.notas && (
-                                    <div className='reserva-dato-row reserva-dato-full'>
-                                        <span className='reserva-dato-label'>Notas</span>
-                                        <span>{reservaSeleccionada.datos_evento.notas}</span>
-                                    </div>
-                                )}
-                            </div>
-                            {reservaSeleccionada.estado !== 'cancelada' && (
-                                <div className='reserva-acciones'>
-                                    {reservaSeleccionada.estado === 'seña_abonada' && (
-                                        confirmando === 'confirmar' ? (
-                                            <div className='confirm-overlay'>
-                                                <p>¿Confirmar esta reserva?</p>
-                                                <div className='confirm-btns'>
-                                                    <button className='btn-accion btn-confirmar' onClick={() => ejecutarAccion(reservaSeleccionada.id_reserva, 'confirmada')} disabled={accionando}>
-                                                        {accionando ? '...' : <><FiCheck size={14}/> Sí, confirmar</>}
-                                                    </button>
-                                                    <button className='btn-accion btn-cancelar-accion' onClick={() => setConfirmando(null)}>No</button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <button className='btn-accion btn-confirmar' onClick={() => setConfirmando('confirmar')}>
-                                                <FiCheck size={15}/> Confirmar reserva
-                                            </button>
-                                        )
-                                    )}
-                                    {confirmando === 'cancelar' ? (
-                                        <div className='confirm-overlay'>
-                                            <p>¿Cancelar esta reserva? No se puede deshacer.</p>
-                                            <div className='confirm-btns'>
-                                                <button className='btn-accion btn-rechazar' onClick={() => ejecutarAccion(reservaSeleccionada.id_reserva, 'cancelada')} disabled={accionando}>
-                                                    {accionando ? '...' : <><FiSlash size={14}/> Sí, cancelar</>}
-                                                </button>
-                                                <button className='btn-accion btn-cancelar-accion' onClick={() => setConfirmando(null)}>No</button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        confirmando !== 'confirmar' && (
-                                            <button className='btn-accion btn-rechazar' onClick={() => setConfirmando('cancelar')}>
-                                                <FiSlash size={15}/> Cancelar reserva
-                                            </button>
-                                        )
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    )}
+                    {/* El detalle ahora se muestra horizontal arriba (lista) o en modal (calendario) */}
                 </div>
 
                 {/* ── Columna derecha: calendario ── */}
@@ -872,6 +791,20 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                     )}
                 </div>
             </div>
+
+            {/* ── Modal de detalle (al tocar una reserva en el calendario) ── */}
+            {detalleModal && (
+                <div className='rdh-modal-overlay' onClick={e => { if (e.target === e.currentTarget) setDetalleModal(null) }}>
+                    <div className='rdh-modal'>
+                        <ReservaDetalleHorizontal
+                            reserva={detalleModal}
+                            onCerrar={() => setDetalleModal(null)}
+                            onAccion={ejecutarAccion}
+                            accionando={accionando}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* ── Modal: archivo de canceladas ── */}
             {mostrarArchivo && (
