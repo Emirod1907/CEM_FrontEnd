@@ -36,7 +36,12 @@ const ReservaDetalleHorizontal = ({ reserva, onCerrar, onAccion, accionando }) =
     if (!reserva) return null
     const r = reserva
     const total = Number(r.monto_alquiler) || 0
-    const abonado = Number(r.monto_abonado) || 0
+    const sena = Number(r.monto_sena) || +(total * 0.30).toFixed(2)
+    // Abonado respecto del alquiler del salón: con seña → la seña (30%); total → todo.
+    const abonado = r.estado === 'confirmada'   ? total
+        : r.estado === 'seña_abonada'           ? sena
+        : r.estado === 'cancelada'              ? (Number(r.monto_abonado) || 0)
+        : 0
     const saldo = Math.max(0, total - abonado)
     const eReserva = estadoReservaInfo(r)
     const ePago = estadoPagoInfo(r)
