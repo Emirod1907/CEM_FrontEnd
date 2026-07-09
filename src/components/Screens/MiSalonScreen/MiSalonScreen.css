@@ -444,10 +444,9 @@
 
 .reservas-lista-header {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
 }
 
 .filtro-estado-select {
@@ -744,12 +743,14 @@
     color: #c084fc;
 }
 
-/* Bloque izquierdo del header de reservas: título/contadores + filtros */
-.reservas-header-izq {
+/* Fila de controles: filtros a la izquierda, acciones a la derecha (misma altura de fila) */
+.reservas-controles {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: space-between;
     align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 10px;
 }
 /* Filtros (selects) a la izquierda, uno arriba del otro */
 .filtros-selects {
@@ -758,17 +759,20 @@
     gap: 8px;
     align-items: stretch;
 }
-.filtros-selects .filtro-estado-select { width: 100%; }
 /* Acciones (Calendar / Archivo) a la derecha, una abajo de la otra */
 .filtros-acciones {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     align-items: stretch;
     flex-shrink: 0;
 }
+/* Misma altura en selects y botones → las filas quedan alineadas */
+.filtros-selects .filtro-estado-select,
 .filtros-acciones .btn-exportar-cal,
 .filtros-acciones .btn-archivo {
+    height: 42px;
+    box-sizing: border-box;
     width: 100%;
     justify-content: center;
 }

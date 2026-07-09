@@ -566,20 +566,21 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                 {/* ── Columna izquierda: lista + filtro ── */}
                 <div className='reservas-col-izq'>
                     <div className='reservas-lista-header'>
-                        {/* Izquierda: contadores + filtros */}
-                        <div className='reservas-header-izq'>
-                            <div className='reservas-contadores'>
-                                <span className='reservas-lista-titulo'>
-                                    {tituloLista}
-                                    <span className='reservas-lista-count'>{totalSinFiltro}</span>
+                        {/* Título arriba de todo */}
+                        <div className='reservas-contadores'>
+                            <span className='reservas-lista-titulo'>
+                                {tituloLista}
+                                <span className='reservas-lista-count'>{totalSinFiltro}</span>
+                            </span>
+                            {(filtroTipo || filtroEstado) && (
+                                <span className='reservas-lista-titulo reservas-lista-titulo--sub'>
+                                    Filtradas
+                                    <span className='reservas-lista-count reservas-lista-count--filtrado'>{reservasFiltradas.length}</span>
                                 </span>
-                                {(filtroTipo || filtroEstado) && (
-                                    <span className='reservas-lista-titulo reservas-lista-titulo--sub'>
-                                        Filtradas
-                                        <span className='reservas-lista-count reservas-lista-count--filtrado'>{reservasFiltradas.length}</span>
-                                    </span>
-                                )}
-                            </div>
+                            )}
+                        </div>
+                        {/* Fila de controles: filtros a la izquierda, acciones a la derecha (misma altura) */}
+                        <div className='reservas-controles'>
                             <div className='filtros-selects'>
                                 <select
                                     className='filtro-estado-select'
@@ -601,19 +602,18 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                                     <option value='confirmada'>Confirmada</option>
                                 </select>
                             </div>
-                        </div>
-                        {/* Derecha: acciones en columna */}
-                        <div className='filtros-acciones'>
-                            <button
-                                className={`btn-exportar-cal ${calConectado ? 'conectado' : ''}`}
-                                onClick={() => setMostrarCal(true)}
-                                title='Sincronizar tus reservas con Google Calendar'
-                            >
-                                <FiCalendar size={13} /> {calConectado ? 'Calendar ✓' : 'Google Calendar'}
-                            </button>
-                            <button className='btn-archivo' onClick={() => setMostrarArchivo(true)}>
-                                Archivo {reservasArchivadas.length > 0 && <span className='archivo-badge'>{reservasArchivadas.length}</span>}
-                            </button>
+                            <div className='filtros-acciones'>
+                                <button
+                                    className={`btn-exportar-cal ${calConectado ? 'conectado' : ''}`}
+                                    onClick={() => setMostrarCal(true)}
+                                    title='Sincronizar tus reservas con Google Calendar'
+                                >
+                                    <FiCalendar size={13} /> {calConectado ? 'Calendar ✓' : 'Google Calendar'}
+                                </button>
+                                <button className='btn-archivo' onClick={() => setMostrarArchivo(true)}>
+                                    Archivo {reservasArchivadas.length > 0 && <span className='archivo-badge'>{reservasArchivadas.length}</span>}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
