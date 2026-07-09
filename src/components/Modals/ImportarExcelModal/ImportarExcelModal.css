@@ -183,3 +183,7 @@
 .imx-ok-icon { color: #00a650; margin-bottom: 10px; }
 .imx-resultado h3 { margin: 0 0 8px; color: #2d2a33; }
 .imx-resultado .imx-btn { margin-top: 14px; width: 100%; }
+
+.imx-plantilla-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.imx-btn-drive { border-color: #4285f4 !important; color: #4285f4 !important; }
+.imx-btn-drive:hover:not(:disabled) { background: #eef4ff !important; }

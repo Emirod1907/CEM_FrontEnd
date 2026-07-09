@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
-import { descargarPlantillaExcel, previewImportarExcel, confirmarImportarExcel } from '../../../services/servicioServices'
-import { FiX, FiDownload, FiUploadCloud, FiCheckCircle, FiAlertTriangle, FiFileText } from 'react-icons/fi'
+import { descargarPlantillaExcel, getPlantillaExcelBlob, previewImportarExcel, confirmarImportarExcel } from '../../../services/servicioServices'
+import { subirPlantillaADrive } from '../../../services/googleDrive'
+import { FiX, FiDownload, FiUploadCloud, FiCheckCircle, FiAlertTriangle, FiFileText, FiEdit } from 'react-icons/fi'
 import './ImportarExcelModal.css'
 
 const ImportarExcelModal = ({ onClose, onImportado }) => {
@@ -10,6 +11,7 @@ const ImportarExcelModal = ({ onClose, onImportado }) => {
     const [importando, setImportando] = useState(false)
     const [error, setError] = useState('')
     const [resultado, setResultado] = useState(null) // { creados, errores }
+    const [subiendoDrive, setSubiendoDrive] = useState(false)
     const inputRef = useRef(null)
 
     const elegirArchivo = async (e) => {
@@ -50,6 +52,20 @@ const ImportarExcelModal = ({ onClose, onImportado }) => {
         catch { setError('No se pudo descargar la plantilla.') }
     }
 
+    const editarEnDrive = async () => {
+        setSubiendoDrive(true)
+        setError('')
+        try {
+            const blob = await getPlantillaExcelBlob()
+            const link = await subirPlantillaADrive(blob)
+            window.open(link, '_blank', 'noopener')
+        } catch (err) {
+            setError(err?.message || 'No se pudo abrir la plantilla en Google Drive.')
+        } finally {
+            setSubiendoDrive(false)
+        }
+    }
+
     const validas = preview?.filas_validas || []
     const invalidas = preview?.filas_invalidas || []
 
@@ -83,9 +99,14 @@ const ImportarExcelModal = ({ onClose, onImportado }) => {
                                 <div className="imx-paso-body">
                                     <strong>Descargá la plantilla de ejemplo</strong>
                                     <p className="imx-hint">Columnas: producto, presentación, precio, categoría, cantidad mínima y % de descuento.</p>
-                                    <button className="imx-btn imx-btn-outline" onClick={descargar}>
-                                        <FiDownload size={15} /> Descargar plantilla
-                                    </button>
+                                    <div className="imx-plantilla-btns">
+                                        <button className="imx-btn imx-btn-outline" onClick={descargar}>
+                                            <FiDownload size={15} /> Descargar plantilla
+                                        </button>
+                                        <button className="imx-btn imx-btn-outline imx-btn-drive" onClick={editarEnDrive} disabled={subiendoDrive}>
+                                            <FiEdit size={15} /> {subiendoDrive ? 'Abriendo…' : 'Editar en Google Drive'}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

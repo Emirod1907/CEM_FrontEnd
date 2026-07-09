@@ -64,6 +64,12 @@ export const getMisReservasProveedor = async () => {
 
 // ── Importación masiva desde Excel ────────────────────────────────────────────
 
+// Devuelve la plantilla como Blob (para subir a Google Drive, etc.)
+export const getPlantillaExcelBlob = async () => {
+    const response = await axios.get('servicios/plantilla-excel', { responseType: 'blob' })
+    return new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+}
+
 // GET /api/servicios/plantilla-excel — descarga la planilla de ejemplo (.xlsx)
 export const descargarPlantillaExcel = async () => {
     const response = await axios.get('servicios/plantilla-excel', { responseType: 'blob' })
