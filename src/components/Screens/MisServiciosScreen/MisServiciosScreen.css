@@ -2948,3 +2948,11 @@
         justify-content: center;
     }
 }
+/* Detalle horizontal arriba + achicar calendario (unificado con Mi Salón) */
+.tab-reservas > .rdh { margin-bottom: 18px; }
+.reservas-layout--con-detalle .reservas-col-der {
+    transform: scale(0.9);
+    transform-origin: top center;
+    opacity: 0.92;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}

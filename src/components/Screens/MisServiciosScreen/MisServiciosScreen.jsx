@@ -21,6 +21,7 @@ import ContratoModal from '../../Modals/ContratoModal/ContratoModal'
 import { getMiContrato } from '../../../services/contratoServices'
 import MpConnectButton from '../../MpConnectButton/MpConnectButton'
 import GoogleCalendarConnectButton from '../../MpConnectButton/GoogleCalendarConnectButton'
+import ReservaDetalleProveedorHorizontal from './ReservaDetalleProveedorHorizontal'
 import UploadImg from '../../../services/uploadimg'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MisServiciosScreen.css'
@@ -457,7 +458,20 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
 
     return (
         <div className='tab-reservas'>
-            <div className='reservas-layout'>
+            {/* Detalle horizontal arriba (al tocar una reserva interna) */}
+            {reservaSeleccionada && (
+                <ReservaDetalleProveedorHorizontal
+                    reserva={reservaSeleccionada}
+                    estadoAgenda={estadoAgenda}
+                    estadoMostrado={estadoMostrado}
+                    onCerrar={cerrarTodo}
+                    onConfirmar={() => { if (window.confirm('¿Confirmás la solicitud para este evento?')) handleConfirmarReserva('confirmada') }}
+                    onCancelar={abrirModalCancelacion}
+                    accionando={accionando}
+                />
+            )}
+
+            <div className={`reservas-layout ${reservaSeleccionada ? 'reservas-layout--con-detalle' : ''}`}>
 
                 {/* Columna izquierda: lista */}
                 <div className='reservas-col-izq'>
@@ -556,7 +570,8 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
                     )}
 
                     {/* Panel detalle reserva de plataforma */}
-                    {reservaSeleccionada && (
+                    {/* Detalle vertical reemplazado por ReservaDetalleProveedorHorizontal (arriba) */}
+                    {false && reservaSeleccionada && (
                         <div className='reserva-detalle-panel'>
                             <div className='reserva-detalle-header'>
                                 <h4>Detalle de reserva</h4>
