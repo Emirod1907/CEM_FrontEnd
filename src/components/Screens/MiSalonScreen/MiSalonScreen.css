@@ -746,9 +746,28 @@
 
 .filtros-group {
     display: flex;
-    gap: 6px;
-    align-items: center;
+    gap: 14px;
+    align-items: flex-start;
     flex-wrap: wrap;
+}
+/* Filtros (selects) a la izquierda, en columna */
+.filtros-selects {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.filtros-selects .filtro-estado-select { width: 100%; }
+/* Acciones (Calendar / Archivo) a la derecha, una abajo de la otra */
+.filtros-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+}
+.filtros-acciones .btn-exportar-cal,
+.filtros-acciones .btn-archivo {
+    width: 100%;
+    justify-content: center;
 }
 .reservas-vacio { color: rgba(255,255,255,0.78); font-size: 0.9rem; text-align: center; padding: 20px 0; }
 

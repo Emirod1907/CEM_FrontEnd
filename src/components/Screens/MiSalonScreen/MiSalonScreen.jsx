@@ -579,35 +579,41 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
                             )}
                         </div>
                         <div className='filtros-group'>
-                            <select
-                                className='filtro-estado-select'
-                                value={filtroTipo}
-                                onChange={e => setFiltroTipo(e.target.value)}
-                            >
-                                <option value=''>Todas</option>
-                                <option value='interna'>Internas</option>
-                                <option value='externa'>Externas</option>
-                            </select>
-                            <select
-                                className='filtro-estado-select'
-                                value={filtroEstado}
-                                onChange={e => setFiltroEstado(e.target.value)}
-                            >
-                                <option value=''>Todos los estados</option>
-                                <option value='pendiente_pago'>Pendiente de pago</option>
-                                <option value='seña_abonada'>Seña abonada</option>
-                                <option value='confirmada'>Confirmada</option>
-                            </select>
-                            <button
-                                className={`btn-exportar-cal ${calConectado ? 'conectado' : ''}`}
-                                onClick={() => setMostrarCal(true)}
-                                title='Sincronizar tus reservas con Google Calendar'
-                            >
-                                <FiCalendar size={13} /> {calConectado ? 'Calendar ✓' : 'Google Calendar'}
-                            </button>
-                            <button className='btn-archivo' onClick={() => setMostrarArchivo(true)}>
-                                Archivo {reservasArchivadas.length > 0 && <span className='archivo-badge'>{reservasArchivadas.length}</span>}
-                            </button>
+                            {/* Filtros a la izquierda */}
+                            <div className='filtros-selects'>
+                                <select
+                                    className='filtro-estado-select'
+                                    value={filtroTipo}
+                                    onChange={e => setFiltroTipo(e.target.value)}
+                                >
+                                    <option value=''>Todas</option>
+                                    <option value='interna'>Internas</option>
+                                    <option value='externa'>Externas</option>
+                                </select>
+                                <select
+                                    className='filtro-estado-select'
+                                    value={filtroEstado}
+                                    onChange={e => setFiltroEstado(e.target.value)}
+                                >
+                                    <option value=''>Todos los estados</option>
+                                    <option value='pendiente_pago'>Pendiente de pago</option>
+                                    <option value='seña_abonada'>Seña abonada</option>
+                                    <option value='confirmada'>Confirmada</option>
+                                </select>
+                            </div>
+                            {/* Acciones a la derecha, en columna */}
+                            <div className='filtros-acciones'>
+                                <button
+                                    className={`btn-exportar-cal ${calConectado ? 'conectado' : ''}`}
+                                    onClick={() => setMostrarCal(true)}
+                                    title='Sincronizar tus reservas con Google Calendar'
+                                >
+                                    <FiCalendar size={13} /> {calConectado ? 'Calendar ✓' : 'Google Calendar'}
+                                </button>
+                                <button className='btn-archivo' onClick={() => setMostrarArchivo(true)}>
+                                    Archivo {reservasArchivadas.length > 0 && <span className='archivo-badge'>{reservasArchivadas.length}</span>}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
