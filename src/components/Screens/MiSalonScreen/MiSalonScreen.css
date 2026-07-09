@@ -751,13 +751,14 @@
     gap: 10px;
     align-items: flex-start;
 }
-/* Filtros (selects) a la izquierda, uno al lado del otro */
+/* Filtros (selects) a la izquierda, uno arriba del otro */
 .filtros-selects {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 8px;
-    flex-wrap: wrap;
+    align-items: stretch;
 }
+.filtros-selects .filtro-estado-select { width: 100%; }
 /* Acciones (Calendar / Archivo) a la derecha, una abajo de la otra */
 .filtros-acciones {
     display: flex;
