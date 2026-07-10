@@ -422,6 +422,12 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                         const total      = calcTotal(servicio)
                         const horaInicio = horaPor[id] || ''
 
+                        // Destacado: producto "ideal para N personas" que coincide (o está cerca) del cupo del evento
+                        const cupoNum = Number(cupo) || 0
+                        const idealPers = Number(servicio.ideal_para_personas) || 0
+                        const tolCupo = Math.max(1, Math.round(cupoNum * 0.1))
+                        const esDestacado = idealPers > 0 && cupoNum > 0 && Math.abs(idealPers - cupoNum) <= tolCupo
+
                         const calcFin = (inicio, h) => {
                             if (!inicio) return null
                             const [hh, mm] = inicio.split(':').map(Number)
@@ -430,7 +436,10 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                         }
 
                         return (
-                            <div key={id} className={`spk-card ${enSel ? 'spk-card--sel' : ''} ${bloqueado ? 'spk-card--bloqueado' : ''}`}>
+                            <div key={id} className={`spk-card ${enSel ? 'spk-card--sel' : ''} ${bloqueado ? 'spk-card--bloqueado' : ''} ${esDestacado ? 'spk-card--destacado' : ''}`}>
+                                {esDestacado && (
+                                    <span className='spk-destacado-badge'>⭐ Ideal para {idealPers} personas</span>
+                                )}
                                 {servicio.imagen && <img src={servicio.imagen} alt={servicio.nombre} className='spk-card-img'/>}
                                 <div className='spk-card-body'>
                                     <span className='spk-cat-label'>{CATEGORIAS_LABEL[servicio.categoria] || servicio.categoria}</span>

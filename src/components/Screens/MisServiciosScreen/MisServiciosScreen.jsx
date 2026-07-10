@@ -98,12 +98,15 @@ const DIAS_FORM = [
 const DIAS_LABEL = { lun:'Lunes', mar:'Martes', mie:'Miércoles', jue:'Jueves', vie:'Viernes', sab:'Sábado', dom:'Domingo' }
 
 const FORM_VACIO = {
-    nombre: '', descripcion: '', precio: '',
+    nombre: '', descripcion: '', marca: '', unidad: '', ideal_para_personas: '', precio: '',
     categoria: 'catering', subcategoria: '', tipo_precio: 'fijo', tipo_item: 'producto',
     imagen: '', capacidad_maxima: '', dias_anticipacion: '0',
     dias_disponibles: [], horario_inicio: '', horario_fin: '',
     precios_tramos: {}   // objeto con fin_semana, feriado; ya no es un array
 }
+
+// Unidades de venta predefinidas (+ opción 'otro' para escribir una personalizada)
+const UNIDADES_PREDEF = ['por persona', 'por unidad', 'por porción', 'por docena', 'por bandeja', 'por kg', 'por hora', 'por turno']
 
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
@@ -1076,6 +1079,7 @@ const MisServiciosScreen = () => {
     const [mostrarForm, setMostrarForm] = useState(false)
     const [editando, setEditando] = useState(null)
     const [form, setForm] = useState(FORM_VACIO)
+    const [unidadOtro, setUnidadOtro] = useState(false)  // true = escribir unidad personalizada
     const [guardando, setGuardando] = useState(false)
     const [error, setError] = useState(null)
     const [confirmDelete, setConfirmDelete] = useState(null)
@@ -1118,7 +1122,7 @@ const MisServiciosScreen = () => {
 
     useEffect(() => { cargar() }, [])
 
-    const abrirNuevo = () => { setEditando(null); setForm(FORM_VACIO); setError(null); setMostrarForm(true) }
+    const abrirNuevo = () => { setEditando(null); setForm(FORM_VACIO); setUnidadOtro(false); setError(null); setMostrarForm(true) }
     const abrirEditar = (s) => {
         setEditando(s.id_servicio)
         const tipoItem = s.tipo_item || 'producto'
@@ -1126,6 +1130,9 @@ const MisServiciosScreen = () => {
         setForm({
             nombre: s.nombre,
             descripcion: s.descripcion,
+            marca: s.marca || '',
+            unidad: s.unidad || '',
+            ideal_para_personas: s.ideal_para_personas ?? '',
             precio: s.precio_base ?? s.precio ?? '',
             categoria: s.categoria,
             subcategoria: s.subcategoria || '',
@@ -1139,6 +1146,7 @@ const MisServiciosScreen = () => {
             horario_fin: s.horario_fin || '',
             precios_tramos: cfgPrecios,
         })
+        setUnidadOtro(!!s.unidad && !UNIDADES_PREDEF.includes(s.unidad))
         setError(null); setMostrarForm(true)
     }
     const cerrarForm = () => { setMostrarForm(false); setEditando(null); setForm(FORM_VACIO); setError(null) }
@@ -1188,6 +1196,9 @@ const MisServiciosScreen = () => {
             const datos = {
                 nombre: form.nombre.trim(),
                 descripcion: form.descripcion.trim(),
+                marca: form.marca?.trim() || null,
+                unidad: form.unidad?.trim() || null,
+                ideal_para_personas: form.ideal_para_personas !== '' ? Number(form.ideal_para_personas) : null,
                 precio: Number(form.precio),
                 categoria: form.categoria,
                 subcategoria: (SUBCATEGORIAS[form.categoria] ? form.subcategoria : '') || null,
@@ -1496,6 +1507,38 @@ const MisServiciosScreen = () => {
                                 <textarea name='descripcion' value={form.descripcion} onChange={handleChange}
                                     placeholder={form.tipo_item === 'servicio' ? 'Describí en qué consiste tu servicio, duración, incluye...' : 'Describí qué incluye tu producto'}
                                     rows={3} maxLength={500}/>
+                            </div>
+                            <div className='form-row'>
+                                <div className='form-group'>
+                                    <label>Marca <span className='label-hint'>(opcional)</span></label>
+                                    <input type='text' name='marca' value={form.marca} onChange={handleChange}
+                                        placeholder='Ej: Coca-Cola' maxLength={120}/>
+                                </div>
+                                <div className='form-group'>
+                                    <label>Unidad de venta <span className='label-hint'>(opcional)</span></label>
+                                    <select
+                                        value={unidadOtro ? 'otro' : form.unidad}
+                                        onChange={e => {
+                                            const v = e.target.value
+                                            if (v === 'otro') { setUnidadOtro(true); setForm(p => ({ ...p, unidad: '' })) }
+                                            else { setUnidadOtro(false); setForm(p => ({ ...p, unidad: v })) }
+                                        }}
+                                    >
+                                        <option value=''>— Sin unidad —</option>
+                                        {UNIDADES_PREDEF.map(u => <option key={u} value={u}>{u}</option>)}
+                                        <option value='otro'>Otro (escribir)…</option>
+                                    </select>
+                                    {unidadOtro && (
+                                        <input type='text' name='unidad' value={form.unidad} onChange={handleChange}
+                                            placeholder='Ej: bandeja de 12' maxLength={40} style={{ marginTop: 6 }}/>
+                                    )}
+                                </div>
+                                <div className='form-group'>
+                                    <label>Ideal para N personas <span className='label-hint'>(opcional)</span></label>
+                                    <input type='number' name='ideal_para_personas' value={form.ideal_para_personas} onChange={handleChange}
+                                        placeholder='Ej: 50' min='1'/>
+                                    <span className='label-hint'>Se destaca cuando coincide con el cupo del evento.</span>
+                                </div>
                             </div>
                             <div className='form-row'>
                                 <div className='form-group'>
