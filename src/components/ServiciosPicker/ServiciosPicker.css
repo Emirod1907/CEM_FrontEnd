@@ -612,6 +612,19 @@
     min-width: 20px;
     text-align: center;
 }
+.spk-cant-input {
+    width: 56px;
+    padding: 5px 6px;
+    border: 1.5px solid #d8cff0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    text-align: center;
+    font-family: inherit;
+    outline: none;
+}
+.spk-cant-input:focus { border-color: #6b23d8; }
 .spk-btn-agregar {
     display: flex;
     align-items: center;

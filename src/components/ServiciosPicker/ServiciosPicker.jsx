@@ -173,6 +173,12 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
         ))
     }
 
+    // Setea la cantidad exacta (entero >= 1) tipeada en el input
+    const setCantidad = (id, value) => {
+        const n = Math.max(1, Math.floor(Number(value) || 1))
+        onChange(seleccionados.map(s => s.id_servicio === id ? { ...s, cantidad: n } : s))
+    }
+
     // Cantidad de personas de un ítem por persona (comida/viandas), editable por ítem
     const updatePersonas = (id, delta) => {
         onChange(seleccionados.map(s => s.id_servicio === id
@@ -588,7 +594,16 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                     {enSel ? (
                                         <div className='spk-cant-row'>
                                             <button type='button' className='spk-cant-btn' onClick={() => updateCantidad(id, -1)}><FiMinus size={13}/></button>
-                                            <span className='spk-cant-val'>{selMap[id].cantidad}</span>
+                                            <input
+                                                type='number'
+                                                min='1'
+                                                step='1'
+                                                className='spk-cant-input'
+                                                value={selMap[id].cantidad}
+                                                onChange={e => setCantidad(id, e.target.value)}
+                                                onFocus={e => e.target.select()}
+                                                aria-label='Cantidad'
+                                            />
                                             <button type='button' className='spk-cant-btn' onClick={() => updateCantidad(id, +1)}><FiPlus size={13}/></button>
                                             <button type='button' className='spk-btn-quitar' onClick={() => toggleServicio(servicio)}><FiX size={13}/> Quitar</button>
                                         </div>
