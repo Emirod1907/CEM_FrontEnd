@@ -65,7 +65,7 @@
 }
 .rdh-val { font-size: 0.9rem; color: #fff; }
 .rdh-val-fuerte { font-weight: 700; }
-.rdh-sub { font-size: 0.78rem; color: rgba(255,255,255,0.6); word-break: break-all; }
+.rdh-sub { font-size: 0.78rem; color: rgba(255,255,255,0.6); word-break: normal; overflow-wrap: break-word; }
 .rdh-verde { color: #4ade80; }
 .rdh-rojo  { color: #f87171; }
 

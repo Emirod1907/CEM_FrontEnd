@@ -85,7 +85,10 @@ const ReservaDetalleProveedorHorizontal = ({ reserva, estadoAgenda, estadoMostra
                     {servicios.length > 0 ? (
                         <>
                             {servicios.map((s, i) => (
-                                <span key={i} className='rdh-sub'>{s.nombre || s.titulo || 'Servicio'} ×{cantidadSolicitada(s)}</span>
+                                <span key={i} className='rdh-sub'>
+                                    {s.nombre || s.titulo || 'Servicio'}{' '}
+                                    <span style={{ whiteSpace: 'nowrap' }}>×{cantidadSolicitada(s)}</span>
+                                </span>
                             ))}
                             <span className='rdh-val rdh-val-fuerte' style={{ marginTop: 4 }}>
                                 Total: {totalSolicitado} unidad{totalSolicitado !== 1 ? 'es' : ''}
