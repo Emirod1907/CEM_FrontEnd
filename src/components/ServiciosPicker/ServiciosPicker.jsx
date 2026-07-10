@@ -294,7 +294,18 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                                     <div className='spk-chip-qty'>
                                                         {porPersona && <span className='spk-chip-qty-label'>pers.</span>}
                                                         <button className='spk-chip-qty-btn' onClick={onMenos} disabled={qtyValor <= 1} title='Menos'><FiMinus size={12}/></button>
-                                                        <span className='spk-chip-qty-num'>{qtyValor}</span>
+                                                        {porPersona ? (
+                                                            <span className='spk-chip-qty-num'>{qtyValor}</span>
+                                                        ) : (
+                                                            <input
+                                                                type='number' min='1' step='1'
+                                                                className='spk-chip-qty-input'
+                                                                value={qtyValor}
+                                                                onChange={e => setCantidad(id, e.target.value)}
+                                                                onFocus={e => e.target.select()}
+                                                                aria-label='Cantidad'
+                                                            />
+                                                        )}
                                                         <button className='spk-chip-qty-btn' onClick={onMas} title='Más'><FiPlus size={12}/></button>
                                                     </div>
                                                     <button

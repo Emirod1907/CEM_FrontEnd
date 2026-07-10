@@ -189,6 +189,20 @@
 .spk-chip-qty-btn:hover:not(:disabled) { background: #6b23d8; color: #fff; }
 .spk-chip-qty-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .spk-chip-qty-num { min-width: 18px; text-align: center; font-size: 0.82rem; font-weight: 700; }
+.spk-chip-qty-input {
+    width: 48px;
+    padding: 3px 4px;
+    border: 1.5px solid #d8cff0;
+    border-radius: 7px;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    font-family: inherit;
+    outline: none;
+    -moz-appearance: textfield;
+}
+.spk-chip-qty-input:focus { border-color: #6b23d8; }
 .spk-chip-qty-label { font-size: 0.68rem; font-weight: 700; color: #6b23d8; padding: 0 4px 0 6px; text-transform: uppercase; }
 
 /* Lápiz de edición */
