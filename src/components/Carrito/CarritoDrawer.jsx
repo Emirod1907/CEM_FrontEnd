@@ -3,6 +3,7 @@ import { useCarrito } from '../../Contexts/CarritoContextProvider'
 import { useAuth } from '../../Contexts/PersonaContextProvider'
 import { crearPreferenciaPago, crearPreferenciaOrganizador } from '../../services/pagoServices'
 import { aceptarTerminosConsumidor } from '../../services/contratoServices'
+import { precioUnitarioConDescuento } from '../../utils/preciosUtils'
 import { useNavigate } from 'react-router-dom'
 import { FiX, FiTrash2, FiMinus, FiPlus, FiShoppingCart, FiCalendar, FiMapPin, FiUsers, FiClock, FiRepeat, FiBookmark } from 'react-icons/fi'
 import ServiciosModal from '../Modals/ServiciosModal/ServiciosModal'
@@ -225,7 +226,10 @@ const CarritoDrawer = () => {
                                             if (s.tipo_precio === 'por_persona') multiplicador = personasItem > 0 ? personasItem : 1
                                             else if (s.tipo_precio === 'por_hora')   multiplicador = Number(s.horas)  || 1
                                             else if (s.tipo_precio === 'por_turno')  multiplicador = Number(s.turnos) || 1
-                                            const subtotal = Number(s.precio) * s.cantidad * multiplicador
+                                            // Precio unitario con descuento por cantidad (si aplica)
+                                            const precioUnit = precioUnitarioConDescuento(s)
+                                            const tieneDesc  = precioUnit < Number(s.precio)
+                                            const subtotal = precioUnit * s.cantidad * multiplicador
 
                                             return (
                                                 <div key={s.id_servicio} className='carrito-item servicio-item'>
@@ -283,7 +287,19 @@ const CarritoDrawer = () => {
                                                         )}
 
                                                         {s.tipo_precio === 'fijo' && (
-                                                            <span className='carrito-item-precio'>${Number(s.precio).toLocaleString('es-AR')} c/u</span>
+                                                            <span className='carrito-item-precio'>
+                                                                {tieneDesc ? (
+                                                                    <>
+                                                                        <s className='precio-tachado'>${Number(s.precio).toLocaleString('es-AR')}</s>{' '}
+                                                                        <span className='precio-desc'>${precioUnit.toLocaleString('es-AR')} c/u</span>
+                                                                    </>
+                                                                ) : `$${Number(s.precio).toLocaleString('es-AR')} c/u`}
+                                                            </span>
+                                                        )}
+                                                        {tieneDesc && (s.descuento_porcentaje) && (
+                                                            <span className='precio-desc-badge'>
+                                                                🏷️ {s.descuento_porcentaje}% off desde {s.descuento_cantidad_min} u
+                                                            </span>
                                                         )}
 
                                                         {/* Hora de inicio para tipos que no son por_hora (ya lo muestra arriba) */}

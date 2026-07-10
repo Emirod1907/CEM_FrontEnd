@@ -810,3 +810,18 @@
     font-weight: 600;
     margin-top: 2px;
 }
+
+/* Descuento por cantidad en el carrito */
+.precio-tachado { color: #dc2626; text-decoration: line-through; opacity: 0.8; }
+.precio-desc { color: #16a34a; font-weight: 700; }
+.precio-desc-badge {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-top: 2px;
+    width: fit-content;
+}
