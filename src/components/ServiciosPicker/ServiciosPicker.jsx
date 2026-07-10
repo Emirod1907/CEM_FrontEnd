@@ -83,6 +83,8 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
     // Panel de "agregados": colapsable + edición de condiciones por ítem
     const [agregadosAbierto, setAgregadosAbierto] = useState(true)
     const [editId, setEditId] = useState(null)
+    // Cantidad tipeada en la tarjeta ANTES de agregar (id → cantidad)
+    const [cantidadNueva, setCantidadNueva] = useState({})
 
     useEffect(() => {
         getServicios().then(d => { setServicios(d || []); setCargando(false) })
@@ -152,7 +154,7 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                 tipo_precio:  tp,
                 tipo_item:    servicio.tipo_item || 'producto',
                 imagen:       servicio.imagen || null,
-                cantidad:     1,
+                cantidad:     Math.max(1, Math.floor(Number(cantidadNueva[id]) || 1)),
                 horas:  tp === 'por_hora'  ? horas  : null,
                 turnos: tp === 'por_turno' ? turnos : null,
                 // por persona: arranca con el total de invitados, pero es editable por ítem
@@ -619,14 +621,28 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                             <button type='button' className='spk-btn-quitar' onClick={() => toggleServicio(servicio)}><FiX size={13}/> Quitar</button>
                                         </div>
                                     ) : (
-                                        <button
-                                            type='button'
-                                            className='spk-btn-agregar'
-                                            disabled={bloqueado}
-                                            onClick={() => !bloqueado && toggleServicio(servicio)}
-                                        >
-                                            <FiPlus size={14}/> Agregar
-                                        </button>
+                                        <div className='spk-agregar-row'>
+                                            {tp !== 'por_persona' && (
+                                                <input
+                                                    type='number' min='1' step='1'
+                                                    className='spk-cant-input spk-cant-input--lista'
+                                                    value={cantidadNueva[id] ?? 1}
+                                                    onChange={e => setCantidadNueva(prev => ({ ...prev, [id]: e.target.value }))}
+                                                    onFocus={e => e.target.select()}
+                                                    disabled={bloqueado}
+                                                    aria-label='Cantidad'
+                                                    title='Cantidad a agregar'
+                                                />
+                                            )}
+                                            <button
+                                                type='button'
+                                                className='spk-btn-agregar'
+                                                disabled={bloqueado}
+                                                onClick={() => !bloqueado && toggleServicio(servicio)}
+                                            >
+                                                <FiPlus size={14}/> Agregar
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
                             </div>

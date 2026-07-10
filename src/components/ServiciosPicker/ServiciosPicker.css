@@ -639,6 +639,8 @@
     outline: none;
 }
 .spk-cant-input:focus { border-color: #6b23d8; }
+.spk-agregar-row { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.spk-cant-input--lista { width: 60px; height: 38px; }
 .spk-btn-agregar {
     display: flex;
     align-items: center;
