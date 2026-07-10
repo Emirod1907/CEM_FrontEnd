@@ -33,8 +33,16 @@ const ReservaDetalleProveedorHorizontal = ({ reserva, estadoAgenda, estadoMostra
     const eConf = confirmacionInfo(estadoAgenda)
     const organizador = `${r.Persona?.nombre || ''} ${r.Persona?.apellido || ''}`.trim() || '—'
     const servicios = r.mis_servicios || []
-    // Cantidad total de productos/unidades pedidos en esta reserva
-    const totalProductos = servicios.reduce((acc, s) => acc + (Number(s.cantidad) || 1), 0)
+    // Cantidad realmente solicitada de cada ítem según su tipo de precio:
+    // por_persona → personas, por_hora → horas, por_turno → turnos, si no → cantidad.
+    const cantidadSolicitada = (s) => {
+        const base = Number(s.cantidad) || 1
+        if (s.tipo_precio === 'por_persona' && Number(s.personas) > 0) return Number(s.personas) * base
+        if (s.tipo_precio === 'por_hora'    && Number(s.horas) > 0)    return Number(s.horas) * base
+        if (s.tipo_precio === 'por_turno'   && Number(s.turnos) > 0)   return Number(s.turnos) * base
+        return base
+    }
+    const totalSolicitado = servicios.reduce((acc, s) => acc + cantidadSolicitada(s), 0)
 
     return (
         <div className='rdh'>
@@ -77,10 +85,10 @@ const ReservaDetalleProveedorHorizontal = ({ reserva, estadoAgenda, estadoMostra
                     {servicios.length > 0 ? (
                         <>
                             {servicios.map((s, i) => (
-                                <span key={i} className='rdh-sub'>{s.nombre || s.titulo || 'Servicio'}{s.cantidad ? ` ×${s.cantidad}` : ''}</span>
+                                <span key={i} className='rdh-sub'>{s.nombre || s.titulo || 'Servicio'} ×{cantidadSolicitada(s)}</span>
                             ))}
                             <span className='rdh-val rdh-val-fuerte' style={{ marginTop: 4 }}>
-                                Total: {totalProductos} producto{totalProductos !== 1 ? 's' : ''}
+                                Total: {totalSolicitado} unidad{totalSolicitado !== 1 ? 'es' : ''}
                             </span>
                         </>
                     ) : <span className='rdh-sub'>—</span>}
