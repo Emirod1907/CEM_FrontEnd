@@ -976,15 +976,19 @@
     opacity: 0.55;
 }
 
-.tienda-card-img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    display: block;
-}
-
 .tienda-card-img-wrap {
     position: relative;
+    height: 180px;
+    overflow: hidden;
+    background: #f3eefb;
+    border-radius: 12px 12px 0 0;
+}
+.tienda-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
 }
 
 .tienda-card-foto-btn {
