@@ -33,6 +33,8 @@ const ReservaDetalleProveedorHorizontal = ({ reserva, estadoAgenda, estadoMostra
     const eConf = confirmacionInfo(estadoAgenda)
     const organizador = `${r.Persona?.nombre || ''} ${r.Persona?.apellido || ''}`.trim() || '—'
     const servicios = r.mis_servicios || []
+    // Cantidad total de productos/unidades pedidos en esta reserva
+    const totalProductos = servicios.reduce((acc, s) => acc + (Number(s.cantidad) || 1), 0)
 
     return (
         <div className='rdh'>
@@ -72,11 +74,16 @@ const ReservaDetalleProveedorHorizontal = ({ reserva, estadoAgenda, estadoMostra
                 </div>
                 <div className='rdh-col'>
                     <span className='rdh-label'><FiPackage size={12} /> Tus servicios</span>
-                    {servicios.length > 0
-                        ? servicios.map((s, i) => (
-                            <span key={i} className='rdh-sub'>{s.nombre || s.titulo || 'Servicio'}{s.cantidad ? ` ×${s.cantidad}` : ''}</span>
-                          ))
-                        : <span className='rdh-sub'>—</span>}
+                    {servicios.length > 0 ? (
+                        <>
+                            {servicios.map((s, i) => (
+                                <span key={i} className='rdh-sub'>{s.nombre || s.titulo || 'Servicio'}{s.cantidad ? ` ×${s.cantidad}` : ''}</span>
+                            ))}
+                            <span className='rdh-val rdh-val-fuerte' style={{ marginTop: 4 }}>
+                                Total: {totalProductos} producto{totalProductos !== 1 ? 's' : ''}
+                            </span>
+                        </>
+                    ) : <span className='rdh-sub'>—</span>}
                 </div>
             </div>
 
