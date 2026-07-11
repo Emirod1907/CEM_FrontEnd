@@ -499,15 +499,26 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                 const reales = (o.items || []).filter(i => i.id_servicio)
                                                 const serviciosO = reales.filter(i => (i.tipo_item || 'producto') === 'servicio')
                                                 const productosO = reales.filter(i => (i.tipo_item || 'producto') === 'producto')
-                                                // La comisión de servicio del lado cliente va SIEMPRE incorporada en
-                                                // los precios (markup congelado del contrato). El organizador nunca la
-                                                // ve desglosada: se suma de forma invisible a cada importe mostrado.
+                                                // Base con descuento (sin comisión) de esta orden.
+                                                const baseAlq  = alquiler ? Number(alquiler.precio) * (Number(alquiler.cantidad) || 1) : 0
+                                                const baseServ = serviciosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
+                                                const baseProd = productosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
+                                                const baseTotal = baseAlq + baseServ + baseProd
+                                                // La comisión del cliente va SIEMPRE incorporada de forma invisible en
+                                                // cada importe. Para una orden ya cobrada derivamos el factor del monto
+                                                // REAL cobrado (o.monto_total), así el Total coincide EXACTO con lo
+                                                // cobrado sin depender de la comisión vigente del contrato (que pudo
+                                                // cambiar). La seña cobra el 30%, por eso se divide por la proporción.
+                                                const proporcion = o.tipo_pago === 'seña' ? 0.30 : 1
+                                                const cobrado = Number(o.monto_total) || 0
                                                 const comisionPct = Number(reserva.comision_cliente_porcentaje) || 0
-                                                const factorCom = 1 + comisionPct / 100
+                                                const factorCom = (cobrado > 0 && baseTotal > 0)
+                                                    ? cobrado / (baseTotal * proporcion)
+                                                    : 1 + comisionPct / 100
                                                 const conCom = (n) => n * factorCom
-                                                const totServ = serviciosO.reduce((a, s) => a + conCom(calcSubtotal(s, invEf)), 0)
-                                                const totProd = productosO.reduce((a, s) => a + conCom(calcSubtotal(s, invEf)), 0)
-                                                const montoAlquiler = alquiler ? conCom(Number(alquiler.precio) * (Number(alquiler.cantidad) || 1)) : 0
+                                                const totServ = conCom(baseServ)
+                                                const totProd = conCom(baseProd)
+                                                const montoAlquiler = conCom(baseAlq)
                                                 const totalDesglose = montoAlquiler + totServ + totProd
 
                                                 const multLabel = (i) => i.tipo_precio === 'por_persona'
