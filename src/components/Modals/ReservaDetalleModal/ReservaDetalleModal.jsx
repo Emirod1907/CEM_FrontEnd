@@ -263,9 +263,19 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                     {(() => {
                                         const invitadosEfectivos = Number(de?.numInvitados) > 0 ? Number(de.numInvitados) : (Number(de?.cupo) || 0)
                                         const totalServicios = servicios.reduce((acc, s) => acc + calcSubtotal(s, invitadosEfectivos), 0)
+                                        const baseEvento = Number(reserva.monto_alquiler) + totalServicios
                                         const comisionPct = Number(reserva.comision_cliente_porcentaje) || 0
-                                        const factorComision = 1 + comisionPct / 100
-                                        const totalEvento = +((Number(reserva.monto_alquiler) + totalServicios) * factorComision).toFixed(2)
+                                        // Si ya hay un pago aprobado, el total real es lo efectivamente cobrado
+                                        // (llevado a 100% si fue seña), para que el resumen coincida EXACTO con
+                                        // lo pagado. Si aún no se pagó, se estima con la comisión del contrato.
+                                        const ordenAprobada = ordenes.find(o => o.estado === 'aprobado')
+                                        const cobrado = ordenAprobada ? Number(ordenAprobada.monto_total) : 0
+                                        const proporcion = ordenAprobada?.tipo_pago === 'seña' ? 0.30 : 1
+                                        const totalEvento = (cobrado > 0 && baseEvento > 0)
+                                            ? +(cobrado / proporcion).toFixed(2)
+                                            : +(baseEvento * (1 + comisionPct / 100)).toFixed(2)
+                                        // Factor efectivo para que las líneas (alquiler/servicios) sumen el total.
+                                        const factorComision = baseEvento > 0 ? totalEvento / baseEvento : 1 + comisionPct / 100
                                         const sena = +(totalEvento * 0.30).toFixed(2)
                                         const saldo = +(totalEvento * 0.70).toFixed(2)
                                         return (
