@@ -100,7 +100,25 @@
 }
 .tcg-modal-cerrar:hover { background: rgba(255,255,255,.32); }
 
-.tcg-modal-body { padding: 18px 20px; overflow-y: auto; }
+.tcg-body-wrap { position: relative; flex: 1; min-height: 0; display: flex; }
+.tcg-modal-body { flex: 1; padding: 18px 20px; overflow-y: auto; }
+
+/* Indicador "seguir leyendo" cuando hay más texto abajo */
+.tcg-scroll-hint {
+    position: absolute;
+    bottom: 12px; left: 50%; transform: translateX(-50%);
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #6b23d8, #d827b7); color: #fff;
+    border: none; border-radius: 20px; padding: 7px 16px;
+    font-family: inherit; font-size: .8rem; font-weight: 700; cursor: pointer;
+    box-shadow: 0 6px 16px rgba(107,35,216,.45);
+    animation: tcg-bounce 1.4s ease-in-out infinite;
+}
+.tcg-scroll-hint:hover { filter: brightness(1.08); }
+@keyframes tcg-bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(4px); }
+}
 .tcg-callout {
     display: flex; align-items: flex-start; gap: 10px;
     background: #eefcf3; border: 1px solid #bbf7d0;

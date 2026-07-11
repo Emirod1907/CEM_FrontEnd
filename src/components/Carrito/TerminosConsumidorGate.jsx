@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { getTerminosConsumidor } from '../../services/contratoServices'
-import { FiShield, FiCheckCircle, FiX, FiAlertTriangle, FiArrowLeft, FiArrowRight } from 'react-icons/fi'
+import { FiShield, FiCheckCircle, FiX, FiAlertTriangle, FiArrowLeft, FiArrowRight, FiChevronDown } from 'react-icons/fi'
 import './TerminosConsumidorGate.css'
 
 // Divide el texto de los términos en secciones (separadas por líneas de guiones/iguales).
@@ -25,9 +25,23 @@ const TerminosConsumidorGate = ({ checked, onChange }) => {
     const [modalAbierto, setModalAbierto] = useState(false)
     const [paso, setPaso]             = useState(0)
     const [tildado, setTildado]       = useState(!!checked)
+    const [hayMas, setHayMas]         = useState(false)  // hay más texto abajo (mostrar "seguir leyendo")
+    const bodyRef = useRef(null)
 
     useEffect(() => { getTerminosConsumidor().then(setTerms).catch(() => {}) }, [])
     useEffect(() => { setTildado(!!checked) }, [checked])
+
+    // Al cambiar de paso/abrir: subir el scroll y detectar si hay más contenido debajo
+    const revisarScroll = () => {
+        const el = bodyRef.current
+        if (!el) return
+        setHayMas(el.scrollHeight - el.scrollTop - el.clientHeight > 8)
+    }
+    useEffect(() => {
+        if (bodyRef.current) bodyRef.current.scrollTop = 0
+        const t = setTimeout(revisarScroll, 30)
+        return () => clearTimeout(t)
+    }, [paso, modalAbierto, terms])
 
     const secciones = useMemo(() => parseSecciones(terms?.texto_terminos), [terms])
     const total = secciones.length
@@ -71,7 +85,8 @@ const TerminosConsumidorGate = ({ checked, onChange }) => {
                             <div className='tcg-progress-fill' style={{ width: `${((paso + 1) / total) * 100}%` }} />
                         </div>
 
-                        <div className='tcg-modal-body' key={paso}>
+                        <div className='tcg-body-wrap'>
+                        <div className='tcg-modal-body' key={paso} ref={bodyRef} onScroll={revisarScroll}>
                             <h4 className='tcg-seccion-titulo'>{seccion?.titulo}</h4>
 
                             {esCancelacion && (
@@ -95,6 +110,16 @@ const TerminosConsumidorGate = ({ checked, onChange }) => {
                             )}
 
                             {seccion?.cuerpo && <pre className='tcg-seccion-cuerpo'>{seccion.cuerpo}</pre>}
+                        </div>
+                        {hayMas && (
+                            <button
+                                type='button'
+                                className='tcg-scroll-hint'
+                                onClick={() => bodyRef.current?.scrollBy({ top: bodyRef.current.clientHeight * 0.8, behavior: 'smooth' })}
+                            >
+                                <FiChevronDown size={16} /> Seguir leyendo
+                            </button>
+                        )}
                         </div>
 
                         <div className='tcg-modal-footer'>
