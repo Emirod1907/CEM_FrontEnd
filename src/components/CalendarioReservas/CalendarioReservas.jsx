@@ -364,8 +364,8 @@ const CalendarioReservas = ({
                                         {esPendiente && onContinuar && (
                                             <button
                                                 className="cr-btn cr-btn-continuar"
-                                                onClick={() => onContinuar(reserva)}
-                                                title="Volver a los pasos para agregar servicios, productos o invitados"
+                                                onClick={() => onContinuar(reserva, 'pendiente')}
+                                                title="Continuar con la reserva (te lleva al paso pendiente)"
                                             >
                                                 <FiArrowRight size={12} /> Continuar
                                             </button>
