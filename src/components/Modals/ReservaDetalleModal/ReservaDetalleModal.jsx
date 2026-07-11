@@ -263,19 +263,9 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                     {(() => {
                                         const invitadosEfectivos = Number(de?.numInvitados) > 0 ? Number(de.numInvitados) : (Number(de?.cupo) || 0)
                                         const totalServicios = servicios.reduce((acc, s) => acc + calcSubtotal(s, invitadosEfectivos), 0)
-                                        const baseEvento = Number(reserva.monto_alquiler) + totalServicios
                                         const comisionPct = Number(reserva.comision_cliente_porcentaje) || 0
-                                        // Si ya hay un pago aprobado, el total real es lo efectivamente cobrado
-                                        // (llevado a 100% si fue seña), para que el resumen coincida EXACTO con
-                                        // lo pagado. Si aún no se pagó, se estima con la comisión del contrato.
-                                        const ordenAprobada = ordenes.find(o => o.estado === 'aprobado')
-                                        const cobrado = ordenAprobada ? Number(ordenAprobada.monto_total) : 0
-                                        const proporcion = ordenAprobada?.tipo_pago === 'seña' ? 0.30 : 1
-                                        const totalEvento = (cobrado > 0 && baseEvento > 0)
-                                            ? +(cobrado / proporcion).toFixed(2)
-                                            : +(baseEvento * (1 + comisionPct / 100)).toFixed(2)
-                                        // Factor efectivo para que las líneas (alquiler/servicios) sumen el total.
-                                        const factorComision = baseEvento > 0 ? totalEvento / baseEvento : 1 + comisionPct / 100
+                                        const factorComision = 1 + comisionPct / 100
+                                        const totalEvento = +((Number(reserva.monto_alquiler) + totalServicios) * factorComision).toFixed(2)
                                         const sena = +(totalEvento * 0.30).toFixed(2)
                                         const saldo = +(totalEvento * 0.70).toFixed(2)
                                         return (
@@ -513,18 +503,11 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                 const baseAlq  = alquiler ? Number(alquiler.precio) * (Number(alquiler.cantidad) || 1) : 0
                                                 const baseServ = serviciosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
                                                 const baseProd = productosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
-                                                const baseTotal = baseAlq + baseServ + baseProd
                                                 // La comisión del cliente va SIEMPRE incorporada de forma invisible en
-                                                // cada importe. Para una orden ya cobrada derivamos el factor del monto
-                                                // REAL cobrado (o.monto_total), así el Total coincide EXACTO con lo
-                                                // cobrado sin depender de la comisión vigente del contrato (que pudo
-                                                // cambiar). La seña cobra el 30%, por eso se divide por la proporción.
-                                                const proporcion = o.tipo_pago === 'seña' ? 0.30 : 1
-                                                const cobrado = Number(o.monto_total) || 0
+                                                // cada importe, con el % del contrato. Todas las pantallas usan el mismo
+                                                // factor para que los precios sean CONSISTENTES entre sí.
                                                 const comisionPct = Number(reserva.comision_cliente_porcentaje) || 0
-                                                const factorCom = (cobrado > 0 && baseTotal > 0)
-                                                    ? cobrado / (baseTotal * proporcion)
-                                                    : 1 + comisionPct / 100
+                                                const factorCom = 1 + comisionPct / 100
                                                 const conCom = (n) => n * factorCom
                                                 const totServ = conCom(baseServ)
                                                 const totProd = conCom(baseProd)
