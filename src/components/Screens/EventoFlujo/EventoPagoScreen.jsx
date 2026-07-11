@@ -18,8 +18,11 @@ const EventoPagoScreen = () => {
     const { isAuthenticated } = useAuth()
     const {
         reservaOrganizador, serviciosCarrito, totalOrganizador, montoSena,
-        invitadosEfectivos, precioEntrada,
+        invitadosEfectivos, precioEntrada, factorComisionOrg,
     } = useCarrito()
+
+    // La comisión del cliente va incorporada de forma invisible en cada precio.
+    const conCom = (n) => Number(n) * (Number(factorComisionOrg) || 1)
 
     const [aceptoTerminos, setAceptoTerminos] = useState(false)
     const [loadingPago, setLoadingPago] = useState(false)
@@ -47,7 +50,7 @@ const EventoPagoScreen = () => {
         if (s.tipo_precio === 'por_persona') mult = Number(s.personas) > 0 ? Number(s.personas) : (invitadosEfectivos || 1)
         else if (s.tipo_precio === 'por_hora') mult = Number(s.horas) || 1
         else if (s.tipo_precio === 'por_turno') mult = Number(s.turnos) || 1
-        return precioUnitarioConDescuento(s) * (Number(s.cantidad) || 1) * mult
+        return conCom(precioUnitarioConDescuento(s)) * (Number(s.cantidad) || 1) * mult
     }
 
     const irAlCheckout = (data) => {
@@ -102,14 +105,15 @@ const EventoPagoScreen = () => {
                         ) : (
                             <ul className='pago-items'>
                                 {serviciosCarrito.map(s => {
-                                    const unit = precioUnitarioConDescuento(s)
-                                    const conDesc = unit < Number(s.precio)
+                                    const unit = conCom(precioUnitarioConDescuento(s))
+                                    const precioBaseCom = conCom(Number(s.precio))
+                                    const conDesc = unit < precioBaseCom
                                     return (
                                         <li key={s.id_servicio} className='pago-item'>
                                             <div className='pago-item-info'>
                                                 <span className='pago-item-nombre'>{s.nombre} <small>×{s.cantidad}</small></span>
                                                 <span className='pago-item-unit'>
-                                                    {conDesc && <s className='pago-tachado'>{fmt(s.precio)}</s>} {fmt(unit)} c/u
+                                                    {conDesc && <s className='pago-tachado'>{fmt(precioBaseCom)}</s>} {fmt(unit)} c/u
                                                 </span>
                                             </div>
                                             <span className='pago-item-sub'>{fmt(subtotalItem(s))}</span>

@@ -12,6 +12,7 @@
 import React, { useEffect, useState } from 'react'
 import { getServicios, getDisponibilidadServicios } from '../../services/servicioServices'
 import { calcularPrecioServicio, precioUnitarioConDescuento, TIPO_DIA_LABEL, TIPO_DIA_COLOR } from '../../utils/preciosUtils'
+import { useCarrito } from '../../Contexts/CarritoContextProvider'
 import { FiX, FiPlus, FiMinus, FiCheck, FiClock, FiRepeat, FiUsers, FiPackage, FiStar, FiEdit2, FiChevronDown, FiChevronUp } from 'react-icons/fi'
 import TimePicker24 from '../TimePicker24/TimePicker24'
 import './ServiciosPicker.css'
@@ -85,6 +86,11 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
     const [editId, setEditId] = useState(null)
     // Cantidad tipeada en la tarjeta ANTES de agregar (id → cantidad)
     const [cantidadNueva, setCantidadNueva] = useState({})
+
+    // Comisión del cliente incorporada de forma invisible en TODO precio mostrado.
+    // Vale 1 mientras no haya una reserva cargada (aún no se congeló la comisión).
+    const { factorComisionOrg } = useCarrito()
+    const conCom = (n) => Number(n) * (Number(factorComisionOrg) || 1)
 
     useEffect(() => {
         getServicios().then(d => { setServicios(d || []); setCargando(false) })
@@ -202,7 +208,7 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
         if (s.tipo_precio === 'por_persona')   mult = personasDe(s)
         else if (s.tipo_precio === 'por_hora')  mult = Math.max(1, Number(s.horas)  || 1)
         else if (s.tipo_precio === 'por_turno') mult = Math.max(1, Number(s.turnos) || 1)
-        return precioUnitarioConDescuento(s) * (Number(s.cantidad) || 1) * mult
+        return conCom(precioUnitarioConDescuento(s)) * (Number(s.cantidad) || 1) * mult
     }
 
     const nProductos = servicios.filter(s => (s.tipo_item || 'producto') === 'producto').length
@@ -282,7 +288,7 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                                     <span className='spk-add-nombre'>{s.nombre}</span>
                                                     <span className='spk-add-precio'>
                                                         ${Number(subtotalSeleccionado(s)).toLocaleString('es-AR')}
-                                                        <small> (${Number(precioUnitarioConDescuento(s)).toLocaleString('es-AR')}{unidad} c/u)</small>
+                                                        <small> (${Number(conCom(precioUnitarioConDescuento(s))).toLocaleString('es-AR')}{unidad} c/u)</small>
                                                     </span>
                                                     {s.hora_inicio && (
                                                         <span className='spk-add-cond'>
@@ -437,8 +443,10 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                         const opciones   = getOpcionesTurno(servicio)
                         const opIdx      = opcionTurnoPor[id] ?? 0
                         const opSel      = opciones ? (opciones[opIdx] || opciones[0]) : null
-                        const precioUnit = getPrecioUnitario(servicio)
-                        const total      = calcTotal(servicio)
+                        // Precios de catálogo YA con la comisión del cliente incorporada
+                        // (invisible), para que el monto no cambie al agregarlo al carrito.
+                        const precioUnit = conCom(getPrecioUnitario(servicio))
+                        const total      = conCom(calcTotal(servicio))
                         const horaInicio = horaPor[id] || ''
 
                         // Destacado: producto "ideal para N personas" que coincide (o está cerca) del cupo del evento
@@ -475,7 +483,7 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                             <div className='spk-dia-badge' style={{ borderColor: TIPO_DIA_COLOR[info.tipo], color: TIPO_DIA_COLOR[info.tipo] }}>
                                                 {TIPO_DIA_LABEL[info.tipo]}
                                                 {info.precioUnitario !== Number(servicio.precio) && (
-                                                    <span> · ${info.precioUnitario.toLocaleString('es-AR')}</span>
+                                                    <span> · ${conCom(info.precioUnitario).toLocaleString('es-AR')}</span>
                                                 )}
                                             </div>
                                         )
@@ -494,7 +502,7 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                                         onClick={() => setOpcionTurnoPor(prev => ({ ...prev, [id]: i }))}
                                                     >
                                                         <FiClock size={11}/> {op.horas ?? '?'}h
-                                                        <strong>${Number(op.precio ?? servicio.precio).toLocaleString('es-AR')}</strong>
+                                                        <strong>${Number(conCom(op.precio ?? servicio.precio)).toLocaleString('es-AR')}</strong>
                                                     </button>
                                                 ))}
                                             </div>
@@ -583,7 +591,7 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                         )}
                                         {tp === 'por_turno' && opciones && opSel && (
                                             <div className='spk-unidades-row'>
-                                                <strong>${Number(opSel.precio ?? servicio.precio).toLocaleString('es-AR')}</strong>
+                                                <strong>${Number(conCom(opSel.precio ?? servicio.precio)).toLocaleString('es-AR')}</strong>
                                                 <span className='spk-por'>/ turno de {opSel.horas}h</span>
                                                 <span>×</span>
                                                 <input
@@ -593,7 +601,7 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                                     className='spk-num-input'
                                                 />
                                                 <span>=</span>
-                                                <strong>${(Number(opSel.precio ?? servicio.precio) * (Number(turnosPor[id]) || 1)).toLocaleString('es-AR')}</strong>
+                                                <strong>${(Number(conCom(opSel.precio ?? servicio.precio)) * (Number(turnosPor[id]) || 1)).toLocaleString('es-AR')}</strong>
                                             </div>
                                         )}
                                         {tp === 'fijo' && (

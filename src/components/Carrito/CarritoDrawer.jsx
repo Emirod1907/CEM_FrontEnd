@@ -15,13 +15,17 @@ const CarritoDrawer = () => {
         // Carrito cliente
         items, totalItems, totalPrecio, quitarItem, actualizarCantidad, vaciarCarrito,
         // Carrito organizador
-        reservaOrganizador, serviciosCarrito, totalOrganizador, montoAlquiler, montoAlquilerConComision, montoSena,
+        reservaOrganizador, serviciosCarrito, totalOrganizador, montoAlquiler, montoAlquilerConComision, montoSena, factorComisionOrg,
         quitarServicioAdicional, actualizarCantidadServicio, actualizarUnidadesServicio, vaciarCarritoOrganizador,
         precioEntrada, setPrecioEntrada,
         numInvitados, setNumInvitados, invitadosEfectivos,
         // Compartido
         isCartOpen, setIsCartOpen
     } = useCarrito()
+
+    // La comisión del cliente va incorporada de forma invisible en TODO precio
+    // mostrado al organizador (mismo factor que aplica el backend al cobrar).
+    const conCom = (n) => Number(n) * (Number(factorComisionOrg) || 1)
 
     // ── Cálculos ROI ──
     const cobrarEntrada = reservaOrganizador?.datos_evento?.cobrar_entrada ?? false
@@ -226,9 +230,11 @@ const CarritoDrawer = () => {
                                             if (s.tipo_precio === 'por_persona') multiplicador = personasItem > 0 ? personasItem : 1
                                             else if (s.tipo_precio === 'por_hora')   multiplicador = Number(s.horas)  || 1
                                             else if (s.tipo_precio === 'por_turno')  multiplicador = Number(s.turnos) || 1
-                                            // Precio unitario con descuento por cantidad (si aplica)
-                                            const precioUnit = precioUnitarioConDescuento(s)
-                                            const tieneDesc  = precioUnit < Number(s.precio)
+                                            // Precio unitario con descuento por cantidad (si aplica),
+                                            // ya con la comisión del cliente incorporada de forma invisible.
+                                            const precioUnit = conCom(precioUnitarioConDescuento(s))
+                                            const precioBaseCom = conCom(Number(s.precio))
+                                            const tieneDesc  = precioUnit < precioBaseCom
                                             const subtotal = precioUnit * s.cantidad * multiplicador
 
                                             return (
@@ -238,7 +244,7 @@ const CarritoDrawer = () => {
 
                                                         {s.tipo_precio === 'por_persona' && (
                                                             <span className='carrito-item-precio tipo-badge'>
-                                                                ${Number(s.precio).toLocaleString('es-AR')}/persona × {personasItem > 0 ? personasItem : '?'} {Number(s.personas) > 0 ? 'pers.' : 'inv.'}
+                                                                ${precioBaseCom.toLocaleString('es-AR')}/persona × {personasItem > 0 ? personasItem : '?'} {Number(s.personas) > 0 ? 'pers.' : 'inv.'}
                                                             </span>
                                                         )}
 
@@ -246,7 +252,7 @@ const CarritoDrawer = () => {
                                                             <>
                                                                 <div className='unidades-drawer-row'>
                                                                     <FiClock size={13} />
-                                                                    <span>${Number(s.precio).toLocaleString('es-AR')}/hora ×</span>
+                                                                    <span>${precioBaseCom.toLocaleString('es-AR')}/hora ×</span>
                                                                     <input
                                                                         type='number'
                                                                         min='1'
@@ -273,7 +279,7 @@ const CarritoDrawer = () => {
                                                         {s.tipo_precio === 'por_turno' && (
                                                             <div className='unidades-drawer-row'>
                                                                 <FiRepeat size={13} />
-                                                                <span>${Number(s.precio).toLocaleString('es-AR')}/turno ×</span>
+                                                                <span>${precioBaseCom.toLocaleString('es-AR')}/turno ×</span>
                                                                 <input
                                                                     type='number'
                                                                     min='1'
@@ -290,10 +296,10 @@ const CarritoDrawer = () => {
                                                             <span className='carrito-item-precio'>
                                                                 {tieneDesc ? (
                                                                     <>
-                                                                        <s className='precio-tachado'>${Number(s.precio).toLocaleString('es-AR')}</s>{' '}
+                                                                        <s className='precio-tachado'>${precioBaseCom.toLocaleString('es-AR')}</s>{' '}
                                                                         <span className='precio-desc'>${precioUnit.toLocaleString('es-AR')} c/u</span>
                                                                     </>
-                                                                ) : `$${Number(s.precio).toLocaleString('es-AR')} c/u`}
+                                                                ) : `$${precioBaseCom.toLocaleString('es-AR')} c/u`}
                                                             </span>
                                                         )}
                                                         {tieneDesc && (s.descuento_porcentaje) && (

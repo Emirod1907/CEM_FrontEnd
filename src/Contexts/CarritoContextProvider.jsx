@@ -369,6 +369,10 @@ const CarritoContextProvider = ({ children }) => {
                 montoAlquiler,
                 montoAlquilerConComision,
                 montoSena,
+                // Factor de comisión del cliente (mismo que aplica pago.controller.ts).
+                // Se expone para que TODO precio mostrado al organizador ya lo incluya,
+                // sin que la comisión se vea desglosada en ningún lado.
+                factorComisionOrg,
                 agregarReservaOrganizador,
                 setReservaOrganizador,
                 agregarServicioAdicional,
