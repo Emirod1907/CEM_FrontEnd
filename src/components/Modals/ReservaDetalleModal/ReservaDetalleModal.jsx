@@ -85,11 +85,12 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
 
     useEffect(() => { cargarDetalle() }, [id_reserva])
 
-    // "Agregar servicios" desde el detalle → vuelve a los 5 pasos (paso 2), no abre un modal.
-    const handleContinuarFlujo = () => {
+    // Vuelve a los 5 pasos. destino: 'servicios' (Agregar servicios → paso 2) o
+    // 'pendiente' (Continuar → último paso pendiente según el estado).
+    const handleContinuarFlujo = (destino = 'servicios') => {
         if (!datos?.reserva) return
         const r = datos.reserva
-        onContinuar?.({ ...r, bodega_id: r.bodega_id ?? r.salon_id })
+        onContinuar?.({ ...r, bodega_id: r.bodega_id ?? r.salon_id }, destino)
     }
 
     useEffect(() => {
@@ -164,11 +165,11 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                 </div>
                             )}
 
-                            {/* Continuar con la reserva → vuelve a los 5 pasos (paso 2) */}
+                            {/* Continuar con la reserva → va al último paso pendiente (ej. Pago) */}
                             {reserva.estado === 'pendiente_pago' && onContinuar && (
                                 <button
                                     className='rd-btn-continuar'
-                                    onClick={handleContinuarFlujo}
+                                    onClick={() => handleContinuarFlujo('pendiente')}
                                 >
                                     <FiArrowRight size={14} /> Continuar con la reserva
                                 </button>
@@ -381,7 +382,7 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                     <span>Podés agregar catering, decoración, sonido y más.</span>
                                                     <button
                                                         className='rd-btn-agregar-servicios'
-                                                        onClick={handleContinuarFlujo}
+                                                        onClick={() => handleContinuarFlujo('servicios')}
                                                     >
                                                         <FiPlus size={15} /> Agregar servicios
                                                     </button>
@@ -437,7 +438,7 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                             {reserva.estado === 'pendiente_pago' && (
                                                 <button
                                                     className='rd-btn-agregar-servicios rd-btn-agregar-mas'
-                                                    onClick={handleContinuarFlujo}
+                                                    onClick={() => handleContinuarFlujo('servicios')}
                                                 >
                                                     <FiPlus size={14} /> Agregar más servicios
                                                 </button>

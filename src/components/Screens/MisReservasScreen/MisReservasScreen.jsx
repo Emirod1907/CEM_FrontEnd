@@ -70,9 +70,18 @@ const MisReservasScreen = () => {
         setTimeout(() => setIsCartOpen(true), 100)
     }
 
-    const handleContinuar = (reserva) => {
+    const handleContinuar = (reserva, destino = 'servicios') => {
         cargarReservaEnCarrito(reserva)
-        navigate('/organizar/servicios')
+        // "Agregar servicios" → paso 2. "Continuar" → último paso pendiente según el estado.
+        if (destino === 'servicios') { navigate('/organizar/servicios'); return }
+        const estado = reserva.estado
+        const esPrivado = reserva.datos_evento?.es_publico === false
+        if (estado === 'seña_abonada' || estado === 'confirmada') {
+            navigate(esPrivado ? '/organizar/invitados' : '/organizar/pago')
+        } else {
+            // pendiente_pago (guardada, sin pagar) → el paso pendiente es el Pago
+            navigate('/organizar/pago')
+        }
     }
 
     const handleReiterar = (nuevaReserva, viejoId) => {
@@ -239,7 +248,7 @@ const MisReservasScreen = () => {
                     onClose={() => setDetalleId(null)}
                     onReiterar={(r) => { setDetalleId(null); setReservaAReiterar(r) }}
                     onGuardar={() => { setDetalleId(null); setIsCartOpen(true) }}
-                    onContinuar={(r) => { setDetalleId(null); handleContinuar(r) }}
+                    onContinuar={(r, destino) => { setDetalleId(null); handleContinuar(r, destino) }}
                 />
             )}
 
