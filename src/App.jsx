@@ -17,6 +17,7 @@ import EventoSalonScreen from './components/Screens/EventoFlujo/EventoSalonScree
 import EventoServiciosScreen from './components/Screens/EventoFlujo/EventoServiciosScreen'
 import EventoProductosScreen from './components/Screens/EventoFlujo/EventoProductosScreen'
 import EventoInvitadosScreen from './components/Screens/EventoFlujo/EventoInvitadosScreen'
+import EventoPagoScreen from './components/Screens/EventoFlujo/EventoPagoScreen'
 import PagoPendienteWatcher from './components/PagoPendienteWatcher/PagoPendienteWatcher'
 import SalonesScreen from './components/Screens/SalonesScreen/SalonesScreen'
 import RsvpScreen from './components/Screens/RsvpScreen/RsvpScreen'
@@ -59,6 +60,7 @@ function App() {
                     <Route path='/organizar/servicios' element={<EventoServiciosScreen />} />
                     <Route path='/organizar/productos' element={<EventoProductosScreen />} />
                     <Route path='/organizar/invitados' element={<EventoInvitadosScreen />} />
+                    <Route path='/organizar/pago' element={<EventoPagoScreen />} />
                     <Route path='/mis-reservas' element={<MisReservasScreen />} />
                     <Route path='/mis-borradores' element={<BorradoresScreen />} />
                     <Route path='/validar-entrada' element={<ValidarEntradaScreen />} />

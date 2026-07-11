@@ -63,7 +63,7 @@ const EventoServiciosScreen = () => {
             />
 
             <div className='flujo-nav'>
-                <button className='flujo-btn flujo-btn--ghost' onClick={() => setIsCartOpen(true)}>
+                <button className='flujo-btn flujo-btn--ghost' onClick={() => navigate('/organizar/pago')}>
                     <FiShoppingCart size={16} /> Ir directo al pago
                 </button>
                 <button className='flujo-btn flujo-btn--primary' onClick={() => navigate('/organizar/productos')}>

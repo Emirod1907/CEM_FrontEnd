@@ -78,6 +78,7 @@ const ProgresoEvento = () => {
     let actual
     if (path.startsWith('/organizar/invitados')) actual = 5
     else if (path.startsWith('/pago/exito')) actual = esPrivado ? 5 : 4
+    else if (path.startsWith('/organizar/pago')) actual = 4
     else if (path.startsWith('/pago')) actual = 4
     else if (path.startsWith('/organizar/salon')) actual = 1
     else if (path.startsWith('/organizar/servicios')) actual = 2
@@ -96,7 +97,7 @@ const ProgresoEvento = () => {
                 break
             case 2: navigate('/organizar/servicios'); break
             case 3: navigate('/organizar/productos'); break
-            case 4: setIsCartOpen(true); break
+            case 4: navigate('/organizar/pago'); break
             case 5: navigate('/organizar/invitados'); break
             default: break
         }

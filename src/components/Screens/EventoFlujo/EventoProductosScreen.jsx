@@ -28,9 +28,8 @@ const EventoProductosScreen = () => {
 
     const onChange = (nuevaLista) => reemplazarServiciosPorTipo('producto', nuevaLista)
 
-    // (La pantalla de Invitados como paso propio se agrega en la próxima fase;
-    // por ahora, continuar lleva al pago desde el carrito)
-    const irSiguiente = () => setIsCartOpen(true)
+    // Paso 4: Pago (página completa)
+    const irSiguiente = () => navigate('/organizar/pago')
 
     return (
         <div className='flujo-screen'>
@@ -59,7 +58,7 @@ const EventoProductosScreen = () => {
                     <FiArrowLeft size={16} /> Volver a Servicios
                 </button>
                 <div style={{ display: 'flex', gap: 10 }}>
-                    <button className='flujo-btn flujo-btn--ghost' onClick={() => setIsCartOpen(true)}>
+                    <button className='flujo-btn flujo-btn--ghost' onClick={() => navigate('/organizar/pago')}>
                         <FiShoppingCart size={16} /> Ir directo al pago
                     </button>
                     <button className='flujo-btn flujo-btn--primary' onClick={irSiguiente}>
