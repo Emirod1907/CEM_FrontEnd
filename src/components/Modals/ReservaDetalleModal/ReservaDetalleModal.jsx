@@ -500,7 +500,12 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                 const totServ = serviciosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
                                                 const totProd = productosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
                                                 const montoAlquiler = alquiler ? Number(alquiler.precio) * (Number(alquiler.cantidad) || 1) : 0
-                                                const totalDesglose = montoAlquiler + totServ + totProd
+                                                const subtotalBienes = montoAlquiler + totServ + totProd
+                                                // Comisión de servicio del lado cliente (markup congelado del contrato).
+                                                // Los precios del desglose son base; al cobrar se suma esta comisión.
+                                                const comisionPct = Number(reserva.comision_cliente_porcentaje) || 0
+                                                const comisionMonto = +(subtotalBienes * comisionPct / 100).toFixed(2)
+                                                const totalDesglose = subtotalBienes + comisionMonto
 
                                                 const multLabel = (i) => i.tipo_precio === 'por_persona'
                                                     ? `${(Number(i.personas) > 0 ? Number(i.personas) : invEf) || 1} pers.`
@@ -568,7 +573,21 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                                 </div>
                                                             )}
                                                             {(alquiler || serviciosO.length > 0 || productosO.length > 0) && (
-                                                                <div className='rd-pago-total-fila'><span>Total</span><strong>${fmt(totalDesglose)}</strong></div>
+                                                                <>
+                                                                    {comisionMonto > 0 && (
+                                                                        <div className='rd-pago-grupo rd-pago-comision'>
+                                                                            <div className='rd-pago-linea'>
+                                                                                <span>Subtotal</span>
+                                                                                <span className='rd-pago-item-sub'>${fmt(subtotalBienes)}</span>
+                                                                            </div>
+                                                                            <div className='rd-pago-linea'>
+                                                                                <span>Comisión de servicio ({comisionPct}%)</span>
+                                                                                <span className='rd-pago-item-sub'>${fmt(comisionMonto)}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                    <div className='rd-pago-total-fila'><span>Total</span><strong>${fmt(totalDesglose)}</strong></div>
+                                                                </>
                                                             )}
                                                         </div>
                                                     </div>

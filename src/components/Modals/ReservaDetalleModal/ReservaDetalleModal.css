@@ -670,3 +670,5 @@
     font-size: 1rem; color: #fff;
 }
 .rd-pago-total-fila strong { font-size: 1.15rem; }
+.rd-pago-comision { display: flex; flex-direction: column; gap: 6px; }
+.rd-pago-comision .rd-pago-linea { font-size: 0.86rem; color: rgba(255,255,255,0.72); }
