@@ -1498,3 +1498,20 @@
     color: #5b5470;
     max-width: 520px;
 }
+
+/* Archivo: filtros + detalle */
+.archivo-filtros { display: flex; gap: 8px; padding: 12px 20px 0; flex-wrap: wrap; }
+.archivo-filtro {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: rgba(255,255,255,0.78);
+    border-radius: 20px;
+    padding: 6px 15px;
+    font-size: 0.82rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.archivo-filtro:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.archivo-filtro.activo { background: linear-gradient(135deg, #770981, #1882da); color: #fff; border-color: transparent; }
+.archivo-detalle-wrap { margin: 12px 20px 0; }

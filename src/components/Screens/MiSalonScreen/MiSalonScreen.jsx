@@ -389,6 +389,8 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const [filtroEstado,     setFiltroEstado]     = useState('')
     const [filtroTipo,       setFiltroTipo]       = useState('')   // '' | 'interna' | 'externa'
     const [mostrarArchivo,   setMostrarArchivo]   = useState(false)
+    const [filtroArchivo,    setFiltroArchivo]    = useState('')   // '' | 'pasada' | 'cancelada'
+    const [archivoSel,       setArchivoSel]       = useState(null) // reserva seleccionada en el archivo
     const [mostrarCal,   setMostrarCal]   = useState(false)   // modal de Google Calendar
     const [calConectado, setCalConectado] = useState(false)
     const [calCargando,  setCalCargando]  = useState(false)
@@ -450,6 +452,13 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
     const reservasArchivadas = reservas
         .filter(r => r.estado === 'cancelada' || esPasada(r))
         .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+
+    // Filtro del archivo: todas / pasadas (finalizadas, no canceladas) / canceladas
+    const archivadasFiltradas = reservasArchivadas.filter(r => {
+        if (filtroArchivo === 'cancelada') return r.estado === 'cancelada'
+        if (filtroArchivo === 'pasada')    return r.estado !== 'cancelada' && esPasada(r)
+        return true
+    })
 
     // Aplicar filtros tipo + estado sobre activas
     const reservasFiltradas = reservasActivas
@@ -794,42 +803,69 @@ const TabReservas = ({ reservas, onActualizar, nombreSalon }) => {
 
             {/* ── Modal: archivo de canceladas ── */}
             {mostrarArchivo && (
-                <div className='modal-overlay' onClick={() => setMostrarArchivo(false)}>
+                <div className='modal-overlay' onClick={() => { setMostrarArchivo(false); setArchivoSel(null) }}>
                     <div className='modal-box modal-box--wide' onClick={e => e.stopPropagation()}>
                         <div className='modal-header'>
                             <div>
-                                <h2>Archivo de reservas canceladas</h2>
-                                <span className='panel-fecha-subtitulo'>{reservasArchivadas.length} reserva(s) cancelada(s)</span>
+                                <h2>Archivo de reservas</h2>
+                                <span className='panel-fecha-subtitulo'>{archivadasFiltradas.length} reserva(s)</span>
                             </div>
-                            <button className='btn-cerrar-modal' onClick={() => setMostrarArchivo(false)}><FiX size={20}/></button>
+                            <button className='btn-cerrar-modal' onClick={() => { setMostrarArchivo(false); setArchivoSel(null) }}><FiX size={20}/></button>
                         </div>
+
+                        {/* Filtros: todas / pasadas / canceladas */}
+                        <div className='archivo-filtros'>
+                            <button className={`archivo-filtro ${filtroArchivo === '' ? 'activo' : ''}`} onClick={() => { setFiltroArchivo(''); setArchivoSel(null) }}>Todas</button>
+                            <button className={`archivo-filtro ${filtroArchivo === 'pasada' ? 'activo' : ''}`} onClick={() => { setFiltroArchivo('pasada'); setArchivoSel(null) }}>Pasadas</button>
+                            <button className={`archivo-filtro ${filtroArchivo === 'cancelada' ? 'activo' : ''}`} onClick={() => { setFiltroArchivo('cancelada'); setArchivoSel(null) }}>Canceladas</button>
+                        </div>
+
+                        {/* Detalle horizontal de la reserva seleccionada */}
+                        {archivoSel && (
+                            <div className='archivo-detalle-wrap'>
+                                <ReservaDetalleHorizontal
+                                    reserva={archivoSel}
+                                    onCerrar={() => setArchivoSel(null)}
+                                />
+                            </div>
+                        )}
+
                         <div className='archivo-lista'>
-                            {reservasArchivadas.length === 0 ? (
-                                <p className='reservas-vacio'>No hay reservas canceladas.</p>
-                            ) : reservasArchivadas.map(r => (
-                                <div key={r.id_reserva} className='archivo-item'>
-                                    <div className='reserva-item-left'>
-                                        <div className='reserva-item-fecha-col'>
-                                            <span className='reserva-item-fecha'>
-                                                {new Date(r.fecha).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', timeZone: 'UTC' })}
+                            {archivadasFiltradas.length === 0 ? (
+                                <p className='reservas-vacio'>No hay reservas en este filtro.</p>
+                            ) : archivadasFiltradas.map(r => {
+                                const cancelada = r.estado === 'cancelada'
+                                return (
+                                    <div
+                                        key={r.id_reserva}
+                                        className={`reserva-item ${r.id_reserva === archivoSel?.id_reserva ? 'reserva-item-activa' : ''}`}
+                                        onClick={() => setArchivoSel(prev => prev?.id_reserva === r.id_reserva ? null : r)}
+                                    >
+                                        <div className='reserva-item-left'>
+                                            <div className='reserva-item-fecha-col'>
+                                                <span className='reserva-item-fecha'>
+                                                    {new Date(r.fecha).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', timeZone: 'UTC' })}
+                                                </span>
+                                                <span className='reserva-item-anio'>
+                                                    {new Date(r.fecha).toLocaleDateString('es-AR', { year: 'numeric', timeZone: 'UTC' })}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className='reserva-item-nombre'>{nombreOrganizador(r)}</span>
+                                                <span className='reserva-item-email'>{emailOrganizador(r)}</span>
+                                            </div>
+                                        </div>
+                                        <div className='reserva-item-right'>
+                                            <span className={`tipo-pill ${r.datos_evento?.manual ? 'tipo-externa' : 'tipo-interna'}`}>
+                                                {r.datos_evento?.manual ? 'Externa' : 'Interna'}
                                             </span>
-                                            <span className='reserva-item-anio'>
-                                                {new Date(r.fecha).toLocaleDateString('es-AR', { year: 'numeric', timeZone: 'UTC' })}
+                                            <span className={`estado-badge ${cancelada ? 'estado-cancelada' : 'estado-confirmada'}`}>
+                                                {cancelada ? 'Cancelada' : 'Finalizada'}
                                             </span>
                                         </div>
-                                        <div>
-                                            <span className='reserva-item-nombre'>{nombreOrganizador(r)}</span>
-                                            <span className='reserva-item-email'>{emailOrganizador(r)}</span>
-                                        </div>
                                     </div>
-                                    <div className='reserva-item-right'>
-                                        <span className={`tipo-pill ${r.datos_evento?.manual ? 'tipo-externa' : 'tipo-interna'}`}>
-                                            {r.datos_evento?.manual ? 'Externa' : 'Interna'}
-                                        </span>
-                                        <span className='estado-badge estado-cancelada'>Cancelada</span>
-                                    </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     </div>
                 </div>
