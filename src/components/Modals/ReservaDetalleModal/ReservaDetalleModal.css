@@ -632,3 +632,41 @@
 .badge-sena       { background: var(--de-status-deposit-bg); color: #ffffff; border-color: rgba(255,255,255,0.20); }
 .badge-confirmada { background: var(--de-status-confirmed-bg); color: #ffffff; border-color: rgba(255,255,255,0.20); }
 .badge-cancelada  { background: var(--de-status-cancelled-bg); color: #ffffff; border-color: rgba(255,255,255,0.20); }
+
+/* Desglose de pago: salón / servicios / productos con subtotales */
+.rd-pago-desglose { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
+.rd-pago-grupo {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+.rd-pago-grupo-tit {
+    display: block; font-size: 0.74rem; font-weight: 700;
+    color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 8px;
+}
+.rd-pago-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.rd-pago-item, .rd-pago-linea {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 0.88rem; color: rgba(255,255,255,0.9);
+}
+.rd-pago-item-nombre { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.rd-pago-item-nombre small { color: rgba(255,255,255,0.55); }
+.rd-pago-desc { background: rgba(22,163,74,0.25); color: #4ade80; font-size: 0.68rem; font-weight: 700; padding: 1px 7px; border-radius: 10px; }
+.rd-pago-item-sub { color: #fff; font-weight: 600; white-space: nowrap; }
+.rd-pago-tachado { color: #f87171; text-decoration: line-through; font-weight: 400; margin-right: 5px; font-size: 0.8rem; }
+.rd-pago-subtotal {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.84rem; color: rgba(255,255,255,0.7);
+}
+.rd-pago-subtotal strong { color: #4ade80; }
+.rd-pago-total-fila {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(119,9,129,0.3), rgba(24,130,218,0.2));
+    border: 1px solid rgba(255,255,255,0.12);
+    font-size: 1rem; color: #fff;
+}
+.rd-pago-total-fila strong { font-size: 1.15rem; }

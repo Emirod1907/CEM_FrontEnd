@@ -492,7 +492,39 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                         <div className='rd-ordenes'>
                                             {ordenes.map(o => {
                                                 const cfgO = ESTADO_ORDEN[o.estado] || ESTADO_ORDEN.pendiente
-                                                const itemsSinAlquiler = (o.items || []).filter(i => i.tipo !== 'alquiler' && i.id_servicio)
+                                                const invEf = Number(de?.numInvitados) > 0 ? Number(de.numInvitados) : (Number(de?.cupo) || 0)
+                                                const alquiler = (o.items || []).find(i => i.tipo === 'alquiler')
+                                                const reales = (o.items || []).filter(i => i.id_servicio)
+                                                const serviciosO = reales.filter(i => (i.tipo_item || 'producto') === 'servicio')
+                                                const productosO = reales.filter(i => (i.tipo_item || 'producto') === 'producto')
+                                                const totServ = serviciosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
+                                                const totProd = productosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
+                                                const montoAlquiler = alquiler ? Number(alquiler.precio) * (Number(alquiler.cantidad) || 1) : 0
+                                                const totalDesglose = montoAlquiler + totServ + totProd
+
+                                                const multLabel = (i) => i.tipo_precio === 'por_persona'
+                                                    ? `${(Number(i.personas) > 0 ? Number(i.personas) : invEf) || 1} pers.`
+                                                    : i.tipo_precio === 'por_hora' ? `${Number(i.horas) || 1} h`
+                                                    : i.tipo_precio === 'por_turno' ? `${Number(i.turnos) || 1} turno(s)`
+                                                    : (Number(i.cantidad) || 1) > 1 ? `×${Number(i.cantidad)}` : ''
+
+                                                const renderItem = (i, idx) => {
+                                                    const unit = precioUnitarioConDescuento(i)
+                                                    const conDesc = unit < Number(i.precio)
+                                                    const etq = multLabel(i)
+                                                    return (
+                                                        <li key={idx} className='rd-pago-item'>
+                                                            <span className='rd-pago-item-nombre'>
+                                                                {i.nombre}{etq && <small> · {etq}</small>}
+                                                                {conDesc && <span className='rd-pago-desc'>-{i.descuento_porcentaje}%</span>}
+                                                            </span>
+                                                            <span className='rd-pago-item-sub'>
+                                                                {conDesc && <s className='rd-pago-tachado'>${fmt(Number(i.precio) * (Number(i.cantidad) || 1) * (i.tipo_precio === 'por_persona' ? ((Number(i.personas) > 0 ? Number(i.personas) : invEf) || 1) : i.tipo_precio === 'por_hora' ? (Number(i.horas) || 1) : i.tipo_precio === 'por_turno' ? (Number(i.turnos) || 1) : 1))}</s>}
+                                                                ${fmt(calcSubtotal(i, invEf))}
+                                                            </span>
+                                                        </li>
+                                                    )
+                                                }
                                                 return (
                                                     <div key={o.id_orden} className='rd-orden-item'>
                                                         <div className='rd-orden-top'>
@@ -504,19 +536,41 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                             </span>
                                                         </div>
                                                         <div className='rd-orden-info'>
-                                                            <span>Monto: <strong>${fmt(o.monto_total)}</strong></span>
+                                                            <span>Cobrado: <strong>${fmt(o.monto_total)}</strong></span>
                                                             <span>{fmtFechaHora(o.fecha_creacion)}</span>
                                                             {o.mp_payment_id && (
                                                                 <span className='rd-mp-id'>MP: {o.mp_payment_id}</span>
                                                             )}
                                                         </div>
-                                                        {itemsSinAlquiler.length > 0 && (
-                                                            <ul className='rd-orden-items'>
-                                                                {itemsSinAlquiler.map((item, idx) => (
-                                                                    <li key={idx}>{item.nombre} — ${fmt(item.precio)}</li>
-                                                                ))}
-                                                            </ul>
-                                                        )}
+
+                                                        {/* Desglose: salón / servicios / productos */}
+                                                        <div className='rd-pago-desglose'>
+                                                            {alquiler && (
+                                                                <div className='rd-pago-grupo'>
+                                                                    <div className='rd-pago-linea'>
+                                                                        <span>🏛️ {alquiler.nombre}</span>
+                                                                        <span className='rd-pago-item-sub'>${fmt(montoAlquiler)}</span>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {serviciosO.length > 0 && (
+                                                                <div className='rd-pago-grupo'>
+                                                                    <span className='rd-pago-grupo-tit'>🎧 Servicios</span>
+                                                                    <ul className='rd-pago-items'>{serviciosO.map(renderItem)}</ul>
+                                                                    <div className='rd-pago-subtotal'><span>Subtotal servicios</span><strong>${fmt(totServ)}</strong></div>
+                                                                </div>
+                                                            )}
+                                                            {productosO.length > 0 && (
+                                                                <div className='rd-pago-grupo'>
+                                                                    <span className='rd-pago-grupo-tit'>🥤 Productos</span>
+                                                                    <ul className='rd-pago-items'>{productosO.map(renderItem)}</ul>
+                                                                    <div className='rd-pago-subtotal'><span>Subtotal productos</span><strong>${fmt(totProd)}</strong></div>
+                                                                </div>
+                                                            )}
+                                                            {(alquiler || serviciosO.length > 0 || productosO.length > 0) && (
+                                                                <div className='rd-pago-total-fila'><span>Total</span><strong>${fmt(totalDesglose)}</strong></div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 )
                                             })}
