@@ -68,6 +68,32 @@
 }
 .tcg-modal-titulo { display: flex; align-items: center; gap: 10px; }
 .tcg-modal-titulo h3 { margin: 0; font-size: 1.05rem; }
+.tcg-paso-num { font-size: .74rem; opacity: .9; }
+
+/* Barra de progreso del wizard */
+.tcg-progress { height: 4px; background: #eee2fb; flex-shrink: 0; }
+.tcg-progress-fill { height: 100%; background: linear-gradient(90deg, #6b23d8, #d827b7); transition: width .25s ease; }
+
+/* Sección actual */
+.tcg-seccion-titulo { margin: 0 0 12px; color: #4c1d95; font-size: 1.02rem; }
+.tcg-seccion-cuerpo {
+    white-space: pre-wrap; word-break: break-word;
+    font-family: inherit; font-size: .87rem; color: #444; line-height: 1.6; margin: 12px 0 0;
+}
+
+/* Navegación del wizard */
+.tcg-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.tcg-btn-nav {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: #f0eafb; color: #6b23d8; border: 1px solid #e0d3f5;
+    border-radius: 10px; padding: 9px 16px;
+    font-family: inherit; font-size: .9rem; font-weight: 600; cursor: pointer;
+    transition: background .15s;
+}
+.tcg-btn-nav:hover:not(:disabled) { background: #e6dcfa; }
+.tcg-btn-nav:disabled { opacity: .45; cursor: default; }
+.tcg-btn-nav--primary { background: linear-gradient(135deg, #6b23d8, #d827b7); color: #fff; border: none; }
+.tcg-btn-nav--primary:hover:not(:disabled) { filter: brightness(1.08); }
 .tcg-modal-cerrar {
     background: rgba(255,255,255,.2); border: none; color: #fff; cursor: pointer;
     border-radius: 8px; padding: 5px; display: flex; align-items: center;
