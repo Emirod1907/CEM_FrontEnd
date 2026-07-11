@@ -396,10 +396,11 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                             <p className='rd-servicios-intro'>
                                                 {servicios.length} servicio{servicios.length !== 1 ? 's' : ''} adicional{servicios.length !== 1 ? 'es' : ''} contratado{servicios.length !== 1 ? 's' : ''}
                                             </p>
+                                            {(() => { const facCom = 1 + (Number(reserva.comision_cliente_porcentaje) || 0) / 100; return (<>
                                             <div className='rd-servicios-lista'>
                                                 {servicios.map((s, i) => {
                                                     const invEfectivos = Number(de?.numInvitados) > 0 ? Number(de.numInvitados) : (Number(de?.cupo) || 0)
-                                                    const subtotal = calcSubtotal(s, invEfectivos)
+                                                    const subtotal = calcSubtotal(s, invEfectivos) * facCom
                                                     const etiquetaUnidad = s.tipo_precio === 'por_hora'   ? `× ${s.horas || 1} h`
                                                         : s.tipo_precio === 'por_turno'  ? `× ${s.turnos || 1} turno(s)`
                                                         : s.tipo_precio === 'por_persona' ? `× ${(Number(s.personas) > 0 ? Number(s.personas) : invEfectivos) || 1} pers.`
@@ -423,7 +424,7 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                                 )}
                                                                 <div className='rd-servicio-precios'>
                                                                     <span className='rd-servicio-unitario'>
-                                                                        ${fmt(s.precio)} {TIPO_PRECIO_LABEL[s.tipo_precio] || ''} {etiquetaUnidad}
+                                                                        ${fmt(Number(s.precio) * facCom)} {TIPO_PRECIO_LABEL[s.tipo_precio] || ''} {etiquetaUnidad}
                                                                     </span>
                                                                     <span className='rd-servicio-subtotal'>
                                                                         Subtotal: <strong>${fmt(subtotal)}</strong>
@@ -450,10 +451,11 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                 <strong>
                                                     ${fmt(servicios.reduce((acc, s) => {
                                                         const inv = Number(de?.numInvitados) > 0 ? Number(de.numInvitados) : (Number(de?.cupo) || 0)
-                                                        return acc + calcSubtotal(s, inv)
+                                                        return acc + calcSubtotal(s, inv) * facCom
                                                     }, 0))}
                                                 </strong>
                                             </div>
+                                        </>) })()}
                                         </>
                                     )}
                                 </div>
@@ -497,15 +499,16 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                 const reales = (o.items || []).filter(i => i.id_servicio)
                                                 const serviciosO = reales.filter(i => (i.tipo_item || 'producto') === 'servicio')
                                                 const productosO = reales.filter(i => (i.tipo_item || 'producto') === 'producto')
-                                                const totServ = serviciosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
-                                                const totProd = productosO.reduce((a, s) => a + calcSubtotal(s, invEf), 0)
-                                                const montoAlquiler = alquiler ? Number(alquiler.precio) * (Number(alquiler.cantidad) || 1) : 0
-                                                const subtotalBienes = montoAlquiler + totServ + totProd
-                                                // Comisión de servicio del lado cliente (markup congelado del contrato).
-                                                // Los precios del desglose son base; al cobrar se suma esta comisión.
+                                                // La comisión de servicio del lado cliente va SIEMPRE incorporada en
+                                                // los precios (markup congelado del contrato). El organizador nunca la
+                                                // ve desglosada: se suma de forma invisible a cada importe mostrado.
                                                 const comisionPct = Number(reserva.comision_cliente_porcentaje) || 0
-                                                const comisionMonto = +(subtotalBienes * comisionPct / 100).toFixed(2)
-                                                const totalDesglose = subtotalBienes + comisionMonto
+                                                const factorCom = 1 + comisionPct / 100
+                                                const conCom = (n) => n * factorCom
+                                                const totServ = serviciosO.reduce((a, s) => a + conCom(calcSubtotal(s, invEf)), 0)
+                                                const totProd = productosO.reduce((a, s) => a + conCom(calcSubtotal(s, invEf)), 0)
+                                                const montoAlquiler = alquiler ? conCom(Number(alquiler.precio) * (Number(alquiler.cantidad) || 1)) : 0
+                                                const totalDesglose = montoAlquiler + totServ + totProd
 
                                                 const multLabel = (i) => i.tipo_precio === 'por_persona'
                                                     ? `${(Number(i.personas) > 0 ? Number(i.personas) : invEf) || 1} pers.`
@@ -524,8 +527,8 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                                 {conDesc && <span className='rd-pago-desc'>-{i.descuento_porcentaje}%</span>}
                                                             </span>
                                                             <span className='rd-pago-item-sub'>
-                                                                {conDesc && <s className='rd-pago-tachado'>${fmt(Number(i.precio) * (Number(i.cantidad) || 1) * (i.tipo_precio === 'por_persona' ? ((Number(i.personas) > 0 ? Number(i.personas) : invEf) || 1) : i.tipo_precio === 'por_hora' ? (Number(i.horas) || 1) : i.tipo_precio === 'por_turno' ? (Number(i.turnos) || 1) : 1))}</s>}
-                                                                ${fmt(calcSubtotal(i, invEf))}
+                                                                {conDesc && <s className='rd-pago-tachado'>${fmt(conCom(Number(i.precio) * (Number(i.cantidad) || 1) * (i.tipo_precio === 'por_persona' ? ((Number(i.personas) > 0 ? Number(i.personas) : invEf) || 1) : i.tipo_precio === 'por_hora' ? (Number(i.horas) || 1) : i.tipo_precio === 'por_turno' ? (Number(i.turnos) || 1) : 1)))}</s>}
+                                                                ${fmt(conCom(calcSubtotal(i, invEf)))}
                                                             </span>
                                                         </li>
                                                     )
@@ -573,21 +576,7 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                                 </div>
                                                             )}
                                                             {(alquiler || serviciosO.length > 0 || productosO.length > 0) && (
-                                                                <>
-                                                                    {comisionMonto > 0 && (
-                                                                        <div className='rd-pago-grupo rd-pago-comision'>
-                                                                            <div className='rd-pago-linea'>
-                                                                                <span>Subtotal</span>
-                                                                                <span className='rd-pago-item-sub'>${fmt(subtotalBienes)}</span>
-                                                                            </div>
-                                                                            <div className='rd-pago-linea'>
-                                                                                <span>Comisión de servicio ({comisionPct}%)</span>
-                                                                                <span className='rd-pago-item-sub'>${fmt(comisionMonto)}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                    <div className='rd-pago-total-fila'><span>Total</span><strong>${fmt(totalDesglose)}</strong></div>
-                                                                </>
+                                                                <div className='rd-pago-total-fila'><span>Total</span><strong>${fmt(totalDesglose)}</strong></div>
                                                             )}
                                                         </div>
                                                     </div>
