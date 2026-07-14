@@ -29,8 +29,25 @@ export const updatePedidoTorta = async (id, datos) => {
     return data.pedido
 }
 
+// POST /api/pedidos-torta/:id/cambio — registrar un cambio de último momento
+export const agregarCambioPedido = async (id, cambio) => {
+    const { data } = await axios.post(`pedidos-torta/${id}/cambio`, cambio)
+    return data.pedido
+}
+
 // DELETE /api/pedidos-torta/:id
 export const deletePedidoTorta = async (id) => {
     const { data } = await axios.delete(`pedidos-torta/${id}`)
     return data
+}
+
+// ── Vista pública (cliente, sin auth) ──
+export const getPedidoPublico = async (token) => {
+    const { data } = await axios.get(`pedidos-torta/publico/${token}`)
+    return data.pedido
+}
+
+export const confirmarPedidoPublico = async (token) => {
+    const { data } = await axios.post(`pedidos-torta/publico/${token}/confirmar`)
+    return data.pedido
 }

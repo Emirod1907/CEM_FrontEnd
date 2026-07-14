@@ -120,3 +120,113 @@
 
 .pt-error { color: #d64545; font-size: .88rem; margin: 0; }
 .pt-form-acciones { display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ── Toggle lista/calendario ── */
+.pt-head-acciones { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pt-toggle { display: flex; background: #f2edfb; border-radius: 10px; padding: 3px; }
+.pt-toggle button {
+    display: inline-flex; align-items: center; gap: 6px; border: none; background: transparent;
+    color: #6b23d8; font-family: inherit; font-size: .84rem; font-weight: 600; padding: 6px 12px;
+    border-radius: 8px; cursor: pointer;
+}
+.pt-toggle button.active { background: #fff; box-shadow: 0 2px 6px rgba(107,35,216,.12); }
+.pt-btn--sm { padding: 6px 11px; font-size: .82rem; }
+
+/* ── Bloques tarjeta en el detalle ── */
+.pt-bloque-card {
+    display: flex; flex-direction: column; gap: 10px;
+    background: #faf8fe; border: 1px solid #ece7f6; border-radius: 14px; padding: 14px 16px;
+}
+
+/* Estados (chips) */
+.pt-estados-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.pt-est-chip {
+    border: 1px solid #e0d7f0; background: #fff; color: #6a6480;
+    border-radius: 20px; padding: 5px 12px; font-family: inherit; font-size: .78rem; font-weight: 600; cursor: pointer;
+    transition: background .12s, border-color .12s;
+}
+.pt-est-chip:hover { border-color: #b98cf0; }
+.pt-est-chip.activo { color: #fff; border-color: transparent; }
+.pt-est-chip.activo.pt-est--consulta { background: #5b6472; }
+.pt-est-chip.activo.pt-est--presupuestado { background: #2563c4; }
+.pt-est-chip.activo.pt-est--sena { background: #b7791f; }
+.pt-est-chip.activo.pt-est--confirmado { background: #1a9d4f; }
+.pt-est-chip.activo.pt-est--preparando { background: #7b2cff; }
+.pt-est-chip.activo.pt-est--terminado { background: #0f9d8f; }
+.pt-est-chip.activo.pt-est--entregado { background: #5b5470; }
+.pt-est-chip.activo.pt-est--cancelado { background: #d64545; }
+
+/* Link cliente */
+.pt-link-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.pt-link-url { margin: 3px 0 0; font-size: .8rem; color: #7b2cff; word-break: break-all; }
+.pt-confirmado-ok { display: inline-flex; align-items: center; gap: 6px; color: #1a9d4f; font-size: .85rem; margin: 0; font-weight: 600; }
+.pt-confirmado-no { color: #9a94ad; font-size: .84rem; margin: 0; }
+
+/* Pago */
+.pt-desglose-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.pt-desglose-lista li { display: flex; justify-content: space-between; font-size: .88rem; color: #3a3350; }
+.pt-pago-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+.pt-pago-item {
+    display: flex; flex-direction: column; gap: 2px; background: #fff; border: 1px solid #ece7f6;
+    border-radius: 10px; padding: 8px 12px;
+}
+.pt-pago-item span { font-size: .73rem; color: #9a94ad; text-transform: uppercase; letter-spacing: .03em; font-weight: 700; }
+.pt-pago-item strong { color: #2b2140; font-size: 1.02rem; }
+.pt-verde { color: #1a9d4f !important; }
+.pt-naranja { color: #d98a0b !important; }
+.pt-nota-pago { margin: 0; font-size: .84rem; color: #6a6480; }
+
+/* Cambios */
+.pt-cambio-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+.pt-cambio-form input, .pt-cambio-form select {
+    border: 1px solid #ddd4ee; border-radius: 8px; padding: 8px 10px; font-family: inherit; font-size: .86rem; color: #2b2140;
+}
+.pt-cambio-form input:first-child { flex: 1; min-width: 180px; }
+.pt-cambio-costo { width: 110px; }
+.pt-cambios-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.pt-cambios-lista li { border-left: 3px solid #e0d7f0; padding: 4px 0 4px 10px; }
+.pt-cambios-lista li > div { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pt-cambio-fecha { font-size: .74rem; color: #9a94ad; }
+.pt-cambio-badge { font-size: .7rem; font-weight: 700; padding: 1px 8px; border-radius: 10px; }
+.pt-cambio--ok { background: #e6f7ec; color: #1a9d4f; }
+.pt-cambio--costo { background: #fff4e0; color: #b7791f; }
+.pt-cambio--no { background: #fdecec; color: #d64545; }
+.pt-cambios-lista li p { margin: 3px 0 0; font-size: .88rem; color: #3a3350; }
+
+/* Desglose en el form */
+.pt-hint { margin: 0; font-size: .8rem; color: #9a94ad; }
+.pt-desglose-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.pt-desglose-row input { border: 1px solid #ddd4ee; border-radius: 8px; padding: 8px 10px; font-family: inherit; font-size: .88rem; }
+.pt-desglose-row input:first-child { flex: 1; }
+.pt-desglose-monto { width: 120px; }
+.pt-desglose-del { background: #fdecec; color: #d64545; border: none; border-radius: 8px; width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.pt-total-form { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid #ece7f6; }
+.pt-total-form strong { font-size: 1.2rem; color: #6b23d8; }
+.pt-field--check { flex-direction: row; align-items: center; gap: 8px; }
+.pt-field--check input { width: 17px; height: 17px; accent-color: #7b2cff; }
+.pt-field--check span { font-size: .84rem; color: #4a4560; }
+
+/* ── Calendario ── */
+.pt-cal { display: flex; flex-direction: column; gap: 10px; }
+.pt-cal-head { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.pt-cal-head strong { text-transform: capitalize; color: #2b2140; font-size: 1.02rem; min-width: 170px; text-align: center; }
+.pt-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.pt-cal-dow span { text-align: center; font-size: .74rem; font-weight: 700; color: #9a94ad; text-transform: uppercase; }
+.pt-cal-cell { min-height: 76px; border: 1px solid #ece7f6; border-radius: 10px; padding: 5px; display: flex; flex-direction: column; gap: 3px; background: #fff; }
+.pt-cal-cell--empty { border: none; background: transparent; }
+.pt-cal-cell--hoy { border-color: #7b2cff; box-shadow: inset 0 0 0 1px #7b2cff; }
+.pt-cal-cell--con { background: #faf7ff; }
+.pt-cal-num { font-size: .78rem; font-weight: 700; color: #6a6480; }
+.pt-cal-items { display: flex; flex-direction: column; gap: 3px; }
+.pt-cal-pill {
+    background: #f0e6ff; color: #6b23d8; border: none; border-radius: 6px; padding: 2px 6px;
+    font-family: inherit; font-size: .7rem; font-weight: 600; cursor: pointer; text-align: left;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.pt-cal-pill:hover { background: #e3d3ff; }
+.pt-cal-mas { font-size: .68rem; color: #9a94ad; }
+
+@media (max-width: 620px) {
+    .pt-cal-cell { min-height: 58px; }
+    .pt-cal-pill { font-size: .62rem; }
+}

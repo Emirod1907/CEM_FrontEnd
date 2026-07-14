@@ -1,0 +1,77 @@
+.ptp-wrap {
+    min-height: 100vh; background: linear-gradient(160deg, #f7f2fd, #fdeefb);
+    padding: 28px 16px; display: flex; justify-content: center; align-items: flex-start;
+    font-family: 'Poppins', sans-serif;
+}
+.ptp-loading { color: #6b23d8; font-weight: 600; }
+
+.ptp-card {
+    width: 100%; max-width: 620px; background: #fff; border-radius: 22px;
+    box-shadow: 0 24px 64px rgba(107,35,216,.16); padding: 24px; display: flex; flex-direction: column; gap: 20px;
+}
+.ptp-card--error { align-items: center; text-align: center; gap: 10px; color: #9a3a3a; padding: 40px 24px; }
+.ptp-card--error svg { color: #d98a0b; }
+
+.ptp-head { display: flex; align-items: flex-start; gap: 14px; flex-wrap: wrap; }
+.ptp-emoji { font-size: 2.2rem; line-height: 1; }
+.ptp-head > div { flex: 1; min-width: 180px; }
+.ptp-head h1 { margin: 0; font-family: 'Raleway', sans-serif; font-size: 1.4rem; color: #2b2140; }
+.ptp-head p { margin: 4px 0 0; color: #7a7590; font-size: .9rem; }
+.ptp-est { padding: 4px 12px; border-radius: 20px; font-size: .74rem; font-weight: 700; white-space: nowrap; }
+.pt-est--consulta, .ptp-est.pt-est--consulta { background: #eef1f6; color: #5b6472; }
+.pt-est--presupuestado { background: #e7f0ff; color: #2563c4; }
+.pt-est--sena { background: #fff4e0; color: #b7791f; }
+.pt-est--confirmado { background: #e6f7ec; color: #1a9d4f; }
+.pt-est--preparando { background: #f3e8ff; color: #7b2cff; }
+.pt-est--terminado { background: #e0f6f5; color: #0f9d8f; }
+.pt-est--entregado { background: #eae7f2; color: #5b5470; }
+.pt-est--cancelado { background: #fdecec; color: #d64545; }
+
+.ptp-fotos { display: flex; flex-wrap: wrap; gap: 10px; }
+.ptp-fotos img { width: 130px; height: 130px; object-fit: cover; border-radius: 14px; border: 1px solid #efe8f8; }
+
+.ptp-seccion { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #f0ebf8; padding-top: 16px; }
+.ptp-seccion h3 { margin: 0; display: flex; align-items: center; gap: 7px; font-size: .98rem; color: #6b23d8; font-family: 'Raleway', sans-serif; }
+.ptp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.ptp-dato { display: flex; flex-direction: column; gap: 2px; }
+.ptp-dato span { font-size: .72rem; text-transform: uppercase; letter-spacing: .03em; color: #9a94ad; font-weight: 700; }
+.ptp-dato strong { color: #2b2140; font-size: .92rem; font-weight: 600; }
+.ptp-texto { margin: 0; color: #4a4560; font-size: .9rem; line-height: 1.5; }
+.ptp-politica { background: #faf7ff; border: 1px solid #efe8f8; border-radius: 10px; padding: 10px 12px; color: #5a5470; }
+
+.ptp-alerta {
+    display: flex; align-items: flex-start; gap: 9px; background: #fff6e9; border: 1px solid #ffe0b0;
+    border-radius: 10px; padding: 10px 12px; color: #92600d; font-size: .88rem; line-height: 1.45;
+}
+.ptp-alerta svg { flex-shrink: 0; margin-top: 2px; color: #d98a0b; }
+
+.ptp-desglose { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.ptp-desglose li { display: flex; justify-content: space-between; font-size: .9rem; color: #3a3350; }
+.ptp-pago { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 4px; }
+.ptp-pago > div {
+    display: flex; flex-direction: column; gap: 2px; background: #faf8fe;
+    border: 1px solid #efe8f8; border-radius: 12px; padding: 10px 12px; text-align: center;
+}
+.ptp-pago span { font-size: .72rem; color: #9a94ad; text-transform: uppercase; font-weight: 700; }
+.ptp-pago strong { color: #2b2140; font-size: 1.05rem; }
+.ptp-verde { color: #1a9d4f !important; }
+.ptp-naranja { color: #d98a0b !important; }
+
+.ptp-confirmar { border-top: 1px solid #f0ebf8; padding-top: 18px; display: flex; flex-direction: column; gap: 12px; }
+.ptp-confirmar p { margin: 0; color: #4a4560; font-size: .9rem; line-height: 1.5; }
+.ptp-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    background: linear-gradient(135deg, #7b2cff, #d827b7); color: #fff; border: none; border-radius: 12px;
+    padding: 13px 20px; font-family: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: filter .15s;
+}
+.ptp-btn:hover:not(:disabled) { filter: brightness(1.08); }
+.ptp-btn:disabled { opacity: .6; cursor: default; }
+.ptp-confirmado {
+    display: flex; align-items: center; gap: 10px; background: #e9f9ef; border: 1px solid #bfe9cd;
+    border-radius: 12px; padding: 14px 16px; color: #1a7d42; font-weight: 600; font-size: .92rem;
+}
+.ptp-confirmado svg { flex-shrink: 0; }
+
+@media (max-width: 480px) {
+    .ptp-pago { grid-template-columns: 1fr; }
+}

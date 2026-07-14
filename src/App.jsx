@@ -21,6 +21,7 @@ import EventoPagoScreen from './components/Screens/EventoFlujo/EventoPagoScreen'
 import PagoPendienteWatcher from './components/PagoPendienteWatcher/PagoPendienteWatcher'
 import SalonesScreen from './components/Screens/SalonesScreen/SalonesScreen'
 import RsvpScreen from './components/Screens/RsvpScreen/RsvpScreen'
+import PedidoTortaPublicoScreen from './components/Screens/PedidoTortaPublicoScreen/PedidoTortaPublicoScreen'
 import ValidarEntradaScreen from './components/Screens/ValidarEntradaScreen/ValidarEntradaScreen'
 import RoleSelectionScreen from './components/Screens/RoleSelectionScreen/RoleSelectionScreen'
 import CompleteProfileScreen from './components/Screens/CompleteProfileScreen/CompleteProfileScreen'
@@ -101,6 +102,7 @@ function App() {
 
                   {/* Invitaciones */}
                   <Route path='/invitacion/:token' element={<RsvpScreen />} />
+                  <Route path='/pedido-torta/:token' element={<PedidoTortaPublicoScreen />} />
               </Routes>
             </div>
   )
