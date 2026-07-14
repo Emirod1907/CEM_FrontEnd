@@ -126,11 +126,21 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
         return info.precioUnitario
     }
 
+    // Personas por las que se multiplica un ítem "por persona".
+    // Para una TORTA (producto para N personas) se usa su capacidad propia
+    // (ideal_para_personas), no el cupo del evento: una torta "para 50" no se
+    // multiplica por los 100 invitados. Para el resto, el cupo del evento.
+    const personasBase = (servicio) => {
+        if (servicio.categoria === 'tortas' && Number(servicio.ideal_para_personas) > 0)
+            return Number(servicio.ideal_para_personas)
+        return Math.max(1, Number(cupo) || 1)
+    }
+
     const calcTotal = (servicio) => {
         const id = servicio.id_servicio
         const tp = servicio.tipo_precio
         const base = getPrecioUnitario(servicio)
-        if (tp === 'por_persona') return base * Math.max(1, Number(cupo) || 1)
+        if (tp === 'por_persona') return base * personasBase(servicio)
         if (tp === 'por_hora')   return base * Math.max(1, Number(horasPor[id]) || 1)
         if (tp === 'por_turno')  return base * Math.max(1, Number(turnosPor[id]) || 1)
         return base
@@ -165,8 +175,8 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
             cantidad:     Math.max(1, Math.floor(Number(cantidadNueva[id]) || 1)),
             horas:  tp === 'por_hora'  ? horas  : null,
             turnos: tp === 'por_turno' ? turnos : null,
-            // por persona: arranca con el total de invitados, pero es editable por ítem
-            personas: tp === 'por_persona' ? (Number(cupo) || 1) : null,
+            // por persona: arranca con las personas base (torta → su capacidad; resto → cupo), editable por ítem
+            personas: tp === 'por_persona' ? personasBase(servicio) : null,
             hora_inicio: horaFinal,
             hora_manual: !!horaManual,
             descuento_cantidad_min: servicio.descuento_cantidad_min ?? null,
@@ -591,7 +601,7 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                         {tp === 'por_persona' && (
                                             <span className='spk-precio-unit'>
                                                 ${precioUnit.toLocaleString('es-AR')}<span className='spk-por'>/persona</span>
-                                                {Number(cupo) > 0 && <> × {cupo} = <strong>${total.toLocaleString('es-AR')}</strong></>}
+                                                {personasBase(servicio) > 0 && <> × {personasBase(servicio)} = <strong>${total.toLocaleString('es-AR')}</strong></>}
                                             </span>
                                         )}
                                         {tp === 'por_hora' && (
