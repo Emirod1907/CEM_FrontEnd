@@ -22,6 +22,7 @@ import { getMiContrato } from '../../../services/contratoServices'
 import MpConnectButton from '../../MpConnectButton/MpConnectButton'
 import GoogleCalendarConnectButton from '../../MpConnectButton/GoogleCalendarConnectButton'
 import ReservaDetalleProveedorHorizontal from './ReservaDetalleProveedorHorizontal'
+import PedidosTortaPanel from '../../PedidosTortaPanel/PedidosTortaPanel'
 import UploadImg from '../../../services/uploadimg'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MisServiciosScreen.css'
@@ -1298,6 +1299,11 @@ const MisServiciosScreen = () => {
                         return n > 0 ? <span className='sv-tab-badge'>{n}</span> : null
                     })()}
                 </button>
+                {persona?.rol === 'proveedor_servicios' && (
+                    <button className={`sv-tab ${tabActiva === 'pedidos_torta' ? 'sv-tab--active' : ''}`} onClick={() => setTabActiva('pedidos_torta')}>
+                        🎂 Pedidos de Torta
+                    </button>
+                )}
             </div>
 
             {cargando ? (
@@ -1460,6 +1466,8 @@ const MisServiciosScreen = () => {
                         </div>
                     )}
                 </>
+            ) : tabActiva === 'pedidos_torta' ? (
+                <PedidosTortaPanel />
             ) : (
                 <TabReservasProveedor reservas={reservas} agenda={agenda} onActualizar={cargar} servicios={servicios} />
             )}
