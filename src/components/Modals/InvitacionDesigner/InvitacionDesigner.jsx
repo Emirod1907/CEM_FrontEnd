@@ -364,23 +364,47 @@ const CORNER_POS_STYLE = {
     br: { bottom:26, right:30 },
 }
 
-const TarjetaCard = React.forwardRef(({ tpl, textos, emojiTipo, marco, decoSelec, cornerIcons, portada }, ref) => {
+const TarjetaCard = React.forwardRef(({ tpl, textos, emojiTipo, marco, decoSelec, cornerIcons, portada, onPortadaMove }, ref) => {
     const decoActual = decoSelec || emojiTipo || tpl.decoChar
     const noMarco    = marco.estilo === 'ninguno'
+    const dragRef    = useRef(null)
+
+    const onDown = (e) => {
+        if (!onPortadaMove) return
+        const p = e.touches ? e.touches[0] : e
+        dragRef.current = { sx:p.clientX, sy:p.clientY, ox:portada.x, oy:portada.y }
+    }
+    const onMove = (e) => {
+        if (!dragRef.current) return
+        const p = e.touches ? e.touches[0] : e
+        onPortadaMove(dragRef.current.ox + (p.clientX - dragRef.current.sx), dragRef.current.oy + (p.clientY - dragRef.current.sy))
+    }
+    const onUp = () => { dragRef.current = null }
 
     return (
         <div
             ref={ref}
-            className={`ivd-card ${portada ? 'ivd-card--con-portada' : ''}`}
+            className='ivd-card'
             style={{
                 background: tpl.cardBg,
                 color:      tpl.textColor,
                 borderTop:  noMarco ? (tpl.borderTop || 'none') : 'none',
             }}
         >
-            {/* Portada tipo cover arriba de la tarjeta */}
+            {/* Portada: marco de recorte con imagen transformable (zoom + arrastre) */}
             {portada && (
-                <img src={portada} alt='' className='ivd-card-portada' crossOrigin='anonymous'/>
+                <div
+                    className='ivd-card-portada'
+                    style={{ width: Math.round(190 * portada.size), height: Math.round(150 * portada.size) }}
+                    onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onUp}
+                    onTouchStart={onDown} onTouchMove={onMove} onTouchEnd={onUp}
+                >
+                    <img
+                        src={portada.src} alt='' crossOrigin='anonymous' draggable={false}
+                        className='ivd-card-portada-img'
+                        style={{ transform:`translate(-50%,-50%) translate(${portada.x}px,${portada.y}px) scale(${portada.zoom})` }}
+                    />
+                </div>
             )}
 
             <InnerFrame marco={marco}/>
@@ -449,8 +473,10 @@ const InvitacionDesigner = ({
 }) => {
     const horarioInicial = horaInicio ? `${horaInicio} hs` : ''
 
-    const [portada,     setPortada]     = useState(imagenPortada || null)
+    // portada: null | { src, zoom, x, y, size }  (zoom=escala imagen, size=escala del marco)
+    const [portada,     setPortada]     = useState(imagenPortada ? { src:imagenPortada, zoom:1, x:0, y:0, size:1 } : null)
     const portadaRef = useRef()
+    const setPortadaProp = (k, v) => setPortada(p => p ? { ...p, [k]: Number(v) } : p)
     const [tplId,       setTplId]       = useState('festivo')
     const [exportando,  setExportando]  = useState(false)
     const [textos,      setTextos]      = useState({ titulo:nombreEvento, subtitulo:'', fecha, lugar, horario:horarioInicial, mensaje:descripcion })
@@ -478,7 +504,7 @@ const InvitacionDesigner = ({
         const file = e.target.files?.[0]
         if (!file) return
         const reader = new FileReader()
-        reader.onload = () => setPortada(reader.result)
+        reader.onload = () => setPortada({ src: reader.result, zoom:1, x:0, y:0, size:1 })
         reader.readAsDataURL(file)
         e.target.value = ''
     }
@@ -521,8 +547,21 @@ const InvitacionDesigner = ({
                             <p className='ivd-section-label'>Foto de portada</p>
                             {portada ? (
                                 <div className='ivd-portada-preview'>
-                                    <img src={portada} alt='portada'/>
+                                    <img src={portada.src} alt='portada'/>
+                                    <div className='ivd-portada-controls'>
+                                        <label className='ivd-portada-slider'>
+                                            <span>🔍 Zoom</span>
+                                            <input type='range' min='1' max='3' step='0.02'
+                                                value={portada.zoom} onChange={e => setPortadaProp('zoom', e.target.value)}/>
+                                        </label>
+                                        <label className='ivd-portada-slider'>
+                                            <span>📐 Tamaño</span>
+                                            <input type='range' min='0.6' max='1.8' step='0.02'
+                                                value={portada.size} onChange={e => setPortadaProp('size', e.target.value)}/>
+                                        </label>
+                                    </div>
                                     <div className='ivd-portada-acciones'>
+                                        <button type='button' onClick={() => setPortada(p => ({ ...p, zoom:1, x:0, y:0, size:1 }))}>Centrar</button>
                                         <button type='button' onClick={() => portadaRef.current?.click()}>Cambiar</button>
                                         <button type='button' className='ivd-portada-quitar' onClick={() => setPortada(null)}>Quitar</button>
                                     </div>
@@ -533,7 +572,7 @@ const InvitacionDesigner = ({
                                 </button>
                             )}
                             <input ref={portadaRef} type='file' accept='image/*' hidden onChange={handlePortadaFile}/>
-                            <p className='ivd-portada-hint'>Se muestra como cover arriba de la tarjeta.</p>
+                            <p className='ivd-portada-hint'>Arrastrá la imagen en la vista previa para recortarla. Ajustá zoom y tamaño con las barras.</p>
                         </div>
 
                         {/* 1. Plantilla */}
@@ -675,6 +714,7 @@ const InvitacionDesigner = ({
                                 emojiTipo={emojiTipo} marco={marco}
                                 decoSelec={decoSelec} cornerIcons={cornerIcons}
                                 portada={portada}
+                                onPortadaMove={(x, y) => setPortada(p => p ? { ...p, x, y } : p)}
                             />
                         </div>
                         <div className='ivd-acciones'>

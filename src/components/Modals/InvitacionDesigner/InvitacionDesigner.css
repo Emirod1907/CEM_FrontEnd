@@ -560,17 +560,30 @@
     .ivd-card { width: 100%; min-width: 0; }
 }
 
-/* ── Foto de portada (miniatura, contenida sin estirar) ── */
+/* ── Foto de portada: marco de recorte + imagen transformable ── */
 .ivd-card-portada {
-    display: block;
-    width: auto;
-    max-width: 190px;
-    max-height: 150px;
-    margin: 0 auto 10px;
-    object-fit: contain;
-    border-radius: 12px;
     position: relative;
+    margin: 0 auto 12px;
+    border-radius: 12px;
+    overflow: hidden;
     z-index: 2;
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.08);
+    cursor: grab;
+    touch-action: none;
+}
+.ivd-card-portada:active { cursor: grabbing; }
+.ivd-card-portada-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    max-width: none;
+    user-select: none;
+    pointer-events: none;
+    transform-origin: center center;
 }
 
 /* ── Sección de portada en el sidebar ── */
@@ -596,7 +609,11 @@
     display: block;
     border: 1px solid #ece7f6;
 }
-.ivd-portada-acciones { display: flex; gap: 8px; margin-top: 8px; }
+.ivd-portada-controls { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.ivd-portada-slider { display: flex; align-items: center; gap: 8px; }
+.ivd-portada-slider span { font-size: 0.74rem; font-weight: 600; color: #6a6480; width: 62px; flex-shrink: 0; }
+.ivd-portada-slider input[type='range'] { flex: 1; accent-color: #7b2cff; }
+.ivd-portada-acciones { display: flex; gap: 6px; margin-top: 8px; }
 .ivd-portada-acciones button {
     flex: 1;
     padding: 7px 10px;
