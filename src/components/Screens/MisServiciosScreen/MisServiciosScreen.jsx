@@ -22,7 +22,7 @@ import { getMiContrato } from '../../../services/contratoServices'
 import MpConnectButton from '../../MpConnectButton/MpConnectButton'
 import GoogleCalendarConnectButton from '../../MpConnectButton/GoogleCalendarConnectButton'
 import ReservaDetalleProveedorHorizontal from './ReservaDetalleProveedorHorizontal'
-import PedidosTortaPanel from '../../PedidosTortaPanel/PedidosTortaPanel'
+import { TortaCamposForm, TortaDetalleView, tieneDatosTorta } from '../../TortaCampos/TortaCampos'
 import UploadImg from '../../../services/uploadimg'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MisServiciosScreen.css'
@@ -131,7 +131,17 @@ const FORM_BLOQUEO_VACIO = {
     nombre_cliente: '', descripcion: '', estado: 'confirmada', bloquear_fecha: false,
     items: [{ ...ITEM_VACIO }],
     domicilio: { departamento: '', localidad: '', calle: '' },
-    estado_pago: 'sin_pago', fecha_limite: ''
+    estado_pago: 'sin_pago', fecha_limite: '',
+    torta: null,
+}
+
+// detalle_pedido puede ser el array de items (formato viejo) o { items, torta }.
+// leerDetalle normaliza a { items, torta } sin romper lo existente.
+const leerDetalle = (str) => {
+    let parsed = []
+    try { parsed = JSON.parse(str || '[]') } catch {}
+    if (Array.isArray(parsed)) return { items: parsed, torta: null }
+    return { items: Array.isArray(parsed.items) ? parsed.items : [], torta: parsed.torta || null }
 }
 
 const ESTADO_PAGO_LABEL = {
@@ -352,8 +362,7 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
     }
 
     const editarBloqueo = (b) => {
-        let items = []
-        try { items = JSON.parse(b.detalle_pedido || '[]') } catch {}
+        const { items, torta } = leerDetalle(b.detalle_pedido)
         let domicilio = { departamento: '', localidad: '', calle: '' }
         try { domicilio = { ...domicilio, ...JSON.parse(b.domicilio || '{}') } } catch {}
         setFechaBloqueo(b.fecha)
@@ -367,6 +376,7 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
             domicilio,
             estado_pago:    b.estado_pago    || 'sin_pago',
             fecha_limite:   b.fecha_limite   ? b.fecha_limite.slice(0, 10) : '',
+            torta,
         })
         setMostrarModalBloqueo(true)
     }
@@ -378,13 +388,15 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
         e.preventDefault()
         setGuardando(true)
         try {
-            const { bloquear_fecha, items, domicilio, ...resto } = formBloqueo
+            const { bloquear_fecha, items, domicilio, torta, ...resto } = formBloqueo
             const itemsValidos = (items || []).filter(it => it.nombre.trim())
             const monto_total = calcularTotal(itemsValidos)
+            // Si hay requisitos de torta, se guarda { items, torta }; si no, solo el array (compatibilidad)
+            const detalle = tieneDatosTorta(torta) ? { items: itemsValidos, torta } : itemsValidos
             const payload = {
                 ...resto,
                 bloquear_fecha,
-                detalle_pedido: JSON.stringify(itemsValidos),
+                detalle_pedido: JSON.stringify(detalle),
                 monto_total: monto_total || null,
                 domicilio: JSON.stringify(domicilio || {}),
             }
@@ -689,33 +701,37 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
                                     ) : null
                                 })()}
                                 {(() => {
-                                    let items = []
-                                    try { items = JSON.parse(bloqueoSeleccionado.detalle_pedido || '[]') } catch {}
-                                    if (!Array.isArray(items) || items.length === 0) return null
+                                    const { items, torta } = leerDetalle(bloqueoSeleccionado.detalle_pedido)
                                     const total = items.reduce((a, it) => a + (Number(it.cantidad)||0)*(Number(it.precio_unitario)||0), 0)
+                                    if (items.length === 0 && !tieneDatosTorta(torta)) return null
                                     return (
-                                        <div className='carrito-detalle'>
-                                            <span className='reserva-dato-label'>Pedido</span>
-                                            <div className='carrito-items'>
-                                                {items.map((it, i) => {
-                                                    const subtotal = (Number(it.cantidad)||0) * (Number(it.precio_unitario)||0)
-                                                    return (
-                                                        <div key={i} className='carrito-item'>
-                                                            <div className='carrito-item-icon'><FiPackage size={18}/></div>
-                                                            <div className='carrito-item-info'>
-                                                                <span className='carrito-item-nombre'>{it.nombre}</span>
-                                                                <span className='carrito-item-detalle'>{it.cantidad} × ${Number(it.precio_unitario||0).toLocaleString('es-AR')}</span>
-                                                            </div>
-                                                            <span className='carrito-item-subtotal'>${subtotal.toLocaleString('es-AR')}</span>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                            <div className='carrito-total'>
-                                                <span>Total</span>
-                                                <strong>${total.toLocaleString('es-AR')}</strong>
-                                            </div>
-                                        </div>
+                                        <>
+                                            {items.length > 0 && (
+                                                <div className='carrito-detalle'>
+                                                    <span className='reserva-dato-label'>Pedido</span>
+                                                    <div className='carrito-items'>
+                                                        {items.map((it, i) => {
+                                                            const subtotal = (Number(it.cantidad)||0) * (Number(it.precio_unitario)||0)
+                                                            return (
+                                                                <div key={i} className='carrito-item'>
+                                                                    <div className='carrito-item-icon'><FiPackage size={18}/></div>
+                                                                    <div className='carrito-item-info'>
+                                                                        <span className='carrito-item-nombre'>{it.nombre}</span>
+                                                                        <span className='carrito-item-detalle'>{it.cantidad} × ${Number(it.precio_unitario||0).toLocaleString('es-AR')}</span>
+                                                                    </div>
+                                                                    <span className='carrito-item-subtotal'>${subtotal.toLocaleString('es-AR')}</span>
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                    <div className='carrito-total'>
+                                                        <span>Total</span>
+                                                        <strong>${total.toLocaleString('es-AR')}</strong>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {tieneDatosTorta(torta) && <TortaDetalleView detalle={torta} />}
+                                        </>
                                     )
                                 })()}
                                 <div className='reserva-dato-row'>
@@ -835,9 +851,10 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
                             const estadoAg = d.agenda_estado
                             let domicilio = {}
                             let itemsPedido = []
+                            let tortaPedido = null
                             if (!esInterna) {
                                 try { domicilio = JSON.parse(d.domicilio || '{}') } catch {}
-                                try { itemsPedido = JSON.parse(d.detalle_pedido || '[]') } catch {}
+                                const det = leerDetalle(d.detalle_pedido); itemsPedido = det.items; tortaPedido = det.torta
                             }
                             const totalPedido = itemsPedido.reduce((a, it) => a + (Number(it.cantidad)||0)*(Number(it.precio_unitario)||0), 0)
                             return (
@@ -896,6 +913,7 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
                                                             <div className='carrito-total'><span>Total</span><strong>${totalPedido.toLocaleString('es-AR')}</strong></div>
                                                         </div>
                                                     )}
+                                                    {tieneDatosTorta(tortaPedido) && <TortaDetalleView detalle={tortaPedido} />}
                                                     <div className='reserva-dato-row'><span className='reserva-dato-label'>Estado de pago</span><span className={`estado-badge ${ESTADO_PAGO_CLASS[d.estado_pago || 'sin_pago']}`}>{ESTADO_PAGO_LABEL[d.estado_pago || 'sin_pago']}</span></div>
                                                     {d.fecha_limite && <div className='reserva-dato-row'><span className='reserva-dato-label'>Límite pago / cancelación</span><span>{new Date(d.fecha_limite).toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric', timeZone:'UTC' })}</span></div>}
                                                     {d.descripcion && <div className='reserva-dato-row reserva-dato-full'><span className='reserva-dato-label'>Notas</span><span>{d.descripcion}</span></div>}
@@ -1049,6 +1067,18 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
                                 <label>Notas internas (opcional)</label>
                                 <textarea value={formBloqueo.descripcion} onChange={e => setFormBloqueo(p => ({...p, descripcion: e.target.value}))} placeholder='Observaciones adicionales...' rows={2} maxLength={500}/>
                             </div>
+
+                            {/* Requisitos de torta (opcional) — para pedidos de repostería tomados a mano */}
+                            <details className='bloqueo-torta' open={tieneDatosTorta(formBloqueo.torta)}>
+                                <summary>🎂 Requisitos de torta (opcional)</summary>
+                                <div className='bloqueo-torta-body'>
+                                    <TortaCamposForm
+                                        value={formBloqueo.torta}
+                                        onChange={(t) => setFormBloqueo(p => ({ ...p, torta: t }))}
+                                    />
+                                </div>
+                            </details>
+
                             <label className='bloqueo-toggle-label'>
                                 <input type='checkbox' checked={formBloqueo.bloquear_fecha} onChange={e => setFormBloqueo(p => ({...p, bloquear_fecha: e.target.checked}))}/>
                                 <span>Bloquear esta fecha (no aceptar más reservas ese día)</span>
@@ -1299,11 +1329,6 @@ const MisServiciosScreen = () => {
                         return n > 0 ? <span className='sv-tab-badge'>{n}</span> : null
                     })()}
                 </button>
-                {persona?.rol === 'proveedor_servicios' && (
-                    <button className={`sv-tab ${tabActiva === 'pedidos_torta' ? 'sv-tab--active' : ''}`} onClick={() => setTabActiva('pedidos_torta')}>
-                        🎂 Pedidos de Torta
-                    </button>
-                )}
             </div>
 
             {cargando ? (
@@ -1466,8 +1491,6 @@ const MisServiciosScreen = () => {
                         </div>
                     )}
                 </>
-            ) : tabActiva === 'pedidos_torta' ? (
-                <PedidosTortaPanel />
             ) : (
                 <TabReservasProveedor reservas={reservas} agenda={agenda} onActualizar={cargar} servicios={servicios} />
             )}

@@ -3,6 +3,7 @@ import { getReservaDetalle } from '../../../services/reservaServices'
 import { InvitacionesPanel } from '../InvitacionesModal/InvitacionesModal'
 import PozoPanel from '../PozoPanel/PozoPanel'
 import { precioUnitarioConDescuento } from '../../../utils/preciosUtils'
+import { TortaDetalleView, tieneDatosTorta } from '../../TortaCampos/TortaCampos'
 import {
     FiX, FiCalendar, FiMapPin, FiUsers, FiDollarSign,
     FiClock, FiFileText, FiCheckCircle, FiXCircle,
@@ -430,6 +431,9 @@ const ReservaDetalleModal = ({ id_reserva, onClose, onReiterar, onGuardar, onCon
                                                                         Subtotal: <strong>${fmt(subtotal)}</strong>
                                                                     </span>
                                                                 </div>
+                                                                {(s.categoria === 'tortas' || tieneDatosTorta(s.detalle_torta)) && (
+                                                                    <TortaDetalleView detalle={s.detalle_torta} compacto />
+                                                                )}
                                                             </div>
                                                         </div>
                                                     )

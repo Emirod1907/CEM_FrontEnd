@@ -10,9 +10,11 @@
  *  - onClose      fn()
  */
 import React, { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { getServicios, getDisponibilidadServicios } from '../../services/servicioServices'
 import { calcularPrecioServicio, precioUnitarioConDescuento, TIPO_DIA_LABEL, TIPO_DIA_COLOR } from '../../utils/preciosUtils'
 import { useCarrito } from '../../Contexts/CarritoContextProvider'
+import { TortaCamposForm, TortaDetalleView, TORTA_VACIO, tieneDatosTorta } from '../TortaCampos/TortaCampos'
 import { FiX, FiPlus, FiMinus, FiCheck, FiClock, FiRepeat, FiUsers, FiPackage, FiStar, FiEdit2, FiChevronDown, FiChevronUp } from 'react-icons/fi'
 import TimePicker24 from '../TimePicker24/TimePicker24'
 import './ServiciosPicker.css'
@@ -86,6 +88,8 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
     const [editId, setEditId] = useState(null)
     // Cantidad tipeada en la tarjeta ANTES de agregar (id → cantidad)
     const [cantidadNueva, setCantidadNueva] = useState({})
+    // Modal de requisitos de torta: { servicio, detalle, editId } | null
+    const [tortaModal, setTortaModal] = useState(null)
 
     // Comisión del cliente incorporada de forma invisible en TODO precio mostrado.
     // Vale 1 mientras no haya una reserva cargada (aún no se congeló la comisión).
@@ -132,47 +136,70 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
         return base
     }
 
+    // Construye el ítem del carrito a partir del servicio + estado local (horas/turnos/hora).
+    const construirItem = (servicio, extra = {}) => {
+        const id = servicio.id_servicio
+        const tp = servicio.tipo_precio
+        const opciones = getOpcionesTurno(servicio)
+        const opIdx = opcionTurnoPor[id] ?? 0
+        const opSel = opciones ? (opciones[opIdx] || opciones[0]) : null
+        const horas  = opSel?.horas ?? (Number(horasPor[id]) || 1)
+        const turnos = Number(turnosPor[id]) || 1
+        // Entretenimiento y catering: el usuario puede elegir el horario
+        // (entretenimiento durante el evento; catering p.ej. comida caliente).
+        // Resto: entrega automática 2-3h antes del evento, no editable.
+        const horaEditable = CATEGORIAS_HORA_EDITABLE.includes(servicio.categoria)
+        const entretenimientoYa = seleccionados.filter(s => s.categoria === 'entretenimiento').length
+        const horaAutoSugerida = sugerirHoraServicio(servicio.categoria, horaEvento || '', entretenimientoYa)
+        const horaManual = horaEditable ? (horaPor[id] || null) : null
+        const horaFinal = horaManual || horaAutoSugerida || null
+        return {
+            id_servicio:  servicio.id_servicio,
+            nombre:       servicio.nombre,
+            descripcion:  servicio.descripcion,
+            precio:       getPrecioUnitario(servicio),
+            categoria:    servicio.categoria,
+            tipo_precio:  tp,
+            tipo_item:    servicio.tipo_item || 'producto',
+            imagen:       servicio.imagen || null,
+            cantidad:     Math.max(1, Math.floor(Number(cantidadNueva[id]) || 1)),
+            horas:  tp === 'por_hora'  ? horas  : null,
+            turnos: tp === 'por_turno' ? turnos : null,
+            // por persona: arranca con el total de invitados, pero es editable por ítem
+            personas: tp === 'por_persona' ? (Number(cupo) || 1) : null,
+            hora_inicio: horaFinal,
+            hora_manual: !!horaManual,
+            descuento_cantidad_min: servicio.descuento_cantidad_min ?? null,
+            descuento_porcentaje:   servicio.descuento_porcentaje ?? null,
+            _opcionTurno: opSel || null,
+            ...extra,
+        }
+    }
+
     const toggleServicio = (servicio) => {
         const id = servicio.id_servicio
         if (selMap[id]) {
             onChange(seleccionados.filter(s => s.id_servicio !== id))
+        } else if (servicio.categoria === 'tortas') {
+            // Elaboración de tortas: primero se completan los requisitos del diseño.
+            setTortaModal({ servicio, detalle: { ...TORTA_VACIO, personas: Number(cupo) || '' }, editId: null })
         } else {
-            const tp = servicio.tipo_precio
-            const opciones = getOpcionesTurno(servicio)
-            const opIdx = opcionTurnoPor[id] ?? 0
-            const opSel = opciones ? (opciones[opIdx] || opciones[0]) : null
-            const horas  = opSel?.horas ?? (Number(horasPor[id]) || 1)
-            const turnos = Number(turnosPor[id]) || 1
-            // Entretenimiento y catering: el usuario puede elegir el horario
-            // (entretenimiento durante el evento; catering p.ej. comida caliente).
-            // Resto: entrega automática 2-3h antes del evento, no editable.
-            const horaEditable = CATEGORIAS_HORA_EDITABLE.includes(servicio.categoria)
-            const entretenimientoYa = seleccionados.filter(s => s.categoria === 'entretenimiento').length
-            const horaAutoSugerida = sugerirHoraServicio(servicio.categoria, horaEvento || '', entretenimientoYa)
-            const horaManual = horaEditable ? (horaPor[id] || null) : null
-            const horaFinal = horaManual || horaAutoSugerida || null
-            onChange([...seleccionados, {
-                id_servicio:  servicio.id_servicio,
-                nombre:       servicio.nombre,
-                descripcion:  servicio.descripcion,
-                precio:       getPrecioUnitario(servicio),
-                categoria:    servicio.categoria,
-                tipo_precio:  tp,
-                tipo_item:    servicio.tipo_item || 'producto',
-                imagen:       servicio.imagen || null,
-                cantidad:     Math.max(1, Math.floor(Number(cantidadNueva[id]) || 1)),
-                horas:  tp === 'por_hora'  ? horas  : null,
-                turnos: tp === 'por_turno' ? turnos : null,
-                // por persona: arranca con el total de invitados, pero es editable por ítem
-                personas: tp === 'por_persona' ? (Number(cupo) || 1) : null,
-                hora_inicio: horaFinal,
-                hora_manual: !!horaManual,
-                descuento_cantidad_min: servicio.descuento_cantidad_min ?? null,
-                descuento_porcentaje:   servicio.descuento_porcentaje ?? null,
-                _opcionTurno: opSel || null,
-            }])
+            onChange([...seleccionados, construirItem(servicio)])
         }
     }
+
+    // Confirma el modal de requisitos de la torta y agrega/edita el ítem.
+    const confirmarTorta = () => {
+        if (!tortaModal) return
+        const { servicio, detalle, editId } = tortaModal
+        if (editId) patchSel(editId, { detalle_torta: detalle })
+        else onChange([...seleccionados, construirItem(servicio, { detalle_torta: detalle })])
+        setTortaModal(null)
+    }
+    const abrirEditarTorta = (s) => setTortaModal({
+        servicio: s, editId: s.id_servicio,
+        detalle: { ...TORTA_VACIO, personas: Number(cupo) || '', ...(s.detalle_torta || {}) },
+    })
 
     const updateCantidad = (id, delta) => {
         onChange(seleccionados.map(s => s.id_servicio === id
@@ -296,6 +323,12 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                                                             {porHora && ` · ${s.horas || 1}h`}
                                                             {porTurno && ` · ${s.turnos || 1} turno(s)`}
                                                         </span>
+                                                    )}
+                                                    {s.categoria === 'tortas' && (
+                                                        <button type='button' className='spk-torta-link'
+                                                            onClick={() => abrirEditarTorta(s)}>
+                                                            🎂 {tieneDatosTorta(s.detalle_torta) ? 'Editar requisitos de la torta' : '⚠ Completá los requisitos de la torta'}
+                                                        </button>
                                                     )}
                                                 </div>
                                                 <div className='spk-add-controls'>
@@ -674,6 +707,33 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                     </div>
                 )}
             </div>
+
+            {/* Modal de requisitos de la torta */}
+            {tortaModal && createPortal(
+                <div className='spk-torta-overlay' onClick={e => { if (e.target === e.currentTarget) setTortaModal(null) }}>
+                    <div className='spk-torta-modal'>
+                        <div className='spk-torta-head'>
+                            <h3>🎂 Requisitos de la torta</h3>
+                            <button type='button' onClick={() => setTortaModal(null)}><FiX size={18}/></button>
+                        </div>
+                        <p className='spk-torta-sub'>{tortaModal.servicio?.nombre} — completá los detalles para el pastelero.</p>
+                        <div className='spk-torta-body'>
+                            <TortaCamposForm
+                                value={tortaModal.detalle}
+                                cupo={cupo}
+                                onChange={(d) => setTortaModal(m => ({ ...m, detalle: d }))}
+                            />
+                        </div>
+                        <div className='spk-torta-foot'>
+                            <button type='button' className='spk-torta-cancelar' onClick={() => setTortaModal(null)}>Cancelar</button>
+                            <button type='button' className='spk-torta-confirmar' onClick={confirmarTorta}>
+                                <FiCheck size={15}/> {tortaModal.editId ? 'Guardar' : 'Agregar torta'}
+                            </button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
         </div>
     )
 }

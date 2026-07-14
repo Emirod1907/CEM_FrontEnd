@@ -743,3 +743,41 @@
     z-index: 2;
     white-space: nowrap;
 }
+
+/* ── Torta: link en el ítem agregado + modal de requisitos ── */
+.spk-torta-link {
+    background: none; border: none; padding: 2px 0; margin-top: 3px;
+    color: #7b2cff; font-family: inherit; font-size: .76rem; font-weight: 700;
+    cursor: pointer; text-align: left; text-decoration: underline;
+}
+.spk-torta-link:hover { color: #5c1fd0; }
+
+.spk-torta-overlay {
+    position: fixed; inset: 0; background: rgba(20,10,35,.6);
+    display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 16px;
+}
+.spk-torta-modal {
+    background: #fff; border-radius: 18px; width: 100%; max-width: 620px; max-height: 90vh;
+    display: flex; flex-direction: column; box-shadow: 0 24px 64px rgba(0,0,0,.4); overflow: hidden;
+}
+.spk-torta-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; background: linear-gradient(135deg,#7b2cff,#d827b7); color: #fff; flex-shrink: 0;
+}
+.spk-torta-head h3 { margin: 0; font-size: 1.08rem; }
+.spk-torta-head button { background: rgba(255,255,255,.2); border: none; color: #fff; cursor: pointer; border-radius: 8px; padding: 5px; display: flex; }
+.spk-torta-sub { margin: 0; padding: 12px 20px 0; color: #7a7590; font-size: .86rem; }
+.spk-torta-body { padding: 14px 20px; overflow-y: auto; }
+.spk-torta-foot {
+    display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee; flex-shrink: 0;
+}
+.spk-torta-cancelar {
+    background: #f0eafb; color: #6b23d8; border: 1px solid #e0d3f5; border-radius: 10px;
+    padding: 9px 16px; font-family: inherit; font-size: .9rem; font-weight: 600; cursor: pointer;
+}
+.spk-torta-confirmar {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: linear-gradient(135deg,#7b2cff,#d827b7); color: #fff; border: none; border-radius: 10px;
+    padding: 9px 18px; font-family: inherit; font-size: .9rem; font-weight: 700; cursor: pointer;
+}
+.spk-torta-confirmar:hover { filter: brightness(1.08); }

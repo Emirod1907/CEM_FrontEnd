@@ -1,5 +1,6 @@
 import React from 'react'
 import { FiX, FiCheck, FiSlash, FiUser, FiCalendar, FiHome, FiPackage } from 'react-icons/fi'
+import { TortaDetalleView, tieneDatosTorta } from '../../TortaCampos/TortaCampos'
 import '../MiSalonScreen/ReservaDetalleHorizontal.css'
 
 const fmtFecha = (f) => f
@@ -97,6 +98,18 @@ const ReservaDetalleProveedorHorizontal = ({ reserva, estadoAgenda, estadoMostra
                     ) : <span className='rdh-sub'>—</span>}
                 </div>
             </div>
+
+            {/* Requisitos de torta que cargó el organizador al pedir el servicio */}
+            {servicios.filter(s => s.categoria === 'tortas' || tieneDatosTorta(s.detalle_torta)).map((s, i) => (
+                <div key={`torta-${i}`} className='rdh-torta-bloque'>
+                    {servicios.filter(x => x.categoria === 'tortas' || tieneDatosTorta(x.detalle_torta)).length > 1 && (
+                        <span className='rdh-label'>{s.nombre}</span>
+                    )}
+                    {tieneDatosTorta(s.detalle_torta)
+                        ? <TortaDetalleView detalle={s.detalle_torta} />
+                        : <span className='rdh-sub'>El cliente todavía no cargó los requisitos de la torta.</span>}
+                </div>
+            ))}
 
             <div className='rdh-acciones'>
                 {estadoMostrado !== 'confirmada' && onConfirmar && (

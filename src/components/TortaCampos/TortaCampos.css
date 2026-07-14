@@ -1,0 +1,52 @@
+/* ── Formulario de campos de torta (reutilizable) ── */
+.tc-form { display: flex; flex-direction: column; gap: 12px; }
+.tc-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.tc-field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
+.tc-field--full { flex-basis: 100%; }
+.tc-field > span { font-size: .76rem; font-weight: 600; color: #6a6480; }
+.tc-field input, .tc-field select, .tc-field textarea {
+    border: 1px solid #ddd4ee; border-radius: 9px; padding: 9px 11px; font-family: inherit; font-size: .9rem;
+    color: #2b2140; background: #fff; transition: border-color .15s;
+}
+.tc-field input:focus, .tc-field select:focus, .tc-field textarea:focus { outline: none; border-color: #7b2cff; }
+.tc-field textarea { resize: vertical; }
+
+.tc-fotos { display: flex; flex-wrap: wrap; gap: 9px; }
+.tc-foto-thumb { position: relative; width: 82px; height: 82px; }
+.tc-foto-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 1px solid #ece7f6; }
+.tc-foto-thumb button {
+    position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%;
+    background: #d64545; color: #fff; border: 2px solid #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+}
+.tc-foto-add {
+    width: 82px; height: 82px; border-radius: 10px; border: 1.5px dashed #ccc1e6; background: #faf7ff;
+    color: #7b2cff; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    font-family: inherit; font-size: .7rem; font-weight: 600;
+}
+.tc-foto-add:hover:not(:disabled) { background: #f3ecff; }
+.tc-foto-add:disabled { opacity: .6; cursor: default; }
+
+/* ── Vista de solo lectura ── */
+.tc-view {
+    display: flex; flex-direction: column; gap: 10px;
+    background: rgba(123,44,255,.05); border: 1px solid rgba(123,44,255,.18);
+    border-radius: 12px; padding: 12px 14px; margin-top: 8px;
+}
+.tc-view-titulo { font-weight: 700; color: #7b2cff; font-size: .9rem; }
+.tc-view-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.tc-dato { display: flex; flex-direction: column; gap: 2px; }
+.tc-dato span { font-size: .68rem; text-transform: uppercase; letter-spacing: .03em; color: #9a94ad; font-weight: 700; }
+.tc-dato strong { color: #2b2140; font-size: .88rem; font-weight: 600; }
+.tc-view-txt { margin: 0; font-size: .88rem; color: #3a3350; line-height: 1.5; }
+.tc-view-alerta {
+    display: flex; align-items: flex-start; gap: 8px; background: #fff6e9; border: 1px solid #ffe0b0;
+    border-radius: 9px; padding: 9px 11px; color: #92600d; font-size: .85rem; line-height: 1.4;
+}
+.tc-view-alerta svg { flex-shrink: 0; margin-top: 2px; color: #d98a0b; }
+.tc-view-fotos { display: flex; flex-wrap: wrap; gap: 8px; }
+.tc-view-fotos img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; border: 1px solid #ece7f6; }
+
+/* En modales de tema oscuro, aclarar textos */
+.tc-view--compacto .tc-dato strong { color: #f0ecf8; }
+.tc-view--compacto .tc-view-txt { color: #e6e0f0; }

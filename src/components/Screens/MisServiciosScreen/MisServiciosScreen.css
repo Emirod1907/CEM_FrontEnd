@@ -2968,3 +2968,11 @@
     opacity: 0.92;
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
+
+/* ── Requisitos de torta dentro del bloqueo manual ── */
+.bloqueo-torta { border: 1px solid #ece7f6; border-radius: 12px; padding: 4px 12px; margin: 4px 0; background: #faf8fe; }
+.bloqueo-torta > summary { cursor: pointer; font-weight: 700; color: #7b2cff; font-size: .9rem; padding: 8px 0; list-style: none; }
+.bloqueo-torta > summary::-webkit-details-marker { display: none; }
+.bloqueo-torta > summary::before { content: '▸ '; }
+.bloqueo-torta[open] > summary::before { content: '▾ '; }
+.bloqueo-torta-body { padding: 6px 0 12px; }
