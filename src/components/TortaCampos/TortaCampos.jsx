@@ -101,6 +101,69 @@ export const TortaCamposForm = ({ value, onChange, cupo }) => {
     )
 }
 
+// ══════════════════════════════════════════════════════════════════════
+//  FICHA DEL PASTELERO — lo que OFRECE, cargado al dar de alta el servicio.
+//  Le sirve de referencia al organizador cuando completa su pedido.
+// ══════════════════════════════════════════════════════════════════════
+export const FICHA_TORTA_VACIA = {
+    sabores: '', rellenos: '', coberturas: '', tematicas: '',
+    pisos_max: '', porciones_info: '', incluye: '',
+}
+
+export const tieneFichaTorta = (f) => {
+    if (!f) return false
+    return ['sabores', 'rellenos', 'coberturas', 'tematicas', 'porciones_info', 'incluye'].some(k => f[k]) || f.pisos_max
+}
+
+// Formulario que llena el PASTELERO al publicar su torta.
+export const FichaTortaForm = ({ value, onChange }) => {
+    const v = { ...FICHA_TORTA_VACIA, ...(value || {}) }
+    const set = (k, val) => onChange({ ...v, [k]: val })
+    return (
+        <div className='tc-form'>
+            <p className='tc-ficha-hint'>Describí lo que ofrecés. Esto le aparece al cliente como referencia cuando pide la torta.</p>
+            <label className='tc-field tc-field--full'><span>Sabores que ofrecés</span>
+                <input value={v.sabores} onChange={e => set('sabores', e.target.value)} placeholder='Ej: Chocolate, Vainilla, Red Velvet, Zanahoria'/></label>
+            <label className='tc-field tc-field--full'><span>Rellenos disponibles</span>
+                <input value={v.rellenos} onChange={e => set('rellenos', e.target.value)} placeholder='Ej: Dulce de leche, Ganache, Frutilla, Crema'/></label>
+            <div className='tc-row'>
+                <label className='tc-field'><span>Coberturas</span>
+                    <input value={v.coberturas} onChange={e => set('coberturas', e.target.value)} placeholder='Ej: Fondant, Crema, Chantilly'/></label>
+                <label className='tc-field'><span>Máximo de pisos</span>
+                    <input type='number' min='1' value={v.pisos_max} onChange={e => set('pisos_max', e.target.value)} placeholder='Ej: 3'/></label>
+            </div>
+            <label className='tc-field tc-field--full'><span>Temáticas / estilos que hacés</span>
+                <input value={v.tematicas} onChange={e => set('tematicas', e.target.value)} placeholder='Ej: Infantiles, Bodas, Personajes, Minimalistas'/></label>
+            <label className='tc-field tc-field--full'><span>Porciones / tamaños</span>
+                <input value={v.porciones_info} onChange={e => set('porciones_info', e.target.value)} placeholder='Ej: Desde 15 hasta 100 porciones'/></label>
+            <label className='tc-field tc-field--full'><span>Qué incluye / aclaraciones</span>
+                <textarea rows={2} value={v.incluye} onChange={e => set('incluye', e.target.value)}
+                    placeholder='Ej: Incluye topper personalizado. Requiere 7 días de anticipación.'/></label>
+        </div>
+    )
+}
+
+// Vista de la ficha del pastelero (referencia para el organizador).
+export const FichaTortaView = ({ ficha }) => {
+    if (!tieneFichaTorta(ficha)) return null
+    const f = ficha
+    const Row = ({ label, valor }) => valor ? (
+        <div className='tc-ficha-row'><span>{label}:</span> <strong>{valor}</strong></div>
+    ) : null
+    return (
+        <div className='tc-ficha-view'>
+            <div className='tc-ficha-titulo'>🧁 Lo que ofrece el pastelero</div>
+            <Row label='Sabores' valor={f.sabores} />
+            <Row label='Rellenos' valor={f.rellenos} />
+            <Row label='Coberturas' valor={f.coberturas} />
+            <Row label='Temáticas' valor={f.tematicas} />
+            <Row label='Pisos máx.' valor={f.pisos_max} />
+            <Row label='Porciones' valor={f.porciones_info} />
+            <Row label='Incluye' valor={f.incluye} />
+        </div>
+    )
+}
+
 // ── Vista de solo lectura (detalle de reserva) ──
 export const TortaDetalleView = ({ detalle, compacto = false }) => {
     if (!tieneDatosTorta(detalle)) return null

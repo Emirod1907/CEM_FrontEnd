@@ -47,6 +47,17 @@
 .tc-view-fotos { display: flex; flex-wrap: wrap; gap: 8px; }
 .tc-view-fotos img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; border: 1px solid #ece7f6; }
 
+/* ── Ficha del pastelero (oferta) ── */
+.tc-ficha-hint { margin: 0 0 4px; font-size: .8rem; color: #9a94ad; }
+.tc-ficha-view {
+    display: flex; flex-direction: column; gap: 5px;
+    background: #fff6ef; border: 1px solid #ffe0c2; border-radius: 12px; padding: 11px 14px; margin-top: 8px;
+}
+.tc-ficha-titulo { font-weight: 700; color: #c26a1b; font-size: .88rem; margin-bottom: 2px; }
+.tc-ficha-row { font-size: .85rem; color: #6a5540; }
+.tc-ficha-row span { color: #9a8a76; }
+.tc-ficha-row strong { color: #4a3f30; font-weight: 600; }
+
 /* En modales de tema oscuro, aclarar textos */
 .tc-view--compacto .tc-dato strong { color: #f0ecf8; }
 .tc-view--compacto .tc-view-txt { color: #e6e0f0; }

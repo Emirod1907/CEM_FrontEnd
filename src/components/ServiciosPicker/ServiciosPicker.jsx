@@ -14,7 +14,7 @@ import { createPortal } from 'react-dom'
 import { getServicios, getDisponibilidadServicios } from '../../services/servicioServices'
 import { calcularPrecioServicio, precioUnitarioConDescuento, TIPO_DIA_LABEL, TIPO_DIA_COLOR } from '../../utils/preciosUtils'
 import { useCarrito } from '../../Contexts/CarritoContextProvider'
-import { TortaCamposForm, TortaDetalleView, TORTA_VACIO, tieneDatosTorta } from '../TortaCampos/TortaCampos'
+import { TortaCamposForm, TortaDetalleView, TORTA_VACIO, tieneDatosTorta, FichaTortaView } from '../TortaCampos/TortaCampos'
 import { FiX, FiPlus, FiMinus, FiCheck, FiClock, FiRepeat, FiUsers, FiPackage, FiStar, FiEdit2, FiChevronDown, FiChevronUp } from 'react-icons/fi'
 import TimePicker24 from '../TimePicker24/TimePicker24'
 import './ServiciosPicker.css'
@@ -718,6 +718,11 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
                         </div>
                         <p className='spk-torta-sub'>{tortaModal.servicio?.nombre} — completá los detalles para el pastelero.</p>
                         <div className='spk-torta-body'>
+                            {(() => {
+                                let ficha = tortaModal.servicio?.ficha_torta
+                                try { ficha = typeof ficha === 'string' ? JSON.parse(ficha) : ficha } catch { ficha = null }
+                                return <FichaTortaView ficha={ficha} />
+                            })()}
                             <TortaCamposForm
                                 value={tortaModal.detalle}
                                 cupo={cupo}

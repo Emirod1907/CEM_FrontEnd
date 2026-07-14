@@ -22,7 +22,7 @@ import { getMiContrato } from '../../../services/contratoServices'
 import MpConnectButton from '../../MpConnectButton/MpConnectButton'
 import GoogleCalendarConnectButton from '../../MpConnectButton/GoogleCalendarConnectButton'
 import ReservaDetalleProveedorHorizontal from './ReservaDetalleProveedorHorizontal'
-import { TortaCamposForm, TortaDetalleView, tieneDatosTorta } from '../../TortaCampos/TortaCampos'
+import { TortaCamposForm, TortaDetalleView, tieneDatosTorta, FichaTortaForm, FICHA_TORTA_VACIA, tieneFichaTorta } from '../../TortaCampos/TortaCampos'
 import UploadImg from '../../../services/uploadimg'
 import { parsePreciosConfig } from '../../../utils/preciosUtils'
 import './MisServiciosScreen.css'
@@ -103,7 +103,8 @@ const FORM_VACIO = {
     categoria: 'catering', subcategoria: '', tipo_precio: 'fijo', tipo_item: 'producto',
     imagen: '', capacidad_maxima: '', dias_anticipacion: '0',
     dias_disponibles: [], horario_inicio: '', horario_fin: '',
-    precios_tramos: {}   // objeto con fin_semana, feriado; ya no es un array
+    precios_tramos: {},   // objeto con fin_semana, feriado; ya no es un array
+    ficha_torta: null,    // ficha de oferta cuando la categoría es 'tortas'
 }
 
 // Unidades de venta predefinidas (+ opción 'otro' para escribir una personalizada)
@@ -1176,6 +1177,7 @@ const MisServiciosScreen = () => {
             horario_inicio: s.horario_inicio || '',
             horario_fin: s.horario_fin || '',
             precios_tramos: cfgPrecios,
+            ficha_torta: (() => { try { return typeof s.ficha_torta === 'string' ? JSON.parse(s.ficha_torta) : (s.ficha_torta || null) } catch { return null } })(),
         })
         setUnidadOtro(!!s.unidad && !UNIDADES_PREDEF.includes(s.unidad))
         setError(null); setMostrarForm(true)
@@ -1244,6 +1246,8 @@ const MisServiciosScreen = () => {
                 precios_tramos: form.tipo_item === 'servicio'
                     ? (form.precios_tramos && Object.keys(form.precios_tramos).length > 0 ? form.precios_tramos : null)
                     : null,
+                // Ficha de la torta: solo si la categoría es 'tortas' y tiene datos
+                ficha_torta: form.categoria === 'tortas' && tieneFichaTorta(form.ficha_torta) ? form.ficha_torta : null,
             }
             if (editando) await updateServicioProveedor(editando, datos)
             else await crearServicioProveedor(datos)
@@ -1596,6 +1600,17 @@ const MisServiciosScreen = () => {
                                     </select>
                                 </div>
                             </div>
+
+                            {/* Ficha de la torta: lo que ofrece el pastelero (solo categoría tortas) */}
+                            {form.categoria === 'tortas' && (
+                                <div className='form-group bloqueo-torta bloqueo-torta--abierto'>
+                                    <label>🎂 Ficha de la torta (lo que ofrecés)</label>
+                                    <FichaTortaForm
+                                        value={form.ficha_torta || FICHA_TORTA_VACIA}
+                                        onChange={(f) => setForm(prev => ({ ...prev, ficha_torta: f }))}
+                                    />
+                                </div>
+                            )}
                             <div className='form-group'>
                                 <label>Precio *{sufijoPrecio(form.tipo_precio) && <span className='label-hint'> (monto {sufijoPrecio(form.tipo_precio)})</span>}</label>
                                 <div className='precio-input-wrapper'>
