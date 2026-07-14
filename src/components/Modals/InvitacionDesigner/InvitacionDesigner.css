@@ -568,7 +568,7 @@
     overflow: hidden;
     z-index: 2;
     flex-shrink: 0;
-    background: rgba(0,0,0,0.08);
+    background: transparent;
     cursor: grab;
     touch-action: none;
 }

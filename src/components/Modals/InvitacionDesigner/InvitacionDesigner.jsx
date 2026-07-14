@@ -551,7 +551,7 @@ const InvitacionDesigner = ({
                                     <div className='ivd-portada-controls'>
                                         <label className='ivd-portada-slider'>
                                             <span>🔍 Zoom</span>
-                                            <input type='range' min='1' max='3' step='0.02'
+                                            <input type='range' min='0.3' max='3' step='0.02'
                                                 value={portada.zoom} onChange={e => setPortadaProp('zoom', e.target.value)}/>
                                         </label>
                                         <label className='ivd-portada-slider'>
