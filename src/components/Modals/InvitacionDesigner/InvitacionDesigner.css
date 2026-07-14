@@ -559,3 +559,55 @@
     }
     .ivd-card { width: 100%; min-width: 0; }
 }
+
+/* ── Foto de portada (cover) en la tarjeta ── */
+.ivd-card-portada {
+    display: block;
+    width: calc(100% + 88px);
+    margin: -36px -44px 12px;
+    height: 165px;
+    object-fit: cover;
+    border-radius: 18px 18px 0 0;
+    position: relative;
+    z-index: 2;
+}
+.ivd-card--con-portada { padding-top: 0; }
+
+/* ── Sección de portada en el sidebar ── */
+.ivd-portada-add {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px dashed #ccc1e6;
+    background: #faf7ff;
+    color: #6b23d8;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.14s;
+}
+.ivd-portada-add:hover { background: #f3ecff; }
+.ivd-portada-preview img {
+    width: 100%;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+    border: 1px solid #ece7f6;
+}
+.ivd-portada-acciones { display: flex; gap: 8px; margin-top: 8px; }
+.ivd-portada-acciones button {
+    flex: 1;
+    padding: 7px 10px;
+    border: 1px solid #e0d3f5;
+    background: #f2edfb;
+    color: #6b23d8;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.ivd-portada-quitar { background: #fdecec !important; color: #d64545 !important; border-color: #f6d3d3 !important; }
+.ivd-portada-hint { margin: 7px 0 0; font-size: 0.72rem; color: #9a94ad; }

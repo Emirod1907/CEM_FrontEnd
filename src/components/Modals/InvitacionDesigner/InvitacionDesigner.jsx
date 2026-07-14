@@ -364,20 +364,25 @@ const CORNER_POS_STYLE = {
     br: { bottom:26, right:30 },
 }
 
-const TarjetaCard = React.forwardRef(({ tpl, textos, emojiTipo, marco, decoSelec, cornerIcons }, ref) => {
+const TarjetaCard = React.forwardRef(({ tpl, textos, emojiTipo, marco, decoSelec, cornerIcons, portada }, ref) => {
     const decoActual = decoSelec || emojiTipo || tpl.decoChar
     const noMarco    = marco.estilo === 'ninguno'
 
     return (
         <div
             ref={ref}
-            className='ivd-card'
+            className={`ivd-card ${portada ? 'ivd-card--con-portada' : ''}`}
             style={{
                 background: tpl.cardBg,
                 color:      tpl.textColor,
                 borderTop:  noMarco ? (tpl.borderTop || 'none') : 'none',
             }}
         >
+            {/* Portada tipo cover arriba de la tarjeta */}
+            {portada && (
+                <img src={portada} alt='' className='ivd-card-portada' crossOrigin='anonymous'/>
+            )}
+
             <InnerFrame marco={marco}/>
 
             {/* Íconos en las 4 esquinas de la tarjeta */}
@@ -439,11 +444,13 @@ const CornerMapBtn = ({ pos, icon, active, onClick }) => (
 // ── Modal principal ───────────────────────────────────────────────────────────
 const InvitacionDesigner = ({
     nombreEvento='', tipoEvento='', fecha='', lugar='', descripcion='',
-    horaInicio='', horaFin='',
+    horaInicio='', horaFin='', imagenPortada='',
     onFile, onClose,
 }) => {
     const horarioInicial = horaInicio ? `${horaInicio} hs` : ''
 
+    const [portada,     setPortada]     = useState(imagenPortada || null)
+    const portadaRef = useRef()
     const [tplId,       setTplId]       = useState('festivo')
     const [exportando,  setExportando]  = useState(false)
     const [textos,      setTextos]      = useState({ titulo:nombreEvento, subtitulo:'', fecha, lugar, horario:horarioInicial, mensaje:descripcion })
@@ -465,6 +472,16 @@ const InvitacionDesigner = ({
     const set = (k, v) => setTextos(p => ({ ...p, [k]:v }))
     const setCornerIcon = (icon) =>
         setCornerIcons(p => ({ ...p, [cornerActivo]: p[cornerActivo]===icon ? null : icon }))
+
+    // Foto de portada: se lee como dataURL para que html2canvas la incruste sin CORS
+    const handlePortadaFile = (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = () => setPortada(reader.result)
+        reader.readAsDataURL(file)
+        e.target.value = ''
+    }
 
     const handleExportar = async () => {
         if (!cardRef.current) return
@@ -498,6 +515,26 @@ const InvitacionDesigner = ({
 
                 <div className='ivd-layout'>
                     <aside className='ivd-sidebar'>
+
+                        {/* 0. Foto de portada (cover) */}
+                        <div className='ivd-section'>
+                            <p className='ivd-section-label'>Foto de portada</p>
+                            {portada ? (
+                                <div className='ivd-portada-preview'>
+                                    <img src={portada} alt='portada'/>
+                                    <div className='ivd-portada-acciones'>
+                                        <button type='button' onClick={() => portadaRef.current?.click()}>Cambiar</button>
+                                        <button type='button' className='ivd-portada-quitar' onClick={() => setPortada(null)}>Quitar</button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <button type='button' className='ivd-portada-add' onClick={() => portadaRef.current?.click()}>
+                                    📷 Subir foto de portada
+                                </button>
+                            )}
+                            <input ref={portadaRef} type='file' accept='image/*' hidden onChange={handlePortadaFile}/>
+                            <p className='ivd-portada-hint'>Se muestra como cover arriba de la tarjeta.</p>
+                        </div>
 
                         {/* 1. Plantilla */}
                         <div className='ivd-section'>
@@ -637,6 +674,7 @@ const InvitacionDesigner = ({
                                 ref={cardRef} tpl={tpl} textos={textos}
                                 emojiTipo={emojiTipo} marco={marco}
                                 decoSelec={decoSelec} cornerIcons={cornerIcons}
+                                portada={portada}
                             />
                         </div>
                         <div className='ivd-acciones'>

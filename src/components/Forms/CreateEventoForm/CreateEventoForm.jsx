@@ -1074,6 +1074,7 @@ const CreateEventoForm = () => {
                     descripcion={form_values_state.descripcion}
                     horaInicio={form_values_state.hora_inicio}
                     horaFin={form_values_state.hora_fin}
+                    imagenPortada={imagenUrl || (form_values_state.imagen instanceof File ? URL.createObjectURL(form_values_state.imagen) : '')}
                     onFile={(file) => {
                         setFormValuesState(prev => ({ ...prev, imagen: file }))
                         setImagenUrl('')
