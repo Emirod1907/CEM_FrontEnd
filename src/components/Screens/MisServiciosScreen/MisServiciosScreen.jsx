@@ -32,6 +32,7 @@ import './MisServiciosScreen.css'
 const CATEGORIAS_PRODUCTO = [
     { value: 'bebidas',     label: 'Bebidas' },
     { value: 'alimentos',   label: 'Alimentos' },
+    { value: 'tortas',      label: 'Tortas a pedido' },
     { value: 'catering',    label: 'Catering' },
     { value: 'cotillon',    label: 'Cotillón y Souvenirs' },
     { value: 'vajilla',     label: 'Vajilla (platos, vasos, cubiertos)' },
@@ -45,7 +46,6 @@ const CATEGORIAS_SERVICIO = [
     { value: 'personal',        label: 'Provisión de Personal (mozos y bartenders)' },
     { value: 'mobiliario',      label: 'Mobiliario' },
     { value: 'entretenimiento', label: 'Entretenimiento' },
-    { value: 'tortas',          label: 'Elaboración de Tortas' },
     { value: 'otro',            label: 'Otro' }
 ]
 
