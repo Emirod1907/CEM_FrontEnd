@@ -560,18 +560,18 @@
     .ivd-card { width: 100%; min-width: 0; }
 }
 
-/* ── Foto de portada (cover) en la tarjeta ── */
+/* ── Foto de portada (miniatura, contenida sin estirar) ── */
 .ivd-card-portada {
     display: block;
-    width: calc(100% + 88px);
-    margin: -36px -44px 12px;
-    height: 165px;
-    object-fit: cover;
-    border-radius: 18px 18px 0 0;
+    width: auto;
+    max-width: 190px;
+    max-height: 150px;
+    margin: 0 auto 10px;
+    object-fit: contain;
+    border-radius: 12px;
     position: relative;
     z-index: 2;
 }
-.ivd-card--con-portada { padding-top: 0; }
 
 /* ── Sección de portada en el sidebar ── */
 .ivd-portada-add {
