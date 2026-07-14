@@ -126,21 +126,24 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
         return info.precioUnitario
     }
 
-    // Personas por las que se multiplica un ítem "por persona".
-    // Para una TORTA (producto para N personas) se usa su capacidad propia
-    // (ideal_para_personas), no el cupo del evento: una torta "para 50" no se
-    // multiplica por los 100 invitados. Para el resto, el cupo del evento.
-    const personasBase = (servicio) => {
-        if (servicio.categoria === 'tortas' && Number(servicio.ideal_para_personas) > 0)
-            return Number(servicio.ideal_para_personas)
-        return Math.max(1, Number(cupo) || 1)
+    // Una TORTA es un producto discreto que rinde N personas (ideal_para_personas).
+    // El precio es POR TORTA (unidad); si el evento tiene más invitados que lo que
+    // rinde, se necesitan varias tortas → cantidad = ⌈invitados ÷ capacidad⌉.
+    const esTorta = (servicio) => servicio.categoria === 'tortas'
+    const tortasNecesarias = (servicio) => {
+        const cap = Number(servicio.ideal_para_personas) || 0
+        const inv = Math.max(1, Number(cupo) || 1)
+        return cap > 0 ? Math.max(1, Math.ceil(inv / cap)) : 1
     }
+    // Cantidad efectiva a agregar de una torta (lo tipeado o la sugerida por capacidad)
+    const cantTorta = (servicio) => Math.max(1, Math.floor(Number(cantidadNueva[servicio.id_servicio]) || tortasNecesarias(servicio)))
 
     const calcTotal = (servicio) => {
         const id = servicio.id_servicio
         const tp = servicio.tipo_precio
         const base = getPrecioUnitario(servicio)
-        if (tp === 'por_persona') return base * personasBase(servicio)
+        if (esTorta(servicio)) return base * cantTorta(servicio)   // precio por torta × cantidad
+        if (tp === 'por_persona') return base * Math.max(1, Number(cupo) || 1)
         if (tp === 'por_hora')   return base * Math.max(1, Number(horasPor[id]) || 1)
         if (tp === 'por_turno')  return base * Math.max(1, Number(turnosPor[id]) || 1)
         return base
@@ -163,20 +166,24 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
         const horaAutoSugerida = sugerirHoraServicio(servicio.categoria, horaEvento || '', entretenimientoYa)
         const horaManual = horaEditable ? (horaPor[id] || null) : null
         const horaFinal = horaManual || horaAutoSugerida || null
+        // La torta se guarda como precio fijo por unidad (rinde N personas),
+        // con la cantidad necesaria para cubrir a los invitados.
+        const torta = esTorta(servicio)
+        const tipoPrecioItem = torta ? 'fijo' : tp
         return {
             id_servicio:  servicio.id_servicio,
             nombre:       servicio.nombre,
             descripcion:  servicio.descripcion,
             precio:       getPrecioUnitario(servicio),
             categoria:    servicio.categoria,
-            tipo_precio:  tp,
+            tipo_precio:  tipoPrecioItem,
             tipo_item:    servicio.tipo_item || 'producto',
             imagen:       servicio.imagen || null,
-            cantidad:     Math.max(1, Math.floor(Number(cantidadNueva[id]) || 1)),
+            cantidad:     torta ? cantTorta(servicio) : Math.max(1, Math.floor(Number(cantidadNueva[id]) || 1)),
             horas:  tp === 'por_hora'  ? horas  : null,
             turnos: tp === 'por_turno' ? turnos : null,
-            // por persona: arranca con las personas base (torta → su capacidad; resto → cupo), editable por ítem
-            personas: tp === 'por_persona' ? personasBase(servicio) : null,
+            // por persona: arranca con el cupo (editable por ítem). Las tortas no usan personas.
+            personas: (!torta && tp === 'por_persona') ? (Number(cupo) || 1) : null,
             hora_inicio: horaFinal,
             hora_manual: !!horaManual,
             descuento_cantidad_min: servicio.descuento_cantidad_min ?? null,
@@ -598,10 +605,28 @@ const ServiciosPicker = ({ fechaEvento, horaEvento, horaFinEvento, cupo, selecci
 
                                     {/* Precio y controles de unidades */}
                                     <div className='spk-precio-bloque'>
-                                        {tp === 'por_persona' && (
+                                        {esTorta(servicio) && (
+                                            <div className='spk-unidades-row'>
+                                                <span className='spk-precio-unit'>${precioUnit.toLocaleString('es-AR')}<span className='spk-por'>/torta</span></span>
+                                                {Number(servicio.ideal_para_personas) > 0 && (
+                                                    <span className='spk-torta-rinde'>rinde {servicio.ideal_para_personas} · </span>
+                                                )}
+                                                <span>×</span>
+                                                <input
+                                                    type='number' min='1'
+                                                    value={cantidadNueva[id] ?? tortasNecesarias(servicio)}
+                                                    onChange={e => setCantidadNueva(prev => ({ ...prev, [id]: e.target.value }))}
+                                                    className='spk-num-input'
+                                                    title='Cantidad de tortas'
+                                                />
+                                                <span>=</span>
+                                                <strong>${total.toLocaleString('es-AR')}</strong>
+                                            </div>
+                                        )}
+                                        {tp === 'por_persona' && !esTorta(servicio) && (
                                             <span className='spk-precio-unit'>
                                                 ${precioUnit.toLocaleString('es-AR')}<span className='spk-por'>/persona</span>
-                                                {personasBase(servicio) > 0 && <> × {personasBase(servicio)} = <strong>${total.toLocaleString('es-AR')}</strong></>}
+                                                {Number(cupo) > 0 && <> × {cupo} = <strong>${total.toLocaleString('es-AR')}</strong></>}
                                             </span>
                                         )}
                                         {tp === 'por_hora' && (

@@ -781,3 +781,6 @@
     padding: 9px 18px; font-family: inherit; font-size: .9rem; font-weight: 700; cursor: pointer;
 }
 .spk-torta-confirmar:hover { filter: brightness(1.08); }
+
+/* Torta: texto "rinde N" en la línea de precio */
+.spk-torta-rinde { font-size: .78rem; color: #9a94ad; font-weight: 600; }
