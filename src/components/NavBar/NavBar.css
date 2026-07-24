@@ -223,3 +223,17 @@
         font-size: 0.78rem;
     }
 }
+
+/* CTA de registro en el navbar (visible solo para invitados) */
+.link-registro {
+    background: linear-gradient(100deg, #7C3AED, #2563EB);
+    color: #fff;
+    border-color: transparent;
+}
+
+.link-registro:hover {
+    background: linear-gradient(100deg, #7C3AED, #2563EB);
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    color: #fff;
+}

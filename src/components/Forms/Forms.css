@@ -2225,3 +2225,28 @@
         padding: 36px 24px;
     }
 }
+
+/* Mensajes del formulario de autenticación */
+.auth-error {
+    background: #fdecef;
+    border: 1px solid #f5b5c0;
+    color: #b0264a;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+}
+
+.auth-hint {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #f9f0ff, #eef4ff);
+    border: 1px solid #e2d3f5;
+    color: #5a4b73;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 2px 0 4px;
+}
+
+.auth-hint strong { color: #770981; }

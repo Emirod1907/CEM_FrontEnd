@@ -25,6 +25,7 @@ import PedidoTortaPublicoScreen from './components/Screens/PedidoTortaPublicoScr
 import ValidarEntradaScreen from './components/Screens/ValidarEntradaScreen/ValidarEntradaScreen'
 import RoleSelectionScreen from './components/Screens/RoleSelectionScreen/RoleSelectionScreen'
 import CompleteProfileScreen from './components/Screens/CompleteProfileScreen/CompleteProfileScreen'
+import CompletarDatosGoogle from './components/Screens/CompletarDatosGoogle/CompletarDatosGoogle'
 import MisServiciosScreen from './components/Screens/MisServiciosScreen/MisServiciosScreen'
 import MisReservasScreen from './components/Screens/MisReservasScreen/MisReservasScreen'
 import MiSalonScreen from './components/Screens/MiSalonScreen/MiSalonScreen'
@@ -46,6 +47,7 @@ function App() {
 
                   {/* Selección de rol y completado de perfil — requieren estar autenticado */}
                   <Route element={<ProtectedRoute/>}>
+                    <Route path='/completar-datos' element={<CompletarDatosGoogle/>} />
                     <Route path='/seleccionar-rol' element={<RoleSelectionScreen/>} />
                     <Route path='/completar-perfil' element={<CompleteProfileScreen/>} />
                   </Route>

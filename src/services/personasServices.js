@@ -12,8 +12,8 @@ try {
     console.error("Error en registerRequest:", error);
     
     if (error.response) {
-      
-      throw new Error(error.response.data.message || "Error en el registro");
+
+      throw new Error(error.response.data.message || error.response.data.error || "Error en el registro");
     } else if (error.request) {
       
       throw new Error("No se recibió respuesta del servidor");
@@ -62,6 +62,14 @@ export const selectRoleRequest = async (rol) => {
 
 export const completeProfileRequest = async (datos) => {
   const response = await axios.post('auth/complete-profile', datos, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+  return response.data;
+};
+
+// Completar datos tras login con Google: CUIT, celular y fecha de nacimiento
+export const completeRegistrationRequest = async (datos) => {
+  const response = await axios.post('auth/complete-registration', datos, {
     headers: { 'Content-Type': 'application/json' }
   });
   return response.data;

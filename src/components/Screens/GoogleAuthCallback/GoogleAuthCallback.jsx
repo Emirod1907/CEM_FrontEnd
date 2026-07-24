@@ -14,7 +14,12 @@ const GoogleAuthCallback = () => {
                 if (res.data) {
                     setPersona(res.data)
                     setIsAuthenticated(true)
-                    const { rol, perfil_completado } = res.data
+                    const { rol, perfil_completado, cuit } = res.data
+                    // Usuario nuevo de Google: todavía no cargó CUIT / celular / fecha de nacimiento.
+                    // Google solo aporta nombre, apellido y email; el resto lo pedimos acá.
+                    if (!cuit) {
+                        return navigate('/completar-datos')
+                    }
                     const ROLES_NUEVOS = ['entusiasta', 'organizador', 'dueno_salon', 'proveedor_servicios', 'proveedor_insumos', 'admin']
                     if (!rol || !ROLES_NUEVOS.includes(rol)) {
                         navigate('/seleccionar-rol')

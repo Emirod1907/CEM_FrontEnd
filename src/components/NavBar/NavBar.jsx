@@ -55,6 +55,9 @@ const NavBar = () => {
                 <>
                     {link('/eventos', 'Eventos')}
                     {link('/login', 'Iniciar Sesión')}
+                    <NavLink to='/register' className={({ isActive }) => isActive ? 'link-seleccionado link-registro' : 'link link-registro'}>
+                        Registrarse
+                    </NavLink>
                 </>
             )
         }
