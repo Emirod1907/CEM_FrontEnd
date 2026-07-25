@@ -1443,8 +1443,9 @@
     display: block;
     width: min(250px, 100%);
     height: auto;
-    border-radius: 16px;
-    box-shadow: 0 18px 34px rgba(20, 8, 38, 0.18);
+    /* El SVG del logo es degradado y sobre el panel de color no se ve. Lo pintamos
+       de blanco sólido para que resalte (mismo look que el logo blanco). */
+    filter: brightness(0) invert(1);
 }
 
 .auth-brand-copy {
