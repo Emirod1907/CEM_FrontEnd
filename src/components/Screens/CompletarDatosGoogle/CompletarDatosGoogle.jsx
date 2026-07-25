@@ -18,7 +18,20 @@ const CompletarDatosGoogle = () => {
     const [error, setError] = useState('')
     const [enviando, setEnviando] = useState(false)
 
-    const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    // Formatea el CUIT argentino como XX-XXXXXXXX-X mientras se tipea.
+    const formatCuit = (value) => {
+        const d = value.replace(/\D/g, '').slice(0, 11)
+        let out = d.slice(0, 2)
+        if (d.length > 2) out += '-' + d.slice(2, 10)
+        if (d.length > 10) out += '-' + d.slice(10, 11)
+        return out
+    }
+
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        const val = name === 'cuit' ? formatCuit(value) : value
+        setForm((prev) => ({ ...prev, [name]: val }))
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()

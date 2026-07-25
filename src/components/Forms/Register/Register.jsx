@@ -49,9 +49,20 @@ const Register = () => {
         }
     }
 
+    // Formatea el CUIT argentino como XX-XXXXXXXX-X mientras se tipea.
+    const formatCuit = (value) => {
+        const d = value.replace(/\D/g, '').slice(0, 11)
+        let out = d.slice(0, 2)
+        if (d.length > 2) out += '-' + d.slice(2, 10)
+        if (d.length > 10) out += '-' + d.slice(10, 11)
+        return out
+    }
+
     const handleChangeInputValue = (event) => {
+        const { name, value } = event.target
+        const val = name === fields.CUIT ? formatCuit(value) : value
         setFormValuesState(
-            (prev_state) => ({ ...prev_state, [event.target.name]: event.target.value })
+            (prev_state) => ({ ...prev_state, [name]: val })
         )
     }
 
