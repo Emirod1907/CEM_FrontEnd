@@ -36,8 +36,14 @@ const Register = () => {
     const handleSubmit = async (event) => {
         event.preventDefault()
         setError('')
+        const fechaISO = fechaAISO(form_values_state[fields.FECHA_NACIMIENTO])
+        if (!fechaISO) {
+            setError('Revisá la fecha de nacimiento (dd/mm/aaaa).')
+            return
+        }
         try {
-            const response = await registerRequest(form_values_state)
+            const payload = { ...form_values_state, [fields.FECHA_NACIMIENTO]: fechaISO }
+            const response = await registerRequest(payload)
             if (response && (response.msg === 'Usuario creado con éxito' || response.message === 'Usuario creado con éxito')) {
                 setIsAuthenticated(true)
                 navigate('/seleccionar-rol')
@@ -58,9 +64,31 @@ const Register = () => {
         return out
     }
 
+    // Máscara dd/mm/aaaa mientras se tipea la fecha.
+    const formatFecha = (value) => {
+        const d = value.replace(/\D/g, '').slice(0, 8)
+        let out = d.slice(0, 2)
+        if (d.length > 2) out += '/' + d.slice(2, 4)
+        if (d.length > 4) out += '/' + d.slice(4, 8)
+        return out
+    }
+
+    // Convierte dd/mm/aaaa -> yyyy-mm-dd (ISO). Devuelve '' si no es una fecha real.
+    const fechaAISO = (s) => {
+        const m = (s || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+        if (!m) return ''
+        const [, dd, mm, yyyy] = m
+        const iso = `${yyyy}-${mm}-${dd}`
+        const dt = new Date(iso + 'T00:00:00')
+        if (isNaN(dt.getTime()) || dt.getMonth() + 1 !== Number(mm) || dt.getDate() !== Number(dd)) return ''
+        return iso
+    }
+
     const handleChangeInputValue = (event) => {
         const { name, value } = event.target
-        const val = name === fields.CUIT ? formatCuit(value) : value
+        let val = value
+        if (name === fields.CUIT) val = formatCuit(value)
+        else if (name === fields.FECHA_NACIMIENTO) val = formatFecha(value)
         setFormValuesState(
             (prev_state) => ({ ...prev_state, [name]: val })
         )
@@ -107,7 +135,7 @@ const Register = () => {
                         </div>
                         <div className='auth-field'>
                             <label htmlFor='fecha_nacimiento'>Fecha de nacimiento</label>
-                            <input type='date' id='fecha_nacimiento' name='fecha_nacimiento' required onChange={handleChangeInputValue} value={form_values_state[fields.FECHA_NACIMIENTO]} />
+                            <input type='text' inputMode='numeric' placeholder='dd/mm/aaaa' maxLength={10} id='fecha_nacimiento' name='fecha_nacimiento' required onChange={handleChangeInputValue} value={form_values_state[fields.FECHA_NACIMIENTO]} />
                         </div>
                         <div className='auth-field'>
                             <label htmlFor='user_password'>Contraseña</label>

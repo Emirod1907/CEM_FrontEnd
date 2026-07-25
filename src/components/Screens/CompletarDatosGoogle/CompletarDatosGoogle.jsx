@@ -27,20 +27,48 @@ const CompletarDatosGoogle = () => {
         return out
     }
 
+    // Máscara dd/mm/aaaa mientras se tipea la fecha.
+    const formatFecha = (value) => {
+        const d = value.replace(/\D/g, '').slice(0, 8)
+        let out = d.slice(0, 2)
+        if (d.length > 2) out += '/' + d.slice(2, 4)
+        if (d.length > 4) out += '/' + d.slice(4, 8)
+        return out
+    }
+
+    // Convierte dd/mm/aaaa -> yyyy-mm-dd (ISO). Devuelve '' si no es una fecha real.
+    const fechaAISO = (s) => {
+        const m = (s || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+        if (!m) return ''
+        const [, dd, mm, yyyy] = m
+        const iso = `${yyyy}-${mm}-${dd}`
+        const dt = new Date(iso + 'T00:00:00')
+        if (isNaN(dt.getTime()) || dt.getMonth() + 1 !== Number(mm) || dt.getDate() !== Number(dd)) return ''
+        return iso
+    }
+
     const handleChange = (e) => {
         const { name, value } = e.target
-        const val = name === 'cuit' ? formatCuit(value) : value
+        let val = value
+        if (name === 'cuit') val = formatCuit(value)
+        else if (name === 'fecha_nacimiento') val = formatFecha(value)
         setForm((prev) => ({ ...prev, [name]: val }))
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError('')
+        const fechaISO = fechaAISO(form.fecha_nacimiento)
+        if (!fechaISO) {
+            setError('Revisá la fecha de nacimiento (dd/mm/aaaa).')
+            return
+        }
         setEnviando(true)
         try {
-            const res = await completeRegistrationRequest(form)
+            const payload = { ...form, fecha_nacimiento: fechaISO }
+            const res = await completeRegistrationRequest(payload)
             // Actualizar el contexto con el CUIT ya cargado para no volver a pedirlo
-            setPersona((prev) => ({ ...(prev || {}), cuit: res?.cuit || form.cuit, celular: form.celular, fecha_nacimiento: form.fecha_nacimiento }))
+            setPersona((prev) => ({ ...(prev || {}), cuit: res?.cuit || form.cuit, celular: form.celular, fecha_nacimiento: fechaISO }))
             const tieneRol = persona?.rol && ROLES_VALIDOS.includes(persona.rol)
             navigate(tieneRol ? '/eventos' : '/seleccionar-rol')
         } catch (err) {
@@ -81,7 +109,7 @@ const CompletarDatosGoogle = () => {
                         </div>
                         <div className='auth-field auth-field--full'>
                             <label htmlFor='fecha_nacimiento'>Fecha de nacimiento</label>
-                            <input type='date' id='fecha_nacimiento' name='fecha_nacimiento' required onChange={handleChange} value={form.fecha_nacimiento} />
+                            <input type='text' inputMode='numeric' placeholder='dd/mm/aaaa' maxLength={10} id='fecha_nacimiento' name='fecha_nacimiento' required onChange={handleChange} value={form.fecha_nacimiento} />
                         </div>
 
                         <p className='auth-hint auth-field--full'>
