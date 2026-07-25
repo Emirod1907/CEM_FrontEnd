@@ -22,7 +22,7 @@ import './ServiciosPicker.css'
 const CATEGORIAS_LABEL = {
     catering: 'Catering', decoracion: 'Decoración', audio_video: 'Audio y Video',
     seguridad: 'Seguridad', personal: 'Provisión de Personal', mobiliario: 'Mobiliario',
-    entretenimiento: 'Entretenimiento', tortas: 'Elaboración de Tortas',
+    entretenimiento: 'Entretenimiento', tortas: 'Tortas a pedido',
     bebidas: 'Bebidas', comida: 'Alimentos', alimentos: 'Alimentos',
     cotillon: 'Cotillón y Souvenirs', vajilla: 'Vajilla', otro: 'Otros'
 }

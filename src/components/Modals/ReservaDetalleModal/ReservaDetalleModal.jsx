@@ -33,7 +33,7 @@ const CATEGORIA_LABEL = {
     personal:       'Provisión de Personal',
     mobiliario:     'Mobiliario',
     entretenimiento:'Entretenimiento',
-    tortas:         'Elaboración de Tortas',
+    tortas:         'Tortas a pedido',
     bebidas:        'Bebidas',
     comida:         'Alimentos',
     alimentos:      'Alimentos',

@@ -65,7 +65,7 @@ const TODAS_CATEGORIAS = [
     { value: 'personal',        label: 'Provisión de Personal' },
     { value: 'mobiliario',      label: 'Mobiliario' },
     { value: 'entretenimiento', label: 'Entretenimiento' },
-    { value: 'tortas',          label: 'Elaboración de Tortas' },
+    { value: 'tortas',          label: 'Tortas a pedido' },
     { value: 'bebidas',         label: 'Bebidas' },
     { value: 'comida',          label: 'Alimentos' },
     { value: 'alimentos',       label: 'Alimentos' },
@@ -1102,6 +1102,22 @@ const TabReservasProveedor = ({ reservas, agenda, onActualizar, servicios = [] }
 
 const MisServiciosScreen = () => {
     const { persona } = useAuth()
+    // Restricción por rol: un proveedor de SERVICIOS solo carga servicios; uno de
+    // INSUMOS solo productos. Admin / full-access puede cargar ambos (tipoFijo = null).
+    const tipoFijo = persona?.rol === 'proveedor_servicios' ? 'servicio'
+        : persona?.rol === 'proveedor_insumos' ? 'producto'
+        : null
+    const formInicial = () => (
+        tipoFijo === 'servicio'
+            ? { ...FORM_VACIO, tipo_item: 'servicio', categoria: 'decoracion' }
+            : { ...FORM_VACIO }
+    )
+    const nuevoItemLabel = tipoFijo === 'servicio' ? 'Nuevo servicio en tu tiendita'
+        : tipoFijo === 'producto' ? 'Nuevo producto en tu tiendita'
+        : 'Nuevo ítem en tu tiendita'
+    const agregarBtnLabel = tipoFijo === 'servicio' ? 'Agregar servicio'
+        : tipoFijo === 'producto' ? 'Agregar producto'
+        : 'Agregar ítem'
     const [tabActiva, setTabActiva] = useState('tiendita')
     const [subtabTiendita, setSubtabTiendita] = useState('todos') // 'todos' | 'producto' | 'servicio'
     const [servicios, setServicios] = useState([])
@@ -1154,7 +1170,7 @@ const MisServiciosScreen = () => {
 
     useEffect(() => { cargar() }, [])
 
-    const abrirNuevo = () => { setEditando(null); setForm(FORM_VACIO); setUnidadOtro(false); setError(null); setMostrarForm(true) }
+    const abrirNuevo = () => { setEditando(null); setForm(formInicial()); setUnidadOtro(false); setError(null); setMostrarForm(true) }
     const abrirEditar = (s) => {
         setEditando(s.id_servicio)
         const tipoItem = s.tipo_item || 'producto'
@@ -1182,7 +1198,7 @@ const MisServiciosScreen = () => {
         setUnidadOtro(!!s.unidad && !UNIDADES_PREDEF.includes(s.unidad))
         setError(null); setMostrarForm(true)
     }
-    const cerrarForm = () => { setMostrarForm(false); setEditando(null); setForm(FORM_VACIO); setError(null) }
+    const cerrarForm = () => { setMostrarForm(false); setEditando(null); setForm(formInicial()); setError(null) }
     const handleChange = (e) => {
         const { name, value } = e.target
         // Al cambiar de categoría, resetear la subcategoría (solo aplica a algunas)
@@ -1297,7 +1313,7 @@ const MisServiciosScreen = () => {
                                 <FiUploadCloud size={17} /> Importar Excel
                             </button>
                             <button className='btn-nuevo-servicio' onClick={abrirNuevo}>
-                                <FiPlus size={18} /> Agregar ítem
+                                <FiPlus size={18} /> {agregarBtnLabel}
                             </button>
                         </>
                     )}
@@ -1339,8 +1355,8 @@ const MisServiciosScreen = () => {
                 <div className='mis-servicios-loading'>Cargando...</div>
             ) : tabActiva === 'tiendita' ? (
                 <>
-                    {/* Subtabs tiendita */}
-                    {servicios.length > 0 && (
+                    {/* Subtabs tiendita — se ocultan si el rol ya fija un único tipo */}
+                    {servicios.length > 0 && !tipoFijo && (
                         <div className='tiendita-subtabs'>
                             <button className={`tiendita-subtab ${subtabTiendita === 'todos' ? 'active' : ''}`} onClick={() => setSubtabTiendita('todos')}>
                                 Todos <span className='subtab-count'>{servicios.length}</span>
@@ -1504,11 +1520,12 @@ const MisServiciosScreen = () => {
                 <div className='form-overlay' onClick={cerrarForm}>
                     <div className='form-modal form-modal--wide' onClick={e => e.stopPropagation()}>
                         <div className='form-modal-header'>
-                            <h2>{editando ? 'Editar ítem' : 'Nuevo ítem en tu tiendita'}</h2>
+                            <h2>{editando ? 'Editar ítem' : nuevoItemLabel}</h2>
                             <button className='btn-cerrar-form' onClick={cerrarForm}><FiX size={20}/></button>
                         </div>
 
-                        {/* Selector de tipo */}
+                        {/* Selector de tipo — se oculta si el rol ya fija el tipo (proveedor de servicios/insumos) */}
+                        {!tipoFijo && (
                         <div className='tipo-item-selector'>
                             <button
                                 type='button'
@@ -1529,6 +1546,7 @@ const MisServiciosScreen = () => {
                                 <span className='tipo-item-btn-desc'>Entretenimiento, decoración, audio, fotografía</span>
                             </button>
                         </div>
+                        )}
 
                         <form onSubmit={handleGuardar} className='form-tienda'>
                             <div className='form-group'>
