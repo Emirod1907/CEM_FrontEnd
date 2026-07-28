@@ -1571,7 +1571,7 @@
 .precios-base-hint,
 .cal-hint,
 .panel-fecha-subtitulo,
-.fm-hint { color: #8a7b9d; }
+.fm-hint { color: #6a5b7d; }
 
 .cal-num { color: #4a4060; }
 .cal-hoy .cal-num { color: #241533; }
@@ -1590,8 +1590,9 @@
 .reserva-item-activa { background: rgba(168, 85, 247, 0.14); border-color: rgba(168, 85, 247, 0.45); }
 .cal-libre:hover { background: rgba(107, 35, 216, 0.09); }
 .mm-salon-cel { background: rgba(107, 35, 216, 0.07); }
-.mm-salon-con-reservas { background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.35); }
-.mm-salon-con-reservas:hover { background: rgba(168, 85, 247, 0.18); border-color: rgba(168, 85, 247, 0.6); }
+.mm-salon-con-reservas { background: rgba(243, 238, 255, 0.82); border-color: rgba(168, 85, 247, 0.5); }
+.mm-salon-con-reservas:hover { background: rgba(235, 226, 255, 0.92); border-color: rgba(168, 85, 247, 0.78); }
+.mm-salon-nombre { color: #3a2f52; font-weight: 700; }
 .mm-salon-card:hover { background: rgba(107, 35, 216, 0.1); box-shadow: 0 6px 20px rgba(24, 10, 45, 0.15); }
 .mm-salon-hoy { outline-color: rgba(124, 58, 237, 0.6); }
 
