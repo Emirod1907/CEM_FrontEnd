@@ -1590,6 +1590,13 @@
 .reserva-item-activa { background: rgba(168, 85, 247, 0.14); border-color: rgba(168, 85, 247, 0.45); }
 .cal-libre:hover { background: rgba(107, 35, 216, 0.09); }
 .mm-salon-cel { background: rgba(107, 35, 216, 0.07); }
+/* Re-declarar los colores de estado DESPUÉS del override de .mm-salon-cel,
+   si no, el fondo lavanda de las celdas vacías pisa verdes/naranjas/amarillos. */
+.mm-salon-vacio      { background: transparent; }
+.mm-salon-confirmada { background: rgba(34, 197, 94, 0.85); }
+.mm-salon-sena       { background: rgba(249, 115, 22, 0.85); }
+.mm-salon-pendiente  { background: rgba(234, 179, 8, 0.82); }
+.mm-salon-cancelada  { background: rgba(130, 120, 140, 0.38); }
 .mm-salon-con-reservas { background: rgba(243, 238, 255, 0.82); border-color: rgba(168, 85, 247, 0.5); }
 .mm-salon-con-reservas:hover { background: rgba(235, 226, 255, 0.92); border-color: rgba(168, 85, 247, 0.78); }
 .mm-salon-nombre { color: #3a2f52; font-weight: 700; }
