@@ -1515,3 +1515,120 @@
 .archivo-filtro:hover { background: rgba(255,255,255,0.12); color: #fff; }
 .archivo-filtro.activo { background: linear-gradient(135deg, #770981, #1882da); color: #fff; border-color: transparent; }
 .archivo-detalle-wrap { margin: 12px 20px 0; }
+
+/* ═══════════════════════════════════════════════════════════════
+   BLOQUES CLAROS — misma estética que la Selección de Rol
+   (vidrio blanco esmerilado + texto oscuro). El header y los tabs
+   siguen en blanco sobre el degradado; solo cambian los BLOQUES.
+═══════════════════════════════════════════════════════════════ */
+
+/* -- Contenedores grandes: vidrio blanco con blur (como .role-selection-card) -- */
+.mi-salon-card,
+.precios-card,
+.cal-wrapper,
+.reserva-detalle-panel {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px) saturate(1.1);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 12px 34px rgba(24, 10, 45, 0.14);
+}
+
+/* -- Tarjetas/ítems chicos: blanco sólido con borde violeta tenue (como .role-card) -- */
+.reserva-item,
+.mm-salon-card,
+.dato-item,
+.precios-base-row,
+.archivo-item {
+    background: rgba(255, 255, 255, 0.66);
+    border: 1px solid rgba(107, 35, 216, 0.16);
+}
+
+/* ── Texto oscuro dentro de los bloques ── */
+.mi-salon-body-header h2,
+.precios-card-header h3,
+.mes-titulo,
+.reserva-detalle-header h4,
+.dato-val,
+.reserva-item-nombre,
+.precios-base-val { color: #241533; }
+
+.precios-card-header p,
+.dato-label, .tags-titulo,
+.reserva-dato-label,
+.reservas-lista-titulo,
+.reservas-lista-titulo--sub,
+.reserva-item-email,
+.precios-base-label,
+.cal-leyenda-item,
+.reserva-dato-row > span:not(.reserva-dato-label),
+.reservas-vacio,
+.mm-salon-nombre { color: #5b4a6b; }
+
+.reserva-item-anio,
+.mm-salon-dias-semana > div,
+.cal-header-dias span,
+.precios-base-hint,
+.cal-hint,
+.panel-fecha-subtitulo,
+.fm-hint { color: #8a7b9d; }
+
+.cal-num { color: #4a4060; }
+.cal-hoy .cal-num { color: #241533; }
+.reserva-item-fecha { color: #7c3aed; }
+
+/* ── Bordes/separadores claros ── */
+.reservas-lista-header { border-bottom-color: rgba(107, 35, 216, 0.22); }
+.cal-leyenda { border-top-color: rgba(107, 35, 216, 0.14); }
+.reserva-detalle-header,
+.reserva-acciones { border-color: rgba(107, 35, 216, 0.12); }
+.precios-tabla th, .precios-tabla td { border-bottom-color: rgba(107, 35, 216, 0.12); }
+.precios-tabla th { color: #4a4060; background: rgba(107, 35, 216, 0.05); }
+
+/* ── Hover / seleccionado ── */
+.reserva-item:hover { background: rgba(107, 35, 216, 0.07); }
+.reserva-item-activa { background: rgba(168, 85, 247, 0.14); border-color: rgba(168, 85, 247, 0.45); }
+.cal-libre:hover { background: rgba(107, 35, 216, 0.09); }
+.mm-salon-cel { background: rgba(107, 35, 216, 0.07); }
+.mm-salon-con-reservas { background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.35); }
+.mm-salon-con-reservas:hover { background: rgba(168, 85, 247, 0.18); border-color: rgba(168, 85, 247, 0.6); }
+.mm-salon-card:hover { background: rgba(107, 35, 216, 0.1); box-shadow: 0 6px 20px rgba(24, 10, 45, 0.15); }
+.mm-salon-hoy { outline-color: rgba(124, 58, 237, 0.6); }
+
+/* ── Colores de estado (números del calendario) legibles sobre blanco ── */
+.cal-pendiente_pago .cal-num { color: #a16207; }
+.cal-seña_abonada  .cal-num  { color: #c2410c; }
+.cal-confirmada    .cal-num  { color: #15803d; }
+.cal-cancelada     .cal-num  { color: rgba(120, 90, 90, 0.7); }
+
+/* ── Controles (selects, botones, inputs) en versión clara ── */
+.mes-btn,
+.filtro-estado-select,
+.btn-archivo,
+.btn-editar-info {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(107, 35, 216, 0.2);
+    color: #4a4060;
+}
+.mes-btn:hover,
+.btn-archivo:hover,
+.btn-editar-info:hover { background: rgba(107, 35, 216, 0.12); color: #241533; }
+.filtro-estado-select option { background: #fff; color: #241533; }
+
+.turno-input, .fila-label-input, .precios-notas textarea,
+.precio-input-wrap, .fm-group input, .fm-group select, .fm-group textarea,
+.mf-group input, .mf-group textarea {
+    background: rgba(255, 255, 255, 0.82);
+    border-color: rgba(107, 35, 216, 0.2);
+    color: #241533;
+}
+.turno-input::placeholder, .fila-label-input::placeholder,
+.fm-group input::placeholder, .fm-group textarea::placeholder { color: #9a8aa5; }
+.precio-signo, .precio-input { color: #241533; }
+.precios-notas label, .fm-group label, .mf-group label { color: #4a4060; }
+.fm-checkbox { color: #5b4a6b; }
+.btn-agregar-fila { border-color: rgba(107, 35, 216, 0.28); color: #6a5b7d; }
+.btn-agregar-fila:hover { border-color: rgba(168, 85, 247, 0.55); color: #7c3aed; }
+.mi-salon-img-wrap { background: rgba(240, 235, 250, 0.5); }
+.btn-cerrar-detalle { color: #6a5b7d; }
+.btn-cerrar-detalle:hover { color: #241533; }
