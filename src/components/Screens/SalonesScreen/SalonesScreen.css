@@ -55,6 +55,78 @@
 }
 .sal-esenciales-limpiar:hover { text-decoration: underline; }
 
+/* Checkbox rango de fechas */
+.sal-rango-check {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 0.85rem; font-weight: 600; color: #4a4060; cursor: pointer;
+    margin-top: -2px;
+}
+.sal-rango-check input { width: 16px; height: 16px; accent-color: #7c3aed; cursor: pointer; flex-shrink: 0; }
+.sal-rango-hint { margin: -4px 0 0; font-size: 0.76rem; color: #6a5b7d; line-height: 1.45; }
+.sal-rango-hint strong { color: #7c3aed; }
+
+/* Botón Buscar salón (CTA principal del aside) */
+.sal-buscar-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 4px;
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
+    color: #fff; border: none; border-radius: 12px;
+    padding: 11px 16px; font-size: 0.92rem; font-weight: 800; font-family: inherit;
+    cursor: pointer; box-shadow: 0 10px 24px rgba(107, 35, 216, 0.32);
+    transition: filter 0.15s, transform 0.1s;
+}
+.sal-buscar-btn:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.sal-buscar-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+/* ── Resultados por rango de fechas (más baratos con fechas libres) ── */
+.sal-rango-lista { display: flex; flex-direction: column; gap: 12px; }
+.sal-rango-row {
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 10px 26px rgba(24, 10, 45, 0.16);
+}
+.sal-rango-row--barato { border-color: rgba(34, 160, 107, 0.55); box-shadow: 0 10px 28px rgba(34, 160, 107, 0.22); }
+.sal-rango-img { width: 84px; height: 84px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+.sal-rango-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.sal-rango-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.sal-rango-nombre {
+    font-size: 1rem; font-weight: 800; color: #241533; font-family: 'Raleway', sans-serif;
+    display: flex; align-items: center; gap: 8px; min-width: 0;
+}
+.sal-rango-badge {
+    background: #22a06b; color: #fff; font-size: 0.62rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;
+}
+.sal-rango-precio { font-size: 1.02rem; font-weight: 800; color: #7c3aed; white-space: nowrap; }
+.sal-rango-precio small { font-size: 0.7rem; color: #8a7b9d; font-weight: 600; }
+.sal-rango-loc { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; color: #6a5b7d; }
+.sal-rango-fechas { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.sal-rango-fechas-label { font-size: 0.76rem; color: #6a5b7d; font-weight: 600; margin-right: 2px; }
+.sal-rango-fecha {
+    background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.28);
+    color: #5e4db2; border-radius: 8px; padding: 3px 9px;
+    font-size: 0.78rem; font-weight: 700; font-family: inherit; cursor: pointer;
+    transition: background 0.15s;
+}
+.sal-rango-fecha:hover { background: rgba(124, 58, 237, 0.22); }
+.sal-rango-mas { font-size: 0.76rem; color: #8a7b9d; font-weight: 700; }
+.sal-rango-ver {
+    flex-shrink: 0;
+    background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.28);
+    color: #5e4db2; border-radius: 10px; padding: 9px 16px;
+    font-size: 0.85rem; font-weight: 700; font-family: inherit; cursor: pointer;
+    transition: background 0.15s;
+}
+.sal-rango-ver:hover { background: rgba(124, 58, 237, 0.2); }
+
+@media (max-width: 560px) {
+    .sal-rango-row { flex-wrap: wrap; }
+    .sal-rango-img { width: 100%; height: 120px; }
+}
+
 /* ── Main ── */
 .salones-main {
     min-width: 0;

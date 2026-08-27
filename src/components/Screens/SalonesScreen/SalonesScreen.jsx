@@ -4,8 +4,8 @@ import SalonCard from '../../Cards/SalonCard/SalonCard'
 import SalonesFiltros from '../../Filters/SalonesFiltros/SalonesFiltros'
 import MapaSalonModal from '../../Modals/MapaSalonModal/MapaSalonModal'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
-import { getSalones } from '../../../services/salonesServices'
-import { FiX, FiMapPin, FiUsers, FiMap, FiCalendar, FiColumns, FiCheck, FiSliders, FiTag, FiStar, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+import { getSalones, getDisponibilidadSalon } from '../../../services/salonesServices'
+import { FiX, FiMapPin, FiUsers, FiMap, FiCalendar, FiColumns, FiCheck, FiSliders, FiTag, FiStar, FiChevronLeft, FiChevronRight, FiSearch } from 'react-icons/fi'
 import { useCompare } from '../../../Contexts/CompareContextProvider'
 import CompareBar from '../../CompareBar/CompareBar'
 import '../../Lists/Lists.css'
@@ -18,8 +18,13 @@ const parsearJSON = (valor) => {
     try { return JSON.parse(valor) } catch { return [] }
 }
 
+const isoLocal = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+const fechaCorta = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })
+const precioDe = (s) => Number(s.precio_publico ?? s.precio_alquiler) || 0
+
 const FILTROS_INICIALES = { departamentos: [], localidades: [], aforoMin: '', aforoMax: '', servicios: [], tiposEvento: [], tiposSalon: [] }
 const ESENCIALES_INICIALES = { tipo_evento: '', invitados: '', fecha: '' }
+const CRITERIOS_INICIALES = { tipo_evento: '', invitados: '', fecha: '', rango: null }
 
 const SalonesScreen = () => {
     const navigate = useNavigate()
@@ -28,7 +33,12 @@ const SalonesScreen = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [filters, setFilters] = useState(FILTROS_INICIALES)
-    const [esenciales, setEsenciales] = useState(ESENCIALES_INICIALES)
+    const [esenciales, setEsenciales] = useState(ESENCIALES_INICIALES)   // inputs del aside
+    const [porRango, setPorRango] = useState(false)
+    const [fechaHasta, setFechaHasta] = useState('')
+    const [criterios, setCriterios] = useState(CRITERIOS_INICIALES)      // aplicados con "Buscar salón"
+    const [dispCache, setDispCache] = useState({})   // id_bodega -> [fechas reservadas 'YYYY-MM-DD']
+    const [cargandoDisp, setCargandoDisp] = useState(false)
     const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
     const [salonDetalle, setSalonDetalle] = useState(null)
     const [salonMapa, setSalonMapa] = useState(null)
@@ -39,11 +49,8 @@ const SalonesScreen = () => {
             setLoading(true)
             try {
                 const data = await getSalones()
-                if (data && Array.isArray(data)) {
-                    setSalones(data)
-                } else {
-                    setError('No se pudieron cargar los salones')
-                }
+                if (data && Array.isArray(data)) setSalones(data)
+                else setError('No se pudieron cargar los salones')
             } catch (err) {
                 console.error('Error al obtener salones:', err)
                 setError('Error al cargar los salones: ' + err.message)
@@ -54,16 +61,13 @@ const SalonesScreen = () => {
         fetchSalones()
     }, [])
 
-    // Tipos de evento disponibles (unión de los que aceptan los salones)
     const tiposEventoUnicos = [...new Set(salones.flatMap(s => parsearJSON(s.tipos_evento)))].filter(Boolean).sort()
 
-    // Salones destacados: con imagen, ordenados por aforo (los más grandes primero)
     const destacados = [...salones]
         .filter(s => s.imagen)
         .sort((a, b) => (Number(b.aforo) || 0) - (Number(a.aforo) || 0))
         .slice(0, 8)
 
-    // Cantidad de filtros detallados activos (para el badge del botón)
     const filtrosActivos =
         filters.departamentos.length + filters.localidades.length + filters.servicios.length +
         filters.tiposEvento.length + (filters.tiposSalon || []).length +
@@ -71,9 +75,32 @@ const SalonesScreen = () => {
 
     const setEsencial = (campo, valor) => setEsenciales(prev => ({ ...prev, [campo]: valor }))
 
+    // ── "Buscar salón": aplica los criterios del aside ──
+    const buscarSalon = () => {
+        const rango = (porRango && esenciales.fecha && fechaHasta && fechaHasta >= esenciales.fecha)
+            ? { desde: esenciales.fecha, hasta: fechaHasta }
+            : null
+        setCriterios({
+            tipo_evento: esenciales.tipo_evento,
+            invitados: esenciales.invitados,
+            fecha: esenciales.fecha,
+            rango,
+        })
+    }
+
+    const limpiarTodo = () => {
+        setEsenciales(ESENCIALES_INICIALES)
+        setPorRango(false)
+        setFechaHasta('')
+        setCriterios(CRITERIOS_INICIALES)
+    }
+
+    const hayInput = esenciales.tipo_evento || esenciales.invitados || esenciales.fecha || porRango
+    const hayCriterios = criterios.tipo_evento || criterios.invitados || criterios.fecha || criterios.rango
+
     const pasaEsenciales = (salon) => {
-        if (esenciales.invitados !== '' && Number(salon.aforo) < Number(esenciales.invitados)) return false
-        if (esenciales.tipo_evento && !parsearJSON(salon.tipos_evento).includes(esenciales.tipo_evento)) return false
+        if (criterios.invitados !== '' && Number(salon.aforo) < Number(criterios.invitados)) return false
+        if (criterios.tipo_evento && !parsearJSON(salon.tipos_evento).includes(criterios.tipo_evento)) return false
         return true
     }
 
@@ -96,15 +123,62 @@ const SalonesScreen = () => {
 
     const filteredSalones = salones.filter(s => pasaEsenciales(s) && pasaFiltros(s))
 
-    // Datos que se arrastran al elegir un salón (prefill del form de crear evento)
-    const irAReservar = (salon) => {
+    // ── Modo rango de fechas ──
+    const rangoValido = !!criterios.rango
+    const idsFiltradosKey = filteredSalones.map(s => s.id_bodega).join(',')
+
+    useEffect(() => {
+        if (!rangoValido) return
+        const faltantes = filteredSalones.filter(s => !(s.id_bodega in dispCache))
+        if (faltantes.length === 0) return
+        let cancelado = false
+        setCargandoDisp(true)
+        Promise.all(faltantes.map(s =>
+            getDisponibilidadSalon(s.id_bodega).then(fechas => [s.id_bodega, (fechas || []).map(f => String(f).slice(0, 10))])
+        )).then(entradas => {
+            if (cancelado) return
+            setDispCache(prev => {
+                const n = { ...prev }
+                entradas.forEach(([id, f]) => { n[id] = f })
+                return n
+            })
+        }).finally(() => { if (!cancelado) setCargandoDisp(false) })
+        return () => { cancelado = true }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [rangoValido, criterios.rango, idsFiltradosKey])
+
+    const fechasDisponibles = (id) => {
+        if (!criterios.rango) return []
+        const reservadas = new Set(dispCache[id] || [])
+        const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
+        const d = new Date(criterios.rango.desde + 'T00:00:00')
+        const fin = new Date(criterios.rango.hasta + 'T00:00:00')
+        const out = []
+        let guard = 0
+        while (d <= fin && guard < 400) {
+            guard++
+            const iso = isoLocal(d)
+            if (d >= hoy && !reservadas.has(iso)) out.push(iso)
+            d.setDate(d.getDate() + 1)
+        }
+        return out
+    }
+
+    const resultadosRango = rangoValido
+        ? filteredSalones
+            .map(s => ({ salon: s, fechas: fechasDisponibles(s.id_bodega) }))
+            .filter(r => r.fechas.length > 0)
+            .sort((a, b) => precioDe(a.salon) - precioDe(b.salon))
+        : []
+
+    const irAReservar = (salon, fecha) => {
         setSalonDetalle(null)
         navigate('/eventos/new', {
             state: {
                 salon,
-                tipo_evento: esenciales.tipo_evento || undefined,
-                cupo: esenciales.invitados || undefined,
-                fecha: esenciales.fecha || undefined,
+                tipo_evento: criterios.tipo_evento || esenciales.tipo_evento || undefined,
+                cupo: criterios.invitados || esenciales.invitados || undefined,
+                fecha: fecha || criterios.fecha || esenciales.fecha || undefined,
             },
         })
     }
@@ -113,13 +187,50 @@ const SalonesScreen = () => {
         if (destacadosRef.current) destacadosRef.current.scrollBy({ left: dir * 320, behavior: 'smooth' })
     }
 
+    // ── Contenido principal ──
     let mainContent
     if (loading) {
         mainContent = <div className='salones-loading'><TailSpin /> Cargando salones...</div>
     } else if (error) {
         mainContent = <p className='salones-error'>{error}</p>
+    } else if (rangoValido) {
+        mainContent = (
+            <div className='sal-rango-lista'>
+                {cargandoDisp && <div className='salones-loading'><TailSpin /> Buscando fechas disponibles...</div>}
+                {!cargandoDisp && resultadosRango.length === 0 && (
+                    <p className='salones-sin-resultados'>Ningún salón con fechas libres entre {fechaCorta(criterios.rango.desde)} y {fechaCorta(criterios.rango.hasta)}.</p>
+                )}
+                {!cargandoDisp && resultadosRango.map(({ salon, fechas }, i) => (
+                    <div className={`sal-rango-row ${i === 0 ? 'sal-rango-row--barato' : ''}`} key={salon.id_bodega}>
+                        {salon.imagen && <img src={salon.imagen} alt={salon.nombre} className='sal-rango-img' />}
+                        <div className='sal-rango-info'>
+                            <div className='sal-rango-top'>
+                                <span className='sal-rango-nombre'>
+                                    {i === 0 && <span className='sal-rango-badge'>Más barato</span>}
+                                    {salon.nombre}
+                                </span>
+                                <span className='sal-rango-precio'>
+                                    ${precioDe(salon).toLocaleString('es-AR')}<small>/evento</small>
+                                </span>
+                            </div>
+                            <span className='sal-rango-loc'><FiMapPin size={12} /> {salon.localidad || salon.domicilio} · aforo {salon.aforo}</span>
+                            <div className='sal-rango-fechas'>
+                                <span className='sal-rango-fechas-label'>{fechas.length} fecha{fechas.length !== 1 ? 's' : ''} libre{fechas.length !== 1 ? 's' : ''}:</span>
+                                {fechas.slice(0, 6).map(f => (
+                                    <button key={f} className='sal-rango-fecha' onClick={() => irAReservar(salon, f)} title={`Reservar el ${fechaCorta(f)}`}>
+                                        {fechaCorta(f)}
+                                    </button>
+                                ))}
+                                {fechas.length > 6 && <span className='sal-rango-mas'>+{fechas.length - 6}</span>}
+                            </div>
+                        </div>
+                        <button className='sal-rango-ver' onClick={() => setSalonDetalle(salon)}>Ver</button>
+                    </div>
+                ))}
+            </div>
+        )
     } else if (filteredSalones.length === 0) {
-        mainContent = <p className='salones-sin-resultados'>No se encontraron salones con estos filtros.</p>
+        mainContent = <p className='salones-sin-resultados'>No se encontraron salones con estos criterios.</p>
     } else {
         mainContent = (
             <div className='list-grid'>
@@ -130,13 +241,15 @@ const SalonesScreen = () => {
         )
     }
 
+    const contador = rangoValido ? resultadosRango.length : filteredSalones.length
+
     return (
         <div className='salones-screen'>
-            {/* ── Aside: esenciales del evento (también filtran) ── */}
+            {/* ── Aside: esenciales del evento + botón Buscar ── */}
             <aside className='sal-esenciales'>
                 <div className='sal-esenciales-head'>
                     <h2>Tu evento</h2>
-                    <p>Con estos datos te mostramos los salones ideales.</p>
+                    <p>Cargá los datos y tocá <strong>Buscar salón</strong> para ver los ideales.</p>
                 </div>
 
                 <div className='sal-esencial-campo'>
@@ -154,35 +267,48 @@ const SalonesScreen = () => {
                 </div>
 
                 <div className='sal-esencial-campo'>
-                    <label htmlFor='es-fecha'><FiCalendar size={13} /> Fecha</label>
+                    <label htmlFor='es-fecha'><FiCalendar size={13} /> {porRango ? 'Fecha desde' : 'Fecha'}</label>
                     <input id='es-fecha' type='date' value={esenciales.fecha} onChange={e => setEsencial('fecha', e.target.value)} />
                 </div>
 
-                {(esenciales.tipo_evento || esenciales.invitados || esenciales.fecha) && (
-                    <button className='sal-esenciales-limpiar' onClick={() => setEsenciales(ESENCIALES_INICIALES)}>
-                        Limpiar
-                    </button>
+                <label className='sal-rango-check'>
+                    <input type='checkbox' checked={porRango} onChange={e => setPorRango(e.target.checked)} />
+                    <span>Buscar por rango de fechas</span>
+                </label>
+
+                {porRango && (
+                    <>
+                        <div className='sal-esencial-campo'>
+                            <label htmlFor='es-hasta'><FiCalendar size={13} /> Fecha hasta</label>
+                            <input id='es-hasta' type='date' min={esenciales.fecha || undefined} value={fechaHasta} onChange={e => setFechaHasta(e.target.value)} />
+                        </div>
+                        <p className='sal-rango-hint'>Te mostramos los salones <strong>más baratos</strong> con sus <strong>fechas libres</strong> en el rango.</p>
+                    </>
+                )}
+
+                <button className='sal-buscar-btn' onClick={buscarSalon} disabled={!hayInput}>
+                    <FiSearch size={16} /> Buscar salón
+                </button>
+
+                {(hayCriterios || hayInput) && (
+                    <button className='sal-esenciales-limpiar' onClick={limpiarTodo}>Limpiar</button>
                 )}
             </aside>
 
-            {/* ── Main: destacados + grilla ── */}
+            {/* ── Main ── */}
             <main className='salones-main'>
                 <div className='salones-main-header'>
                     <div>
                         <h1 className='salones-main-titulo'>Salones</h1>
                         {!loading && !error && (
                             <span className='salones-contador'>
-                                {filteredSalones.length} salón{filteredSalones.length !== 1 ? 'es' : ''} encontrado{filteredSalones.length !== 1 ? 's' : ''}
+                                {contador} salón{contador !== 1 ? 'es' : ''} {rangoValido ? 'con fecha libre' : 'encontrado' + (contador !== 1 ? 's' : '')}
                             </span>
                         )}
                     </div>
 
-                    {/* Filtros detallados: botón + panel desplegable arriba a la derecha */}
                     <div className='sal-filtros-wrap'>
-                        <button
-                            className={`sal-filtros-btn ${filtrosAbiertos ? 'activo' : ''}`}
-                            onClick={() => setFiltrosAbiertos(v => !v)}
-                        >
+                        <button className={`sal-filtros-btn ${filtrosAbiertos ? 'activo' : ''}`} onClick={() => setFiltrosAbiertos(v => !v)}>
                             <FiSliders size={16} /> Filtros
                             {filtrosActivos > 0 && <span className='sal-filtros-badge'>{filtrosActivos}</span>}
                         </button>
@@ -194,7 +320,7 @@ const SalonesScreen = () => {
                                         salones={salones}
                                         filters={filters}
                                         onFiltersChange={setFilters}
-                                        cupoFiltro={esenciales.invitados || null}
+                                        cupoFiltro={criterios.invitados || null}
                                     />
                                 </div>
                             </>
@@ -202,8 +328,7 @@ const SalonesScreen = () => {
                     </div>
                 </div>
 
-                {/* Carrusel de salones destacados */}
-                {!loading && !error && destacados.length > 0 && (
+                {!loading && !error && !rangoValido && destacados.length > 0 && (
                     <section className='sal-destacados'>
                         <div className='sal-destacados-head'>
                             <h3><FiStar size={15} /> Salones destacados</h3>

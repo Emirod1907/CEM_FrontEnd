@@ -66,10 +66,9 @@ const NavBar = () => {
             return (
                 <>
                     {link('/eventos', 'Eventos')}
-                    {link('/eventos/new', 'Crear Evento')}
+                    {link('/salones', 'Crear Evento')}
                     {link('/mis-reservas', 'Mis Reservas')}
                     {link('/mis-borradores', 'Borradores')}
-                    {link('/salones', 'Salones')}
                     {link('/salones/new', 'Registrar Salón')}
                     {link('/salones/mapa', 'Mapa Salones')}
                     {link('/admin', 'Admin')}
@@ -102,10 +101,9 @@ const NavBar = () => {
                 return (
                     <>
                         {link('/eventos', 'Mis Eventos')}
-                        {link('/eventos/new', 'Crear Evento')}
+                        {link('/salones', 'Crear Evento')}
                         {link('/mis-reservas', 'Mis Reservas')}
                         {link('/mis-borradores', 'Borradores')}
-                        {link('/salones', 'Salones')}
                         {link('/salones/mapa', 'Mapa Salones')}
                         {panelAdminBtn}
                         {cambiarRolBtn}
