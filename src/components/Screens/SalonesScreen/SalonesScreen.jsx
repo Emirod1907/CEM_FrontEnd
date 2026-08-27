@@ -77,15 +77,13 @@ const SalonesScreen = () => {
 
     // ── "Buscar salón": aplica los criterios del aside ──
     const buscarSalon = () => {
+        const tipo = (esenciales.tipo_evento || '').trim()
         const rango = (porRango && esenciales.fecha && fechaHasta && fechaHasta >= esenciales.fecha)
             ? { desde: esenciales.fecha, hasta: fechaHasta }
             : null
-        setCriterios({
-            tipo_evento: esenciales.tipo_evento,
-            invitados: esenciales.invitados,
-            fecha: esenciales.fecha,
-            rango,
-        })
+        setCriterios({ tipo_evento: tipo, invitados: esenciales.invitados, fecha: esenciales.fecha, rango })
+        // El tipo de evento se refleja en el filtro "Ideal para" del panel
+        setFilters(prev => ({ ...prev, tiposEvento: tipo ? [tipo] : [] }))
     }
 
     const limpiarTodo = () => {
@@ -93,14 +91,15 @@ const SalonesScreen = () => {
         setPorRango(false)
         setFechaHasta('')
         setCriterios(CRITERIOS_INICIALES)
+        setFilters(prev => ({ ...prev, tiposEvento: [] }))
     }
 
     const hayInput = esenciales.tipo_evento || esenciales.invitados || esenciales.fecha || porRango
     const hayCriterios = criterios.tipo_evento || criterios.invitados || criterios.fecha || criterios.rango
 
     const pasaEsenciales = (salon) => {
+        // El tipo de evento se filtra vía filters.tiposEvento ("Ideal para"), sincronizado al buscar.
         if (criterios.invitados !== '' && Number(salon.aforo) < Number(criterios.invitados)) return false
-        if (criterios.tipo_evento && !parsearJSON(salon.tipos_evento).includes(criterios.tipo_evento)) return false
         return true
     }
 
@@ -254,10 +253,12 @@ const SalonesScreen = () => {
 
                 <div className='sal-esencial-campo'>
                     <label htmlFor='es-tipo'><FiTag size={13} /> Tipo de evento</label>
-                    <select id='es-tipo' value={esenciales.tipo_evento} onChange={e => setEsencial('tipo_evento', e.target.value)}>
-                        <option value=''>Todos</option>
-                        {tiposEventoUnicos.map(t => <option key={t} value={t}>{t}</option>)}
-                    </select>
+                    <input id='es-tipo' list='sal-tipos-evento' autoComplete='off'
+                        placeholder='Ej: Cumpleaños, Boda, Corporativo...'
+                        value={esenciales.tipo_evento} onChange={e => setEsencial('tipo_evento', e.target.value)} />
+                    <datalist id='sal-tipos-evento'>
+                        {tiposEventoUnicos.map(t => <option key={t} value={t} />)}
+                    </datalist>
                 </div>
 
                 <div className='sal-esencial-campo'>
