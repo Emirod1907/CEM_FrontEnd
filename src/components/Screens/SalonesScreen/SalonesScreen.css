@@ -215,6 +215,8 @@
 .sal-fila-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .sal-fila-nombre { font-size: 0.98rem; font-weight: 800; color: #241533; font-family: 'Raleway', sans-serif; display: flex; align-items: center; gap: 8px; min-width: 0; }
 .sal-fila-tipo { background: #eae6ff; color: #5e4db2; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; padding: 2px 7px; border-radius: 6px; flex-shrink: 0; }
+.sal-fila-oferta { background: #22a06b; color: #fff; font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; padding: 2px 7px; border-radius: 6px; flex-shrink: 0; }
+.sal-dest-oferta { display: inline-block; margin-left: 6px; background: #22a06b; color: #fff; font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; padding: 1px 6px; border-radius: 5px; vertical-align: middle; }
 .sal-fila-precio { font-size: 1rem; font-weight: 800; color: #7c3aed; white-space: nowrap; }
 .sal-fila-precio small { font-size: 0.68rem; color: #8a7b9d; font-weight: 600; }
 .sal-fila-loc { font-size: 0.8rem; color: #6a5b7d; display: inline-flex; align-items: center; gap: 5px; }

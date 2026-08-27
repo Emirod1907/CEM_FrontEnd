@@ -114,6 +114,16 @@ export const parsePreciosConfig = (val) => {
     } catch { return null }
 }
 
+// True si el salón tiene precios distintos para fin de semana o feriado
+// (monto fijo o % de incremento). Se muestra como "Oferta" en el catálogo.
+export const tienePreciosEspeciales = (preciosConfig) => {
+    const cfg = parsePreciosConfig(preciosConfig)
+    if (!cfg) return false
+    return cfg.fin_semana != null || cfg.feriado != null ||
+        cfg.fin_semana_pct != null || cfg.feriado_pct != null ||
+        cfg.precio_hora_fin_semana != null || cfg.precio_hora_feriado != null
+}
+
 /**
  * Precio efectivo de un salón para un tipo de día ('fin_semana' | 'feriado'),
  * contemplando tanto el monto fijo como el % de incremento sobre el precio base.

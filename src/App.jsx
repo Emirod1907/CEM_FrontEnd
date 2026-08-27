@@ -2,7 +2,7 @@ import React from 'react'
 import Login from './components/Forms/Login/Login'
 import Register from './components/Forms/Register/Register'
 import { Route, Routes } from 'react-router-dom'
-import CreateEventoForm from './components/Forms/CreateEventoForm/CreateEventoForm'
+import ReservaRapida from './components/Screens/EventoFlujo/ReservaRapida'
 import CreateSalonForm from './components/Forms/CreateSalonForm/CreateSalonForm'
 import HomeScreen from './components/Screens/HomeScreen/HomeScreen'
 import EventosList from './components/Lists/EventosList/EventosList'
@@ -59,7 +59,7 @@ function App() {
 
                   {/* Organizador */}
                   <Route element={<RoleRoute roles={['organizador']} />}>
-                    <Route path='/eventos/new' element={<CreateEventoForm/>} />
+                    <Route path='/eventos/new' element={<ReservaRapida/>} />
                     <Route path='/organizar/salon' element={<EventoSalonScreen />} />
                     <Route path='/organizar/servicios' element={<EventoServiciosScreen />} />
                     <Route path='/organizar/productos' element={<EventoProductosScreen />} />

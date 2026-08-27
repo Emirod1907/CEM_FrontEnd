@@ -64,6 +64,14 @@
     background: #eae6ff; color: #5e4db2; font-size: 0.72rem; font-weight: 800;
     text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 20px;
 }
+.sd-oferta {
+    background: #22a06b; color: #fff; font-size: 0.72rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 20px;
+}
+.sd-precio-dia {
+    display: inline-block; margin-left: 8px; font-size: 0.62rem; font-weight: 800;
+    border: 1px solid; border-radius: 6px; padding: 1px 6px; vertical-align: middle;
+}
 
 .sd-datos { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 14px 0; }
 .sd-datos span { display: inline-flex; align-items: center; gap: 7px; font-size: 0.92rem; color: #4a4060; font-weight: 500; }

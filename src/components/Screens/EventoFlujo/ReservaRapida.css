@@ -1,0 +1,73 @@
+.rr-page { width: min(720px, 100%); margin: 0 auto; padding: 8px 4px 40px; }
+
+.rr-vacio {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; min-height: 320px; color: #fff; text-align: center;
+}
+.rr-vacio h2 { margin: 0; font-family: 'Raleway', sans-serif; }
+.rr-vacio p { margin: 0; opacity: 0.8; max-width: 420px; }
+
+.rr-volver {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255, 255, 255, 0.92); border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 12px; padding: 8px 15px; font-size: 0.88rem; font-weight: 700; color: #3a2f52;
+    cursor: pointer; margin-bottom: 16px; box-shadow: 0 6px 16px rgba(24, 10, 45, 0.14);
+    transition: background 0.15s, transform 0.1s;
+}
+.rr-volver:hover { background: #fff; transform: translateY(-1px); }
+
+.rr-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(24, 10, 45, 0.2);
+    padding: 26px 28px 28px;
+}
+.rr-card h1 { margin: 0; font-size: 1.7rem; color: #241533; font-family: 'Raleway', sans-serif; }
+.rr-sub { margin: 6px 0 20px; font-size: 0.9rem; color: #6a5b7d; line-height: 1.5; }
+
+.rr-resumen {
+    display: flex; gap: 14px; align-items: center;
+    background: rgba(124, 58, 237, 0.06); border: 1px solid rgba(124, 58, 237, 0.16);
+    border-radius: 14px; padding: 14px; margin-bottom: 22px;
+}
+.rr-resumen-img { width: 96px; height: 78px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+.rr-resumen-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.rr-resumen-nombre { font-size: 1.05rem; font-weight: 800; color: #241533; font-family: 'Raleway', sans-serif; display: flex; align-items: center; gap: 8px; }
+.rr-oferta { background: #22a06b; color: #fff; font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; padding: 2px 7px; border-radius: 5px; }
+.rr-resumen-linea { display: inline-flex; align-items: center; gap: 6px; font-size: 0.84rem; color: #5b4a6b; text-transform: capitalize; }
+.rr-resumen-linea svg { color: #7c3aed; }
+.rr-resumen-precio { margin-top: 4px; font-size: 1.05rem; font-weight: 800; color: #7c3aed; }
+.rr-resumen-precio small { font-size: 0.68rem; color: #8a7b9d; font-weight: 600; }
+.rr-precio-dia { display: inline-block; margin-left: 8px; font-size: 0.62rem; font-weight: 800; border: 1px solid; border-radius: 6px; padding: 1px 6px; vertical-align: middle; }
+
+.rr-campo { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.rr-campo label { font-size: 0.82rem; font-weight: 700; color: #4a4060; }
+.rr-campo input {
+    border: 1px solid rgba(107, 35, 216, 0.25); border-radius: 10px; padding: 10px 12px;
+    font-size: 0.95rem; color: #241533; background: #fff; font-family: inherit; width: 100%; box-sizing: border-box;
+}
+.rr-campo input:focus { outline: none; border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14); }
+.rr-horas { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.rr-horas .rr-campo { margin-bottom: 16px; }
+
+.rr-error { color: #c0392b; font-size: 0.85rem; margin: 0 0 12px; }
+.rr-hint { color: #8a7b9d; font-size: 0.85rem; font-style: italic; margin: 6px 0 0; }
+
+.rr-acciones { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+.rr-btn {
+    flex: 1; min-width: 160px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border-radius: 12px; padding: 13px 20px; font-size: 0.95rem; font-weight: 800; font-family: inherit; cursor: pointer;
+    transition: filter 0.15s, transform 0.1s, background 0.15s;
+}
+.rr-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.rr-btn--primary { background: linear-gradient(135deg, #6b23d8, #d827b7); color: #fff; border: none; box-shadow: 0 10px 24px rgba(107, 35, 216, 0.32); }
+.rr-btn--primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.rr-btn--ghost { background: rgba(124, 58, 237, 0.1); color: #5e4db2; border: 1px solid rgba(124, 58, 237, 0.3); }
+.rr-btn--ghost:hover:not(:disabled) { background: rgba(124, 58, 237, 0.18); }
+
+@media (max-width: 520px) {
+    .rr-horas { grid-template-columns: 1fr; }
+    .rr-resumen { flex-direction: column; align-items: flex-start; }
+    .rr-resumen-img { width: 100%; height: 130px; }
+}

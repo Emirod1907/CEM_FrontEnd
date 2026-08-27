@@ -6,9 +6,7 @@ import DestacadosCarousel from './DestacadosCarousel'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import { getSalones, getDisponibilidadSalon } from '../../../services/salonesServices'
 import { getValoracionesSalon } from '../../../services/valoracionServices'
-import { solicitarReserva } from '../../../services/reservaServices'
-import { useCarrito } from '../../../Contexts/CarritoContextProvider'
-import { calcularPrecioEvento, tipoDia } from '../../../utils/preciosUtils'
+import { calcularPrecioEvento, tipoDia, tienePreciosEspeciales } from '../../../utils/preciosUtils'
 import { FiMapPin, FiUsers, FiCalendar, FiSliders, FiTag, FiSearch, FiList, FiMap } from 'react-icons/fi'
 import CompareBar from '../../CompareBar/CompareBar'
 import '../../Lists/Lists.css'
@@ -49,8 +47,6 @@ const CRITERIOS_INICIALES = { tipo_evento: '', invitados: '', fecha: '', rango: 
 
 const SalonesScreen = () => {
     const navigate = useNavigate()
-    const { agregarReservaOrganizador } = useCarrito()
-    const [reservando, setReservando] = useState(false)
     const [salones, setSalones] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -220,37 +216,22 @@ const SalonesScreen = () => {
 
     const verSalon = (salon) => navigate(`/salones/${salon.id_bodega}`, { state: { salon, criterios } })
 
-    // Crea la reserva con los datos mínimos (los detalles se completan antes del
-    // pago) y va directo a agregar servicios.
-    const irAReservar = async (salon, fecha) => {
+    // Va al form mínimo de reserva (nombre + hora) con el salón y los datos del
+    // aside ya cargados. La reserva se crea desde ahí (con "Agregar servicios" o "Pagar").
+    const irAReservar = (salon, fecha) => {
         const f = fecha || criterios.fecha || fechaAISO(esenciales.fecha)
         if (!f) {
             alert('Elegí una fecha para tu evento (en el panel "Tu evento") antes de reservar.')
             return
         }
-        if (reservando) return
-        setReservando(true)
-        try {
-            const datos_evento = {
-                nombre: `Evento en ${salon.nombre}`,
-                tipo_evento: criterios.tipo_evento || esenciales.tipo_evento || null,
-                descripcion: '',
+        navigate('/eventos/new', {
+            state: {
+                salon,
+                tipo_evento: criterios.tipo_evento || esenciales.tipo_evento || undefined,
+                cupo: criterios.invitados || esenciales.invitados || undefined,
                 fecha: f,
-                cupo: criterios.invitados || esenciales.invitados || '',
-                bodega_id: salon.id_bodega,
-                es_publico: true,
-                cobrar_entrada: false,
-                precio: 0,
-            }
-            const reserva = await solicitarReserva({ bodega_id: salon.id_bodega, fecha: f, datos_evento })
-            agregarReservaOrganizador(reserva, false)
-            navigate('/organizar/servicios')
-        } catch (e) {
-            console.error('Error al reservar salón:', e)
-            alert('No se pudo reservar el salón. ' + (e?.response?.data?.message || e?.message || ''))
-        } finally {
-            setReservando(false)
-        }
+            },
+        })
     }
 
     const salonesParaMapa = rangoValido ? resultadosRango.map(r => r.salon) : filteredSalones
@@ -325,6 +306,7 @@ const SalonesScreen = () => {
                                     <span className='sal-fila-nombre'>
                                         {salon.nombre}
                                         {salon.tipo_salon && <span className='sal-fila-tipo'>{salon.tipo_salon}</span>}
+                                        {tienePreciosEspeciales(salon.precios_config) && <span className='sal-fila-oferta'>🏷️ Oferta</span>}
                                     </span>
                                     {(() => {
                                         const p = precioParaFecha(salon)

@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
 import { getSalones } from '../../../services/salonesServices'
-import { solicitarReserva } from '../../../services/reservaServices'
-import { useCarrito } from '../../../Contexts/CarritoContextProvider'
+import { calcularPrecioEvento, tienePreciosEspeciales } from '../../../utils/preciosUtils'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import { FiArrowLeft, FiMapPin, FiUsers, FiCalendar, FiExternalLink } from 'react-icons/fi'
 import './SalonDetailScreen.css'
@@ -22,11 +21,9 @@ const SalonDetailScreen = () => {
     const location = useLocation()
     const navigate = useNavigate()
     const criterios = location.state?.criterios || {}
-    const { agregarReservaOrganizador } = useCarrito()
 
     const [salon, setSalon] = useState(location.state?.salon || null)
     const [cargando, setCargando] = useState(!location.state?.salon)
-    const [reservando, setReservando] = useState(false)
 
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -59,37 +56,27 @@ const SalonDetailScreen = () => {
     const servicios = parsearJSON(salon.servicios_incluidos)
     const tipos = parsearJSON(salon.tipos_evento)
 
-    // Crea la reserva mínima y va directo a agregar servicios (los detalles se
-    // completan antes del pago).
-    const reservar = async () => {
+    // Precio para la fecha ingresada en la búsqueda (fin de semana / feriado)
+    const base = Number(salon.precio_publico ?? salon.precio_alquiler) || 0
+    const infoPrecio = criterios.fecha ? calcularPrecioEvento(base, salon.precios_config, criterios.fecha, 1) : null
+    const precioMostrar = infoPrecio ? infoPrecio.precio : base
+    const hayOferta = tienePreciosEspeciales(salon.precios_config)
+
+    // Va al form mínimo de reserva (nombre + hora) con el salón y la fecha cargados.
+    const reservar = () => {
         const f = criterios.fecha
         if (!f) {
             alert('Volvé a la búsqueda y elegí una fecha para tu evento antes de reservar.')
             return
         }
-        if (reservando) return
-        setReservando(true)
-        try {
-            const datos_evento = {
-                nombre: `Evento en ${salon.nombre}`,
-                tipo_evento: criterios.tipo_evento || null,
-                descripcion: '',
+        navigate('/eventos/new', {
+            state: {
+                salon,
+                tipo_evento: criterios.tipo_evento || undefined,
+                cupo: criterios.invitados || undefined,
                 fecha: f,
-                cupo: criterios.invitados || '',
-                bodega_id: salon.id_bodega,
-                es_publico: true,
-                cobrar_entrada: false,
-                precio: 0,
-            }
-            const reserva = await solicitarReserva({ bodega_id: salon.id_bodega, fecha: f, datos_evento })
-            agregarReservaOrganizador(reserva, false)
-            navigate('/organizar/servicios')
-        } catch (e) {
-            console.error('Error al reservar salón:', e)
-            alert('No se pudo reservar el salón. ' + (e?.response?.data?.message || e?.message || ''))
-        } finally {
-            setReservando(false)
-        }
+            },
+        })
     }
 
     return (
@@ -104,14 +91,18 @@ const SalonDetailScreen = () => {
                         <div className='sd-titulo-row'>
                             <h1>{salon.nombre}</h1>
                             {salon.tipo_salon && <span className='sd-tipo'>{salon.tipo_salon}</span>}
+                            {hayOferta && <span className='sd-oferta'>🏷️ Oferta</span>}
                         </div>
 
                         <div className='sd-datos'>
                             {direccion && <span><FiMapPin size={15} /> {direccion}</span>}
                             <span><FiUsers size={15} /> Aforo: {salon.aforo} personas</span>
-                            {(salon.precio_publico ?? salon.precio_alquiler) != null && (
+                            {base > 0 && (
                                 <span className='sd-precio'>
-                                    ${Number(salon.precio_publico ?? salon.precio_alquiler).toLocaleString('es-AR')}<small>/evento</small>
+                                    ${precioMostrar.toLocaleString('es-AR')}<small>/evento</small>
+                                    {infoPrecio && infoPrecio.tipo !== 'comun' && (
+                                        <span className='sd-precio-dia' style={{ color: infoPrecio.color, borderColor: infoPrecio.color }}>{infoPrecio.label}</span>
+                                    )}
                                 </span>
                             )}
                         </div>
@@ -136,8 +127,8 @@ const SalonDetailScreen = () => {
                             </div>
                         )}
 
-                        <button className='sd-reservar' onClick={reservar} disabled={reservando}>
-                            <FiCalendar size={16} /> {reservando ? 'Reservando…' : 'Reservar salón'}
+                        <button className='sd-reservar' onClick={reservar}>
+                            <FiCalendar size={16} /> Reservar salón
                         </button>
                     </div>
                 </div>

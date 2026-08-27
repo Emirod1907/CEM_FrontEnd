@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { FiStar, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+import { tienePreciosEspeciales } from '../../../utils/preciosUtils'
 
 const precioDe = (s) => Number(s.precio_publico ?? s.precio_alquiler) || 0
 
@@ -95,7 +96,10 @@ const DestacadosCarousel = ({ salones, onVer }) => {
                     <button className='sal-dest-card' key={s.id_bodega} onClick={() => onVer(s)} title={s.nombre}>
                         {s.imagen && <img src={s.imagen} alt={s.nombre} className='sal-dest-img' loading='lazy' />}
                         <div className='sal-dest-body'>
-                            <span className='sal-dest-nombre'>{s.nombre}</span>
+                            <span className='sal-dest-nombre'>
+                                {s.nombre}
+                                {tienePreciosEspeciales(s.precios_config) && <span className='sal-dest-oferta'>Oferta</span>}
+                            </span>
                             <div className='sal-dest-precio-row'>
                                 <span className='sal-dest-precio'>${precioDe(s).toLocaleString('es-AR')}</span>
                                 {Number(s.descuento) > 0 && <span className='sal-dest-desc'>-{Number(s.descuento)}%</span>}
