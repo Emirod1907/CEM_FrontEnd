@@ -60,3 +60,31 @@
     .pago-grid { grid-template-columns: 1fr; }
     .pago-resumen { position: static; }
 }
+
+/* ── Detalles del evento (paso previo al pago) ── */
+.pago-detalles { display: flex; flex-direction: column; gap: 13px; }
+.pd-campo { display: flex; flex-direction: column; gap: 5px; }
+.pd-campo label { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.85); }
+.pd-campo input {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 9px;
+    padding: 9px 12px; font-size: 0.9rem; color: #fff; font-family: inherit; box-sizing: border-box;
+}
+.pd-campo input::placeholder { color: rgba(255,255,255,0.4); }
+.pd-campo input:focus { outline: none; border-color: #a855f7; }
+.pd-toggle { display: flex; gap: 8px; }
+.pd-toggle button {
+    flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 9px; padding: 9px; font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.85);
+    cursor: pointer; font-family: inherit; transition: background 0.15s, border-color 0.15s;
+}
+.pd-toggle button.activo { background: linear-gradient(135deg, #6b23d8, #d827b7); border-color: transparent; color: #fff; }
+.pd-hint { font-size: 0.74rem; color: rgba(255,255,255,0.55); }
+.pd-check { display: flex; align-items: center; gap: 9px; font-size: 0.88rem; font-weight: 600; color: rgba(255,255,255,0.9); cursor: pointer; }
+.pd-check input { width: 16px; height: 16px; accent-color: #a855f7; }
+.pd-guardar {
+    align-self: flex-start; background: rgba(168,85,247,0.2); border: 1px solid rgba(168,85,247,0.45);
+    color: #d8b4fe; border-radius: 9px; padding: 8px 18px; font-size: 0.85rem; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: background 0.15s;
+}
+.pd-guardar:hover:not(:disabled) { background: rgba(168,85,247,0.32); }
+.pd-guardar:disabled { opacity: 0.6; cursor: not-allowed; }

@@ -4,6 +4,7 @@ import { useCarrito } from '../../../Contexts/CarritoContextProvider'
 import { useAuth } from '../../../Contexts/PersonaContextProvider'
 import { crearPreferenciaOrganizador } from '../../../services/pagoServices'
 import { aceptarTerminosConsumidor } from '../../../services/contratoServices'
+import { actualizarDatosEvento } from '../../../services/reservaServices'
 import { precioUnitarioConDescuento } from '../../../utils/preciosUtils'
 import TerminosConsumidorGate from '../../Carrito/TerminosConsumidorGate'
 import { FiArrowLeft, FiHome, FiMapPin, FiCalendar, FiCheck } from 'react-icons/fi'
@@ -19,6 +20,7 @@ const EventoPagoScreen = () => {
     const {
         reservaOrganizador, serviciosCarrito, totalOrganizador, montoSena,
         invitadosEfectivos, precioEntrada, factorComisionOrg,
+        setReservaOrganizador, setPrecioEntrada,
     } = useCarrito()
 
     // La comisión del cliente va incorporada de forma invisible en cada precio.
@@ -27,6 +29,39 @@ const EventoPagoScreen = () => {
     const [aceptoTerminos, setAceptoTerminos] = useState(false)
     const [loadingPago, setLoadingPago] = useState(false)
     const [error, setError] = useState(null)
+
+    // Detalles del evento que antes estaban en el form de crear evento: se completan
+    // acá, en el paso previo al pago, y se persisten con actualizarDatosEvento.
+    const deInicial = reservaOrganizador?.datos_evento || {}
+    const [detalles, setDetalles] = useState({
+        nombre: deInicial.nombre || '',
+        es_publico: deInicial.es_publico !== false,
+        cobrar_entrada: !!deInicial.cobrar_entrada,
+        precio: deInicial.precio ? String(deInicial.precio) : '',
+    })
+    const [guardandoDet, setGuardandoDet] = useState(false)
+    const setDet = (campo, valor) => setDetalles(prev => ({ ...prev, [campo]: valor }))
+
+    const guardarDetalles = async () => {
+        if (!reservaOrganizador) return
+        setGuardandoDet(true)
+        try {
+            const precioNum = detalles.cobrar_entrada ? (Number(detalles.precio) || 0) : 0
+            const patch = {
+                nombre: (detalles.nombre || '').trim() || 'Mi evento',
+                es_publico: detalles.es_publico,
+                cobrar_entrada: detalles.cobrar_entrada,
+                precio: precioNum,
+            }
+            await actualizarDatosEvento(reservaOrganizador.id_reserva, patch)
+            setReservaOrganizador({ ...reservaOrganizador, datos_evento: { ...(reservaOrganizador.datos_evento || {}), ...patch } })
+            setPrecioEntrada(detalles.cobrar_entrada && precioNum > 0 ? String(precioNum) : '')
+        } catch (e) {
+            console.error('Error al guardar detalles:', e)
+        } finally {
+            setGuardandoDet(false)
+        }
+    }
 
     if (!reservaOrganizador) {
         return (
@@ -63,12 +98,13 @@ const EventoPagoScreen = () => {
         if (!aceptoTerminos) { setError('Aceptá las bases y condiciones para continuar.'); return }
         setLoadingPago(true); setError(null)
         try {
+            await guardarDetalles()
             await aceptarTerminosConsumidor().catch(() => {})
             const data = await crearPreferenciaOrganizador({
                 reserva_id: reservaOrganizador.id_reserva,
                 tipo_pago,
                 servicios: serviciosCarrito,
-                precio_entrada: Number(precioEntrada) > 0 ? Number(precioEntrada) : undefined,
+                precio_entrada: detalles.cobrar_entrada && Number(detalles.precio) > 0 ? Number(detalles.precio) : undefined,
             })
             if (!data) { setError('No se pudo iniciar el pago. Intentá de nuevo.'); return }
             irAlCheckout(data)
@@ -90,6 +126,38 @@ const EventoPagoScreen = () => {
             <div className='pago-grid'>
                 {/* Resumen del evento + servicios */}
                 <div className='pago-col'>
+                    {/* Detalles del evento (antes en el form de crear evento) */}
+                    <div className='pago-card pago-detalles'>
+                        <h4>Detalles del evento</h4>
+                        <div className='pd-campo'>
+                            <label>Nombre del evento</label>
+                            <input type='text' value={detalles.nombre} maxLength={100}
+                                onChange={e => setDet('nombre', e.target.value)} placeholder='Ej: Cumple de Vicenta' />
+                        </div>
+                        <div className='pd-campo'>
+                            <label>Visibilidad</label>
+                            <div className='pd-toggle'>
+                                <button type='button' className={detalles.es_publico ? 'activo' : ''} onClick={() => setDet('es_publico', true)}>🌐 Público</button>
+                                <button type='button' className={!detalles.es_publico ? 'activo' : ''} onClick={() => setDet('es_publico', false)}>🔒 Privado</button>
+                            </div>
+                            <span className='pd-hint'>{detalles.es_publico ? 'Aparece en la cartelera; podés vender entradas.' : 'Solo por invitación (WhatsApp) en el último paso.'}</span>
+                        </div>
+                        <label className='pd-check'>
+                            <input type='checkbox' checked={detalles.cobrar_entrada} onChange={e => setDet('cobrar_entrada', e.target.checked)} />
+                            Cobrar entrada
+                        </label>
+                        {detalles.cobrar_entrada && (
+                            <div className='pd-campo'>
+                                <label>Precio de la entrada (por persona)</label>
+                                <input type='number' min='0' value={detalles.precio}
+                                    onChange={e => setDet('precio', e.target.value)} placeholder='Ej: 5000' />
+                            </div>
+                        )}
+                        <button className='pd-guardar' onClick={guardarDetalles} disabled={guardandoDet}>
+                            {guardandoDet ? 'Guardando…' : 'Guardar detalles'}
+                        </button>
+                    </div>
+
                     <div className='pago-card'>
                         <h3>{de.nombre || 'Evento'}</h3>
                         <div className='pago-datos'>

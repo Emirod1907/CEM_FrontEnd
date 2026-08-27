@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCarrito } from '../../../Contexts/CarritoContextProvider'
-import { getReservaDetalle } from '../../../services/reservaServices'
+import { getReservaDetalle, actualizarDatosEvento } from '../../../services/reservaServices'
+import { generarTextoInvitacion } from '../../../utils/eventoUtils'
 import { InvitacionesPanel } from '../../Modals/InvitacionesModal/InvitacionesModal'
 import { FiHome, FiCheck, FiGlobe, FiClock, FiRefreshCw } from 'react-icons/fi'
 import './EventoFlujo.css'
@@ -14,6 +15,9 @@ const EventoInvitadosScreen = () => {
     const [reserva, setReserva]   = useState(null)
     const [cargando, setCargando] = useState(true)
     const [error, setError]       = useState(null)
+    const [texto, setTexto]       = useState('')
+    const [guardandoTexto, setGuardandoTexto] = useState(false)
+    const [guardadoOk, setGuardadoOk]         = useState(false)
 
     const idReserva = reservaOrganizador?.id_reserva
 
@@ -27,6 +31,21 @@ const EventoInvitadosScreen = () => {
     }
 
     useEffect(() => { cargar() }, [idReserva])
+    useEffect(() => { if (reserva) setTexto(reserva.datos_evento?.descripcion || '') }, [reserva])
+
+    const guardarTexto = async () => {
+        setGuardandoTexto(true); setGuardadoOk(false)
+        try {
+            await actualizarDatosEvento(idReserva, { descripcion: texto })
+            setReserva(prev => prev ? { ...prev, datos_evento: { ...(prev.datos_evento || {}), descripcion: texto } } : prev)
+            setGuardadoOk(true)
+            setTimeout(() => setGuardadoOk(false), 2000)
+        } catch {
+            setError('No se pudo guardar el texto de la invitación.')
+        } finally {
+            setGuardandoTexto(false)
+        }
+    }
 
     // Sin reserva en curso: no hay a qué evento invitar
     if (!idReserva) {
@@ -97,6 +116,27 @@ const EventoInvitadosScreen = () => {
                 <h1>Invitaciones</h1>
                 <p>Enviá invitaciones personalizadas por WhatsApp para <strong>{de?.nombre || 'tu evento'}</strong>.
                    Cada invitado recibe un link único para confirmar asistencia y recibir su entrada con QR.</p>
+            </div>
+
+            {/* Tarjeta / texto de la invitación (antes en el form de crear evento) */}
+            <div className='inv-tarjeta'>
+                <h3>✉️ Tarjeta de invitación</h3>
+                <p className='inv-tarjeta-hint'>Este es el mensaje que van a recibir tus invitados. Editalo o generalo automáticamente.</p>
+                <textarea
+                    className='inv-tarjeta-text'
+                    rows={5}
+                    value={texto}
+                    onChange={e => setTexto(e.target.value)}
+                    placeholder='Escribí el mensaje de la invitación…'
+                />
+                <div className='inv-tarjeta-acciones'>
+                    <button className='flujo-btn flujo-btn--ghost' onClick={() => setTexto(generarTextoInvitacion(de?.tipo_evento, de?.nombre))}>
+                        Generar automáticamente
+                    </button>
+                    <button className='flujo-btn flujo-btn--primary' onClick={guardarTexto} disabled={guardandoTexto}>
+                        {guardandoTexto ? 'Guardando…' : guardadoOk ? <><FiCheck size={15} /> Guardado</> : 'Guardar tarjeta'}
+                    </button>
+                </div>
             </div>
 
             <InvitacionesPanel

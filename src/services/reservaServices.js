@@ -24,6 +24,13 @@ export const cambiarFechaReserva = async (id_reserva, fecha) => {
     return response.data.reserva
 }
 
+// PATCH /api/reservas/:id/datos — actualiza datos del evento (nombre, texto de
+// invitación/tarjeta, cobrar entrada + precio, visibilidad) de una reserva ya creada.
+export const actualizarDatosEvento = async (id, patch) => {
+    const response = await axios.patch(`reservas/${id}/datos`, patch)
+    return response.data
+}
+
 // GET /api/reservas/mis-reservas
 export const getMisReservas = async () => {
     try {
