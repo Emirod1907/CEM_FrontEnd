@@ -153,6 +153,8 @@
 .sal-mapa-iw-img { width: 100%; height: 96px; object-fit: cover; border-radius: 8px; margin-bottom: 6px; }
 .sal-mapa-iw h3 { margin: 0 0 4px; font-size: 0.98rem; color: #241533; }
 .sal-mapa-iw p { margin: 2px 0; font-size: 0.82rem; color: #5b4a6b; }
+.sal-mapa-iw-precio strong { color: #7c3aed; font-size: 0.92rem; }
+.sal-mapa-iw-precio small { color: #8a7b9d; }
 .sal-mapa-iw-btns { display: flex; gap: 6px; margin-top: 8px; }
 .sal-mapa-iw-btns button {
     flex: 1; border: 1px solid rgba(124, 58, 237, 0.3); background: #fff; color: #5e4db2;
@@ -169,10 +171,18 @@
 /* ── Destacados: cards chicas + carrusel ── */
 .sal-dest-track {
     display: flex; gap: 12px; overflow-x: auto;
-    padding: 4px 2px 12px; scroll-snap-type: x proximity; scrollbar-width: thin;
+    padding: 4px 2px 6px; scroll-snap-type: x proximity;
+    scrollbar-width: none; -ms-overflow-style: none;
 }
-.sal-dest-track::-webkit-scrollbar { height: 7px; }
-.sal-dest-track::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 6px; }
+.sal-dest-track::-webkit-scrollbar { display: none; }
+/* Puntitos de posición (reemplazan la barra desplegable) */
+.sal-dest-dots { display: flex; justify-content: center; gap: 7px; margin-top: 4px; }
+.sal-dest-dot {
+    width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0; cursor: pointer;
+    background: rgba(255, 255, 255, 0.42); transition: background 0.2s, transform 0.2s;
+}
+.sal-dest-dot:hover { background: rgba(255, 255, 255, 0.7); }
+.sal-dest-dot.activo { background: #fff; transform: scale(1.35); }
 .sal-dest-card {
     flex: 0 0 165px; scroll-snap-align: start;
     background: #fff; border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 12px;
@@ -349,12 +359,22 @@
     right: 0;
     z-index: 50;
     width: 300px;
-    max-height: 72vh;
+    max-height: 82vh;
     overflow-y: auto;
     border-radius: 16px;
     box-shadow: 0 22px 54px rgba(20, 8, 38, 0.42);
 }
-.sal-filtros-dropdown .filtros-aside { width: 100%; margin: 0; }
+/* Dentro del dropdown el aside NO debe tener su propio scroll/sticky:
+   el scroll lo maneja el dropdown; si no, la última sección ("Ideal para")
+   no llega hasta el final. */
+.sal-filtros-dropdown .filtros-aside {
+    width: 100%; margin: 0;
+    position: static;
+    max-height: none;
+    overflow: visible;
+    height: auto;
+    padding-bottom: 14px;
+}
 
 /* ── Carrusel de salones destacados ── */
 .sal-destacados { margin-bottom: 22px; }

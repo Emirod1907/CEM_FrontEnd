@@ -86,7 +86,7 @@ const SalonesScreen = () => {
     const destacados = [...salones]
         .filter(s => s.imagen)
         .sort((a, b) => (Number(b.aforo) || 0) - (Number(a.aforo) || 0))
-        .slice(0, 10)
+        .slice(0, 8)
 
     const filtrosActivos =
         filters.departamentos.length + filters.localidades.length + filters.servicios.length +
@@ -391,7 +391,7 @@ const SalonesScreen = () => {
 
                 {vista === 'mapa' ? (
                     !loading && !error
-                        ? <SalonesMapaInline salones={salonesParaMapa} onVer={verSalon} onReservar={(s) => irAReservar(s)} />
+                        ? <SalonesMapaInline salones={salonesParaMapa} onVer={verSalon} onReservar={(s) => irAReservar(s)} fecha={criterios.fecha} />
                         : (loading ? <div className='salones-loading'><TailSpin /> Cargando salones...</div> : <p className='salones-error'>{error}</p>)
                 ) : (
                     <>

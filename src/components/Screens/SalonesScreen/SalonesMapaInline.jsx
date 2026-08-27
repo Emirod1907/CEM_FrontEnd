@@ -2,6 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import { FiMapPin, FiCrosshair } from 'react-icons/fi'
+import { calcularPrecioEvento } from '../../../utils/preciosUtils'
+
+const fechaCortaLbl = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })
 
 const LIBRARIES = ['places']
 const CENTRO_DEFAULT = { lat: -32.8908, lng: -68.8272 } // Mendoza
@@ -24,7 +27,7 @@ function distanciaKm(lat1, lon1, lat2, lon2) {
 
 // Mapa embebido en el hub: muestra los salones ya filtrados y agrega sus propios
 // filtros de distancia (geolocalización) y tipo de salón.
-const SalonesMapaInline = ({ salones, onVer, onReservar }) => {
+const SalonesMapaInline = ({ salones, onVer, onReservar, fecha }) => {
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
         libraries: LIBRARIES,
@@ -120,6 +123,20 @@ const SalonesMapaInline = ({ salones, onVer, onReservar }) => {
                             <h3>{sel.nombre}</h3>
                             <p>📍 {sel.domicilio}</p>
                             <p>👥 Aforo: {sel.aforo}</p>
+                            {(() => {
+                                const base = Number(sel.precio_publico ?? sel.precio_alquiler) || 0
+                                if (!base) return null
+                                if (fecha) {
+                                    const info = calcularPrecioEvento(base, sel.precios_config, fecha, 1)
+                                    return (
+                                        <p className='sal-mapa-iw-precio'>
+                                            💲 <strong>${info.precio.toLocaleString('es-AR')}</strong>
+                                            <small> · {fechaCortaLbl(fecha)}{info.tipo !== 'comun' ? ` · ${info.label}` : ''}</small>
+                                        </p>
+                                    )
+                                }
+                                return <p className='sal-mapa-iw-precio'>💲 <strong>${base.toLocaleString('es-AR')}</strong><small> /evento</small></p>
+                            })()}
                             {ubicacion && sel.latitud != null && (
                                 <p>📏 {distanciaKm(ubicacion.lat, ubicacion.lng, Number(sel.latitud), Number(sel.longitud)).toFixed(1)} km</p>
                             )}
