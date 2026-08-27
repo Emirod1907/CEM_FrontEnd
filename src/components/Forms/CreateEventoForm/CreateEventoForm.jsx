@@ -201,6 +201,8 @@ const CreateEventoForm = () => {
 
     const fechaPreseleccionada = location.state?.fecha || ''
     const salonPreseleccionado = location.state?.salon || null
+    const tipoPreseleccionado = location.state?.tipo_evento || ''
+    const cupoPreseleccionado = location.state?.cupo || ''
     const formStateRestaurado = location.state?._formState || null
 
     const [OpenModal, SetOpenModal] = useState(false)
@@ -212,6 +214,8 @@ const CreateEventoForm = () => {
         return {
             ...initial_form_state,
             fecha: fechaPreseleccionada,
+            tipo_evento: tipoPreseleccionado || initial_form_state.tipo_evento,
+            cupo: cupoPreseleccionado || initial_form_state.cupo,
             salon: salonPreseleccionado
                 ? {
                     id_bodega: salonPreseleccionado.id_bodega,
