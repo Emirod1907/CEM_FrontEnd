@@ -30,7 +30,7 @@ const GoogleAuthCallback = () => {
                     } else {
                         const destinos = {
                             entusiasta: '/eventos',
-                            organizador: '/eventos/new',
+                            organizador: '/salones',
                             dueno_salon: '/mi-salon',
                             proveedor_servicios: '/mis-servicios',
                             proveedor_insumos: '/mi-catalogo',

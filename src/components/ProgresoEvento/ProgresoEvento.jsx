@@ -29,7 +29,9 @@ const ProgresoEvento = () => {
     // evento: el formulario de crear evento, los pasos de servicios/productos/
     // invitados, o el pago. En cualquier otra pantalla desaparece, aunque haya una
     // reserva parkeada en el carrito.
-    const enCreacion = path.startsWith('/eventos/new')
+    // El paso 1 (Salón) es el catálogo de salones (/salones y el detalle /salones/:id),
+    // además del form mínimo de reserva (/eventos/new).
+    const enCreacion = path.startsWith('/eventos/new') || path === '/salones' || path.startsWith('/salones/')
     const enFlujo = enCreacion || path.startsWith('/organizar') || path.startsWith('/pago')
     // El mapa fullscreen ocuparía toda la pantalla: la barra no debe taparlo
     const enMapaFull = path.startsWith('/salones/mapa')
