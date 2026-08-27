@@ -4,15 +4,28 @@ import { FiStar, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 const precioDe = (s) => Number(s.precio_publico ?? s.precio_alquiler) || 0
 
 // Carrusel de salones destacados: cards chicas (nombre + precio + descuento),
-// auto-deslizante y secuencial. Sin barra: la posición se indica con puntitos.
+// auto-deslizante y secuencial. Los puntitos = posiciones REALES de scroll
+// (no una por card), así todos se usan y el activo avanza con la secuencia.
 const DestacadosCarousel = ({ salones, onVer }) => {
     const trackRef = useRef(null)
     const [activo, setActivo] = useState(0)
+    const [dots, setDots] = useState(1)
 
     const pasoCard = () => {
         const track = trackRef.current
         const card = track?.querySelector('.sal-dest-card')
         return card ? card.offsetWidth + 12 : 180
+    }
+
+    // Cantidad de puntitos = cantidad de posiciones de inicio alcanzables
+    const recomputar = () => {
+        const track = trackRef.current
+        if (!track) return
+        const paso = pasoCard()
+        const maxScroll = track.scrollWidth - track.clientWidth
+        const n = maxScroll <= 4 ? 1 : Math.round(maxScroll / paso) + 1
+        setDots(n)
+        setActivo(Math.min(Math.round(track.scrollLeft / paso), Math.max(0, n - 1)))
     }
 
     const irA = (i) => {
@@ -28,9 +41,20 @@ const DestacadosCarousel = ({ salones, onVer }) => {
     const onScroll = () => {
         const track = trackRef.current
         if (!track) return
-        setActivo(Math.round(track.scrollLeft / pasoCard()))
+        setActivo(Math.min(Math.round(track.scrollLeft / pasoCard()), Math.max(0, dots - 1)))
     }
 
+    // Recalcular puntitos al montar, al cambiar los salones, al reajustar layout
+    useEffect(() => {
+        recomputar()
+        const onResize = () => recomputar()
+        window.addEventListener('resize', onResize)
+        const t = setTimeout(recomputar, 400) // tras cargar imágenes
+        return () => { window.removeEventListener('resize', onResize); clearTimeout(t) }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [salones.length])
+
+    // Auto-slide secuencial (pausa al pasar el mouse)
     useEffect(() => {
         const track = trackRef.current
         if (!track || salones.length <= 1) return
@@ -81,14 +105,14 @@ const DestacadosCarousel = ({ salones, onVer }) => {
                 ))}
             </div>
 
-            {salones.length > 1 && (
+            {dots > 1 && (
                 <div className='sal-dest-dots'>
-                    {salones.map((_, i) => (
+                    {Array.from({ length: dots }).map((_, i) => (
                         <button
                             key={i}
                             className={`sal-dest-dot ${i === activo ? 'activo' : ''}`}
                             onClick={() => irA(i)}
-                            aria-label={`Ir al salón ${i + 1}`}
+                            aria-label={`Posición ${i + 1}`}
                         />
                     ))}
                 </div>
