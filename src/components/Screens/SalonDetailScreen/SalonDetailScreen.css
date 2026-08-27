@@ -1,0 +1,123 @@
+.sd-page {
+    width: min(1200px, 100%);
+    margin: 0 auto;
+    padding: 8px 4px 40px;
+}
+
+.sd-estado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 300px;
+    color: #fff;
+    font-weight: 700;
+    flex-direction: column;
+}
+
+.sd-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    padding: 8px 15px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #3a2f52;
+    cursor: pointer;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 16px rgba(24, 10, 45, 0.14);
+    transition: background 0.15s, transform 0.1s;
+}
+.sd-volver:hover { background: #fff; transform: translateY(-1px); }
+
+.sd-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.sd-card,
+.sd-mapa-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(24, 10, 45, 0.2);
+    overflow: hidden;
+}
+
+.sd-img {
+    width: 100%;
+    max-height: 340px;
+    object-fit: cover;
+    display: block;
+}
+
+.sd-body { padding: 22px 24px 24px; }
+
+.sd-titulo-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.sd-body h1 { margin: 0; font-size: 1.7rem; color: #241533; font-family: 'Raleway', sans-serif; }
+.sd-tipo {
+    background: #eae6ff; color: #5e4db2; font-size: 0.72rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 20px;
+}
+
+.sd-datos { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 14px 0; }
+.sd-datos span { display: inline-flex; align-items: center; gap: 7px; font-size: 0.92rem; color: #4a4060; font-weight: 500; }
+.sd-datos svg { color: #7c3aed; }
+.sd-precio { color: #7c3aed !important; font-weight: 800 !important; font-size: 1.05rem !important; }
+.sd-precio small { color: #8a7b9d; font-weight: 600; font-size: 0.72rem; }
+
+.sd-desc { margin: 6px 0 16px; color: #5b4a6b; font-size: 0.95rem; line-height: 1.55; }
+
+.sd-seccion { margin-bottom: 16px; }
+.sd-seccion h4 { margin: 0 0 8px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6a5b7d; }
+.sd-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.sd-tag { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.sd-tag--serv { background: rgba(24, 130, 218, 0.12); color: #1568b0; border: 1px solid rgba(24, 130, 218, 0.25); }
+.sd-tag--tipo { background: rgba(124, 58, 237, 0.1); color: #5e4db2; border: 1px solid rgba(124, 58, 237, 0.25); }
+
+.sd-reservar {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 8px;
+    background: linear-gradient(135deg, #6b23d8, #d827b7);
+    color: #fff; border: none; border-radius: 12px;
+    padding: 12px 26px; font-size: 0.95rem; font-weight: 800; font-family: inherit;
+    cursor: pointer; box-shadow: 0 10px 24px rgba(107, 35, 216, 0.32);
+    transition: filter 0.15s, transform 0.1s;
+}
+.sd-reservar:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+/* Mapa */
+.sd-mapa-card { padding: 18px 18px 16px; }
+.sd-mapa-card h2 {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0 0 12px; font-size: 1.05rem; color: #241533; font-family: 'Raleway', sans-serif;
+}
+.sd-mapa-card h2 svg { color: #7c3aed; }
+.sd-mapa {
+    width: 100%;
+    height: 340px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #ece7f5;
+}
+.sd-mapa-msg {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; color: #6a5b7d; font-weight: 600; font-size: 0.9rem; text-align: center; padding: 20px;
+}
+.sd-mapa-msg svg { color: #a78bce; }
+.sd-gmaps {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 12px; font-size: 0.86rem; font-weight: 700; color: #7c3aed; text-decoration: none;
+}
+.sd-gmaps:hover { text-decoration: underline; }
+
+@media (max-width: 900px) {
+    .sd-grid { grid-template-columns: 1fr; }
+    .sd-mapa { height: 280px; }
+}

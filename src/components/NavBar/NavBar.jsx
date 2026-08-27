@@ -70,7 +70,6 @@ const NavBar = () => {
                     {link('/mis-reservas', 'Mis Reservas')}
                     {link('/mis-borradores', 'Borradores')}
                     {link('/salones/new', 'Registrar Salón')}
-                    {link('/salones/mapa', 'Mapa Salones')}
                     {link('/admin', 'Admin')}
                     {cambiarRolBtn}
                     <button className='link link-logout' onClick={handleLogout} title='Cerrar sesión'>
@@ -104,7 +103,6 @@ const NavBar = () => {
                         {link('/salones', 'Crear Evento')}
                         {link('/mis-reservas', 'Mis Reservas')}
                         {link('/mis-borradores', 'Borradores')}
-                        {link('/salones/mapa', 'Mapa Salones')}
                         {panelAdminBtn}
                         {cambiarRolBtn}
                         <button className='link link-logout' onClick={handleLogout} title='Cerrar sesión'>
@@ -123,7 +121,6 @@ const NavBar = () => {
                         {link('/mi-salon', 'Mi Salón')}
                         {link('/salones/new', 'Registrar Salón')}
                         {link('/salones', 'Salones')}
-                        {link('/salones/mapa', 'Mapa')}
                         {panelAdminBtn}
                         {cambiarRolBtn}
                         <button className='link link-logout' onClick={handleLogout} title='Cerrar sesión'>

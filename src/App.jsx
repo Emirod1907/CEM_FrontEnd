@@ -11,6 +11,7 @@ import ProtectedRoute from './ProtectedRoute'
 import AdminRoute from './AdminRoute'
 import GoogleAuthCallback from './components/Screens/GoogleAuthCallback/GoogleAuthCallback'
 import MapaSalonesScreen from './components/Screens/MapaSalonesScreen/MapaSalonesScreen'
+import SalonDetailScreen from './components/Screens/SalonDetailScreen/SalonDetailScreen'
 import PagoResultadoScreen from './components/Screens/PagoResultadoScreen/PagoResultadoScreen'
 import PagoEsperaScreen from './components/Screens/PagoEsperaScreen/PagoEsperaScreen'
 import EventoSalonScreen from './components/Screens/EventoFlujo/EventoSalonScreen'
@@ -79,6 +80,7 @@ function App() {
                   {/* Salones — organizador y dueño de salón */}
                   <Route element={<RoleRoute roles={['organizador', 'dueno_salon']} />}>
                     <Route path='/salones' element={<SalonesScreen/>} />
+                    <Route path='/salones/:id' element={<SalonDetailScreen/>} />
                   </Route>
 
                   {/* Proveedor de servicios */}
