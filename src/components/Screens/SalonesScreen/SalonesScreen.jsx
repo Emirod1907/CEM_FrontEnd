@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import SalonCard from '../../Cards/SalonCard/SalonCard'
 import SalonesFiltros from '../../Filters/SalonesFiltros/SalonesFiltros'
 import SalonesMapaInline from './SalonesMapaInline'
+import DestacadosCarousel from './DestacadosCarousel'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import { getSalones, getDisponibilidadSalon } from '../../../services/salonesServices'
-import { FiMapPin, FiUsers, FiCalendar, FiSliders, FiTag, FiStar, FiChevronLeft, FiChevronRight, FiSearch, FiList, FiMap } from 'react-icons/fi'
+import { getValoracionesSalon } from '../../../services/valoracionServices'
+import { FiMapPin, FiUsers, FiCalendar, FiSliders, FiTag, FiSearch, FiList, FiMap } from 'react-icons/fi'
 import CompareBar from '../../CompareBar/CompareBar'
 import '../../Lists/Lists.css'
 import './SalonesScreen.css'
@@ -31,15 +32,16 @@ const SalonesScreen = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [filters, setFilters] = useState(FILTROS_INICIALES)
-    const [esenciales, setEsenciales] = useState(ESENCIALES_INICIALES)   // inputs del aside
+    const [esenciales, setEsenciales] = useState(ESENCIALES_INICIALES)
     const [porRango, setPorRango] = useState(false)
     const [fechaHasta, setFechaHasta] = useState('')
-    const [criterios, setCriterios] = useState(CRITERIOS_INICIALES)      // aplicados con "Buscar salón"
+    const [criterios, setCriterios] = useState(CRITERIOS_INICIALES)
     const [dispCache, setDispCache] = useState({})
     const [cargandoDisp, setCargandoDisp] = useState(false)
     const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
     const [vista, setVista] = useState('lista')   // 'lista' | 'mapa'
-    const destacadosRef = useRef(null)
+    const [valoraciones, setValoraciones] = useState({})  // id -> { promedio, total }
+    const [orden, setOrden] = useState('valoracion')       // valoracion | precio_asc | precio_desc | aforo
 
     useEffect(() => {
         const fetchSalones = async () => {
@@ -58,12 +60,33 @@ const SalonesScreen = () => {
         fetchSalones()
     }, [])
 
+    // Valoraciones (promedio+total) por salón, para ordenar por valoración
+    useEffect(() => {
+        if (salones.length === 0) return
+        let cancel = false
+        Promise.all(salones.map(s =>
+            getValoracionesSalon(s.id_bodega).then(v => [s.id_bodega, v]).catch(() => [s.id_bodega, null])
+        )).then(entries => { if (!cancel) setValoraciones(Object.fromEntries(entries)) })
+        return () => { cancel = true }
+    }, [salones])
+
+    const ratingDe = (s) => Number(valoraciones[s.id_bodega]?.promedio) || 0
+    const totalVal = (s) => Number(valoraciones[s.id_bodega]?.total) || 0
+
+    const ordenarLista = (list) => {
+        const arr = [...list]
+        if (orden === 'precio_asc') return arr.sort((a, b) => precioDe(a) - precioDe(b))
+        if (orden === 'precio_desc') return arr.sort((a, b) => precioDe(b) - precioDe(a))
+        if (orden === 'aforo') return arr.sort((a, b) => (Number(b.aforo) || 0) - (Number(a.aforo) || 0))
+        return arr.sort((a, b) => ratingDe(b) - ratingDe(a)) // valoración (default)
+    }
+
     const tiposEventoUnicos = [...new Set(salones.flatMap(s => parsearJSON(s.tipos_evento)))].filter(Boolean).sort()
 
     const destacados = [...salones]
         .filter(s => s.imagen)
         .sort((a, b) => (Number(b.aforo) || 0) - (Number(a.aforo) || 0))
-        .slice(0, 8)
+        .slice(0, 10)
 
     const filtrosActivos =
         filters.departamentos.length + filters.localidades.length + filters.servicios.length +
@@ -93,7 +116,6 @@ const SalonesScreen = () => {
     const hayCriterios = criterios.tipo_evento || criterios.invitados || criterios.fecha || criterios.rango
 
     const pasaEsenciales = (salon) => {
-        // El tipo de evento se filtra vía filters.tiposEvento ("Ideal para"), sincronizado al buscar.
         if (criterios.invitados !== '' && Number(salon.aforo) < Number(criterios.invitados)) return false
         return true
     }
@@ -165,7 +187,6 @@ const SalonesScreen = () => {
             .sort((a, b) => precioDe(a.salon) - precioDe(b.salon))
         : []
 
-    // Navega a la página de detalle del salón (con mini-mapa)
     const verSalon = (salon) => navigate(`/salones/${salon.id_bodega}`, { state: { salon, criterios } })
 
     const irAReservar = (salon, fecha) => {
@@ -179,11 +200,14 @@ const SalonesScreen = () => {
         })
     }
 
-    const scrollDestacados = (dir) => {
-        if (destacadosRef.current) destacadosRef.current.scrollBy({ left: dir * 320, behavior: 'smooth' })
-    }
-
     const salonesParaMapa = rangoValido ? resultadosRango.map(r => r.salon) : filteredSalones
+    const listaOrdenada = ordenarLista(filteredSalones)
+
+    const estrellas = (s) => {
+        const t = totalVal(s)
+        if (!t) return <span className='sal-fila-sinrating'>Sin valoraciones</span>
+        return <span className='sal-fila-estrellas'>⭐ {ratingDe(s).toFixed(1)} <small>({t})</small></span>
+    }
 
     // ── Contenido principal (vista lista) ──
     let mainContent
@@ -207,9 +231,7 @@ const SalonesScreen = () => {
                                     {i === 0 && <span className='sal-rango-badge'>Más barato</span>}
                                     {salon.nombre}
                                 </span>
-                                <span className='sal-rango-precio'>
-                                    ${precioDe(salon).toLocaleString('es-AR')}<small>/evento</small>
-                                </span>
+                                <span className='sal-rango-precio'>${precioDe(salon).toLocaleString('es-AR')}<small>/evento</small></span>
                             </div>
                             <span className='sal-rango-loc'><FiMapPin size={12} /> {salon.localidad || salon.domicilio} · aforo {salon.aforo}</span>
                             <div className='sal-rango-fechas'>
@@ -231,11 +253,39 @@ const SalonesScreen = () => {
         mainContent = <p className='salones-sin-resultados'>No se encontraron salones con estos criterios.</p>
     } else {
         mainContent = (
-            <div className='list-grid'>
-                {filteredSalones.map(salon => (
-                    <SalonCard key={salon.id_bodega} {...salon} onVerDetalle={() => verSalon(salon)} />
-                ))}
-            </div>
+            <>
+                <div className='sal-orden-row'>
+                    <span className='sal-orden-label'>Ordenar por</span>
+                    <select value={orden} onChange={e => setOrden(e.target.value)}>
+                        <option value='valoracion'>Valoración</option>
+                        <option value='precio_asc'>Precio: menor a mayor</option>
+                        <option value='precio_desc'>Precio: mayor a menor</option>
+                        <option value='aforo'>Aforo (mayor)</option>
+                    </select>
+                </div>
+                <div className='sal-lista'>
+                    {listaOrdenada.map(salon => (
+                        <div className='sal-fila' key={salon.id_bodega}>
+                            {salon.imagen && <img src={salon.imagen} alt={salon.nombre} className='sal-fila-img' loading='lazy' />}
+                            <div className='sal-fila-info'>
+                                <div className='sal-fila-top'>
+                                    <span className='sal-fila-nombre'>
+                                        {salon.nombre}
+                                        {salon.tipo_salon && <span className='sal-fila-tipo'>{salon.tipo_salon}</span>}
+                                    </span>
+                                    <span className='sal-fila-precio'>${precioDe(salon).toLocaleString('es-AR')}<small>/evento</small></span>
+                                </div>
+                                <span className='sal-fila-loc'><FiMapPin size={12} /> {salon.localidad || salon.domicilio} · aforo {salon.aforo}</span>
+                                {estrellas(salon)}
+                            </div>
+                            <div className='sal-fila-btns'>
+                                <button className='sal-fila-ver' onClick={() => verSalon(salon)}>Ver</button>
+                                <button className='sal-fila-reservar' onClick={() => irAReservar(salon)}>Reservar</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </>
         )
     }
 
@@ -308,7 +358,6 @@ const SalonesScreen = () => {
                     </div>
 
                     <div className='sal-header-acciones'>
-                        {/* Toggle Lista / Mapa */}
                         <div className='sal-vista-toggle'>
                             <button className={vista === 'lista' ? 'activo' : ''} onClick={() => setVista('lista')}>
                                 <FiList size={15} /> Lista
@@ -318,7 +367,6 @@ const SalonesScreen = () => {
                             </button>
                         </div>
 
-                        {/* Filtros detallados */}
                         <div className='sal-filtros-wrap'>
                             <button className={`sal-filtros-btn ${filtrosAbiertos ? 'activo' : ''}`} onClick={() => setFiltrosAbiertos(v => !v)}>
                                 <FiSliders size={16} /> Filtros
@@ -347,23 +395,8 @@ const SalonesScreen = () => {
                         : (loading ? <div className='salones-loading'><TailSpin /> Cargando salones...</div> : <p className='salones-error'>{error}</p>)
                 ) : (
                     <>
-                        {!loading && !error && !rangoValido && destacados.length > 0 && (
-                            <section className='sal-destacados'>
-                                <div className='sal-destacados-head'>
-                                    <h3><FiStar size={15} /> Salones destacados</h3>
-                                    <div className='sal-destacados-nav'>
-                                        <button onClick={() => scrollDestacados(-1)} aria-label='Anterior'><FiChevronLeft size={18} /></button>
-                                        <button onClick={() => scrollDestacados(1)} aria-label='Siguiente'><FiChevronRight size={18} /></button>
-                                    </div>
-                                </div>
-                                <div className='sal-destacados-track' ref={destacadosRef}>
-                                    {destacados.map(salon => (
-                                        <div className='sal-destacado-item' key={salon.id_bodega}>
-                                            <SalonCard {...salon} onVerDetalle={() => verSalon(salon)} />
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
+                        {!loading && !error && !rangoValido && (
+                            <DestacadosCarousel salones={destacados} onVer={verSalon} />
                         )}
                         {mainContent}
                     </>

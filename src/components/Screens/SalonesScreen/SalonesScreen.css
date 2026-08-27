@@ -166,6 +166,97 @@
     .sal-mapa-box { height: 440px; }
 }
 
+/* ── Destacados: cards chicas + carrusel ── */
+.sal-dest-track {
+    display: flex; gap: 12px; overflow-x: auto;
+    padding: 4px 2px 12px; scroll-snap-type: x proximity; scrollbar-width: thin;
+}
+.sal-dest-track::-webkit-scrollbar { height: 7px; }
+.sal-dest-track::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 6px; }
+.sal-dest-card {
+    flex: 0 0 165px; scroll-snap-align: start;
+    background: #fff; border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 12px;
+    overflow: hidden; cursor: pointer; text-align: left; padding: 0; font-family: inherit;
+    box-shadow: 0 8px 20px rgba(24, 10, 45, 0.16); transition: transform 0.15s, box-shadow 0.15s;
+}
+.sal-dest-card:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(24, 10, 45, 0.24); }
+.sal-dest-img { width: 100%; height: 82px; object-fit: cover; display: block; }
+.sal-dest-body { padding: 8px 10px 10px; }
+.sal-dest-nombre { display: block; font-size: 0.82rem; font-weight: 800; color: #241533; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sal-dest-precio-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.sal-dest-precio { font-size: 0.9rem; font-weight: 800; color: #7c3aed; }
+.sal-dest-desc { font-size: 0.68rem; font-weight: 800; color: #fff; background: #22a06b; border-radius: 5px; padding: 1px 5px; }
+
+/* ── Resultados como lista ordenable ── */
+.sal-orden-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.sal-orden-label { font-size: 0.82rem; color: rgba(255, 255, 255, 0.88); font-weight: 700; }
+.sal-orden-row select {
+    background: rgba(255, 255, 255, 0.92); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 9px;
+    padding: 7px 11px; font-size: 0.85rem; font-weight: 700; color: #3a2f52; font-family: inherit; cursor: pointer;
+}
+.sal-lista { display: flex; flex-direction: column; gap: 10px; }
+.sal-fila {
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(255, 255, 255, 0.94); border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 14px; padding: 10px 14px; box-shadow: 0 8px 22px rgba(24, 10, 45, 0.14);
+}
+.sal-fila-img { width: 88px; height: 66px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+.sal-fila-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.sal-fila-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.sal-fila-nombre { font-size: 0.98rem; font-weight: 800; color: #241533; font-family: 'Raleway', sans-serif; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.sal-fila-tipo { background: #eae6ff; color: #5e4db2; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; padding: 2px 7px; border-radius: 6px; flex-shrink: 0; }
+.sal-fila-precio { font-size: 1rem; font-weight: 800; color: #7c3aed; white-space: nowrap; }
+.sal-fila-precio small { font-size: 0.68rem; color: #8a7b9d; font-weight: 600; }
+.sal-fila-loc { font-size: 0.8rem; color: #6a5b7d; display: inline-flex; align-items: center; gap: 5px; }
+.sal-fila-estrellas { font-size: 0.82rem; color: #4a4060; font-weight: 700; }
+.sal-fila-estrellas small { color: #8a7b9d; font-weight: 600; }
+.sal-fila-sinrating { font-size: 0.78rem; color: #a397b3; font-style: italic; }
+.sal-fila-btns { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+.sal-fila-ver, .sal-fila-reservar {
+    border-radius: 9px; padding: 7px 16px; font-size: 0.82rem; font-weight: 700; font-family: inherit; cursor: pointer; white-space: nowrap;
+}
+.sal-fila-ver { background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.28); color: #5e4db2; }
+.sal-fila-ver:hover { background: rgba(124, 58, 237, 0.2); }
+.sal-fila-reservar { background: linear-gradient(135deg, #6b23d8, #d827b7); border: none; color: #fff; }
+.sal-fila-reservar:hover { filter: brightness(1.08); }
+
+/* ── Panel de filtros del mapa ── */
+.sal-mapa-panel {
+    position: absolute; top: 12px; left: 12px; z-index: 5;
+    width: 230px; max-height: calc(100% - 24px); overflow-y: auto;
+    background: rgba(255, 255, 255, 0.96); border-radius: 14px; padding: 14px;
+    box-shadow: 0 12px 30px rgba(20, 8, 38, 0.3); display: flex; flex-direction: column; gap: 12px;
+}
+.sal-mapa-ubic {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    background: linear-gradient(135deg, #6b23d8, #d827b7); color: #fff; border: none; border-radius: 10px;
+    padding: 9px 12px; font-size: 0.84rem; font-weight: 700; font-family: inherit; cursor: pointer;
+}
+.sal-mapa-ubic.activo { background: linear-gradient(135deg, #0a8f4a, #16a34a); }
+.sal-mapa-ubic:disabled { opacity: 0.6; cursor: not-allowed; }
+.sal-mapa-err { font-size: 0.74rem; color: #c0392b; margin: 0; line-height: 1.35; }
+.sal-mapa-check { display: flex; align-items: center; gap: 8px; font-size: 0.84rem; font-weight: 600; color: #3a2f52; cursor: pointer; }
+.sal-mapa-check.deshab { opacity: 0.5; cursor: not-allowed; }
+.sal-mapa-check input { accent-color: #7c3aed; width: 15px; height: 15px; }
+.sal-mapa-rango { display: flex; flex-direction: column; gap: 6px; }
+.sal-mapa-rango-top { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #4a4060; font-weight: 600; }
+.sal-mapa-rango-top input { width: 56px; border: 1px solid rgba(107, 35, 216, 0.25); border-radius: 7px; padding: 4px 7px; font-family: inherit; }
+.sal-mapa-rango input[type=range] { width: 100%; accent-color: #7c3aed; }
+.sal-mapa-tipos-head { display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: #4a4060; margin-bottom: 6px; }
+.sal-mapa-tipos-head button { background: none; border: none; color: #7c3aed; font-size: 0.76rem; font-weight: 700; cursor: pointer; }
+.sal-mapa-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.sal-mapa-chip {
+    display: inline-flex; align-items: center; gap: 5px; background: #fff; border: 1.5px solid; border-radius: 20px;
+    padding: 3px 9px; font-size: 0.74rem; font-weight: 700; color: #3a2f52; cursor: pointer; font-family: inherit;
+}
+.sal-mapa-dot { width: 8px; height: 8px; border-radius: 50%; }
+.sal-mapa-conteo { font-size: 0.78rem; color: #6a5b7d; font-weight: 600; margin: 0; }
+
+@media (max-width: 600px) {
+    .sal-mapa-panel { width: 185px; padding: 10px; }
+    .sal-fila-btns { flex-direction: row; }
+}
+
 /* ── Main ── */
 .salones-main {
     min-width: 0;
