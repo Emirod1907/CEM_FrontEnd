@@ -221,6 +221,17 @@
 .sal-fila-estrellas { font-size: 0.82rem; color: #4a4060; font-weight: 700; }
 .sal-fila-estrellas small { color: #8a7b9d; font-weight: 600; }
 .sal-fila-sinrating { font-size: 0.78rem; color: #a397b3; font-style: italic; }
+.sal-fila-diabadge {
+    display: inline-block; margin-left: 8px; font-size: 0.6rem; font-weight: 800;
+    border: 1px solid; border-radius: 6px; padding: 1px 6px; vertical-align: middle; white-space: nowrap;
+}
+
+/* Aviso de precio promocional (finde / feriado) en el aside */
+.sal-promo-aviso {
+    margin: 4px 0 0; font-size: 0.8rem; font-weight: 800; color: #6d28d9;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(216, 39, 183, 0.12));
+    border: 1px solid rgba(139, 92, 246, 0.32); border-radius: 9px; padding: 7px 10px; line-height: 1.35;
+}
 .sal-fila-btns { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
 .sal-fila-ver, .sal-fila-reservar {
     border-radius: 9px; padding: 7px 16px; font-size: 0.82rem; font-weight: 700; font-family: inherit; cursor: pointer; white-space: nowrap;

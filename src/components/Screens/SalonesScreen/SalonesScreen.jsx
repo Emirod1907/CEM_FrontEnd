@@ -6,6 +6,7 @@ import DestacadosCarousel from './DestacadosCarousel'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import { getSalones, getDisponibilidadSalon } from '../../../services/salonesServices'
 import { getValoracionesSalon } from '../../../services/valoracionServices'
+import { calcularPrecioEvento, tipoDia } from '../../../utils/preciosUtils'
 import { FiMapPin, FiUsers, FiCalendar, FiSliders, FiTag, FiSearch, FiList, FiMap } from 'react-icons/fi'
 import CompareBar from '../../CompareBar/CompareBar'
 import '../../Lists/Lists.css'
@@ -21,6 +22,24 @@ const parsearJSON = (valor) => {
 const isoLocal = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 const fechaCorta = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })
 const precioDe = (s) => Number(s.precio_publico ?? s.precio_alquiler) || 0
+
+// Máscara dd/mm/aaaa (formato Argentina) y conversión a ISO para los cálculos.
+const formatFecha = (value) => {
+    const d = value.replace(/\D/g, '').slice(0, 8)
+    let out = d.slice(0, 2)
+    if (d.length > 2) out += '/' + d.slice(2, 4)
+    if (d.length > 4) out += '/' + d.slice(4, 8)
+    return out
+}
+const fechaAISO = (s) => {
+    const m = (s || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+    if (!m) return ''
+    const [, dd, mm, yyyy] = m
+    const iso = `${yyyy}-${mm}-${dd}`
+    const dt = new Date(iso + 'T00:00:00')
+    if (isNaN(dt.getTime()) || dt.getMonth() + 1 !== Number(mm) || dt.getDate() !== Number(dd)) return ''
+    return iso
+}
 
 const FILTROS_INICIALES = { departamentos: [], localidades: [], aforoMin: '', aforoMax: '', servicios: [], tiposEvento: [], tiposSalon: [] }
 const ESENCIALES_INICIALES = { tipo_evento: '', invitados: '', fecha: '' }
@@ -73,10 +92,18 @@ const SalonesScreen = () => {
     const ratingDe = (s) => Number(valoraciones[s.id_bodega]?.promedio) || 0
     const totalVal = (s) => Number(valoraciones[s.id_bodega]?.total) || 0
 
+    // Precio del salón ajustado a la fecha buscada (fin de semana / feriado)
+    const precioParaFecha = (salon) => {
+        const base = precioDe(salon)
+        if (!criterios.fecha) return { precio: base, tipo: 'comun', label: null, color: null }
+        const info = calcularPrecioEvento(base, salon.precios_config, criterios.fecha, 1)
+        return { precio: info.precio, tipo: info.tipo, label: info.label, color: info.color }
+    }
+
     const ordenarLista = (list) => {
         const arr = [...list]
-        if (orden === 'precio_asc') return arr.sort((a, b) => precioDe(a) - precioDe(b))
-        if (orden === 'precio_desc') return arr.sort((a, b) => precioDe(b) - precioDe(a))
+        if (orden === 'precio_asc') return arr.sort((a, b) => precioParaFecha(a).precio - precioParaFecha(b).precio)
+        if (orden === 'precio_desc') return arr.sort((a, b) => precioParaFecha(b).precio - precioParaFecha(a).precio)
         if (orden === 'aforo') return arr.sort((a, b) => (Number(b.aforo) || 0) - (Number(a.aforo) || 0))
         return arr.sort((a, b) => ratingDe(b) - ratingDe(a)) // valoración (default)
     }
@@ -97,10 +124,10 @@ const SalonesScreen = () => {
 
     const buscarSalon = () => {
         const tipo = (esenciales.tipo_evento || '').trim()
-        const rango = (porRango && esenciales.fecha && fechaHasta && fechaHasta >= esenciales.fecha)
-            ? { desde: esenciales.fecha, hasta: fechaHasta }
-            : null
-        setCriterios({ tipo_evento: tipo, invitados: esenciales.invitados, fecha: esenciales.fecha, rango })
+        const desde = fechaAISO(esenciales.fecha)
+        const hasta = fechaAISO(fechaHasta)
+        const rango = (porRango && desde && hasta && hasta >= desde) ? { desde, hasta } : null
+        setCriterios({ tipo_evento: tipo, invitados: esenciales.invitados, fecha: desde, rango })
         setFilters(prev => ({ ...prev, tiposEvento: tipo ? [tipo] : [] }))
     }
 
@@ -195,7 +222,7 @@ const SalonesScreen = () => {
                 salon,
                 tipo_evento: criterios.tipo_evento || esenciales.tipo_evento || undefined,
                 cupo: criterios.invitados || esenciales.invitados || undefined,
-                fecha: fecha || criterios.fecha || esenciales.fecha || undefined,
+                fecha: fecha || criterios.fecha || fechaAISO(esenciales.fecha) || undefined,
             },
         })
     }
@@ -273,7 +300,15 @@ const SalonesScreen = () => {
                                         {salon.nombre}
                                         {salon.tipo_salon && <span className='sal-fila-tipo'>{salon.tipo_salon}</span>}
                                     </span>
-                                    <span className='sal-fila-precio'>${precioDe(salon).toLocaleString('es-AR')}<small>/evento</small></span>
+                                    {(() => {
+                                        const p = precioParaFecha(salon)
+                                        return (
+                                            <span className='sal-fila-precio'>
+                                                ${p.precio.toLocaleString('es-AR')}<small>/evento</small>
+                                                {p.tipo !== 'comun' && <span className='sal-fila-diabadge' style={{ color: p.color, borderColor: p.color }}>{p.label}</span>}
+                                            </span>
+                                        )
+                                    })()}
                                 </div>
                                 <span className='sal-fila-loc'><FiMapPin size={12} /> {salon.localidad || salon.domicilio} · aforo {salon.aforo}</span>
                                 {estrellas(salon)}
@@ -318,7 +353,15 @@ const SalonesScreen = () => {
 
                 <div className='sal-esencial-campo'>
                     <label htmlFor='es-fecha'><FiCalendar size={13} /> {porRango ? 'Fecha desde' : 'Fecha'}</label>
-                    <input id='es-fecha' type='date' value={esenciales.fecha} onChange={e => setEsencial('fecha', e.target.value)} />
+                    <input id='es-fecha' type='text' inputMode='numeric' placeholder='dd/mm/aaaa' maxLength={10}
+                        value={esenciales.fecha} onChange={e => setEsencial('fecha', formatFecha(e.target.value))} />
+                    {(() => {
+                        const iso = fechaAISO(esenciales.fecha)
+                        if (!iso) return null
+                        const t = tipoDia(iso)
+                        if (t === 'comun') return null
+                        return <p className='sal-promo-aviso'>🎉 ¡Precio promocional {t === 'fin_semana' ? 'fin de semana' : 'de feriado'}!</p>
+                    })()}
                 </div>
 
                 <label className='sal-rango-check'>
@@ -330,7 +373,8 @@ const SalonesScreen = () => {
                     <>
                         <div className='sal-esencial-campo'>
                             <label htmlFor='es-hasta'><FiCalendar size={13} /> Fecha hasta</label>
-                            <input id='es-hasta' type='date' min={esenciales.fecha || undefined} value={fechaHasta} onChange={e => setFechaHasta(e.target.value)} />
+                            <input id='es-hasta' type='text' inputMode='numeric' placeholder='dd/mm/aaaa' maxLength={10}
+                                value={fechaHasta} onChange={e => setFechaHasta(formatFecha(e.target.value))} />
                         </div>
                         <p className='sal-rango-hint'>Te mostramos los salones <strong>más baratos</strong> con sus <strong>fechas libres</strong> en el rango.</p>
                     </>
