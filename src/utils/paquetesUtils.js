@@ -6,6 +6,7 @@ const parsearJSON = (v) => {
     try { return JSON.parse(v) } catch { return [] }
 }
 const precioSalon = (s) => Number(s.precio_publico ?? s.precio_alquiler) || 0
+const precioBase = (item) => Number(item.precio) || 0
 
 // Distancia en km entre dos coordenadas (Haversine)
 export const distanciaKm = (lat1, lon1, lat2, lon2) => {
@@ -21,7 +22,7 @@ export const distanciaKm = (lat1, lon1, lat2, lon2) => {
 // - Ítems "por persona" (catering por plato) → precio × invitados.
 // - Fijo / por hora / por turno (seguridad, sonido, show) → 1 unidad, cubre el evento.
 export const cantidadYsubtotal = (item, invitados) => {
-    const base = Number(item.precio) || 0
+    const base = precioBase(item)
     const inv = Math.max(1, Number(invitados) || 1)
     const rinde = Number(item.ideal_para_personas) || 0
     const esDiscreto = item.categoria === 'tortas' || rinde > 0
@@ -35,34 +36,43 @@ export const cantidadYsubtotal = (item, invitados) => {
     return { cantidad: 1, subtotal: base, personas: null }
 }
 
-const precioBaseOrden = (item) => Number(item.precio) || 0
+// Categorías de producto que cuentan como "comida" y como "bebida"
+const COMIDA_CATS = ['alimentos', 'comida', 'catering']
+const BEBIDA_CATS = ['bebidas']
 
-// Niveles de paquete (de menor a mayor). Cada nivel define de qué "ventana" de
-// precios toma servicios y productos, y cuántos. Los niveles altos toman ítems
-// más caros/completos (decoración, sonido, iluminación, etc.).
+// Niveles de paquete (de menor a mayor). Cuántos ítems de cada grupo incluye cada
+// nivel. Son cantidades CRECIENTES por columna → cada nivel es un superconjunto del
+// anterior, así el total nunca baja (Plus nunca sale más caro que Premium).
+// [Económica, Estándar, Plus, Premium]
 export const TIERS_PAQUETE = [
-    { key: 'economica', label: 'Económica', color: '#22a06b', desc: 'Lo esencial para tu evento.',
-      servLo: 0.00, servHi: 0.35, servN: 1, prodLo: 0.00, prodHi: 0.50, prodN: 1 },
-    { key: 'estandar', label: 'Estándar', color: '#1868db', desc: 'Buen equilibrio precio y servicios.',
-      servLo: 0.00, servHi: 0.55, servN: 2, prodLo: 0.00, prodHi: 0.70, prodN: 2 },
-    { key: 'plus', label: 'Plus', color: '#8b5cf6', desc: 'Más servicios y mejor salón.',
-      servLo: 0.35, servHi: 0.90, servN: 3, prodLo: 0.20, prodHi: 0.95, prodN: 2 },
-    { key: 'premium', label: 'Premium', color: '#d827b7', desc: 'Todo incluido, la mejor experiencia.',
-      servLo: 0.45, servHi: 1.00, servN: 5, prodLo: 0.30, prodHi: 1.00, prodN: 3 },
+    { key: 'economica', label: 'Económica', color: '#22a06b', desc: 'Lo esencial: salón, una comida y una bebida.' },
+    { key: 'estandar', label: 'Estándar', color: '#1868db', desc: 'Comida, bebida y algunos servicios.' },
+    { key: 'plus', label: 'Plus', color: '#8b5cf6', desc: 'Más comidas, bebidas y servicios; mejor salón.' },
+    { key: 'premium', label: 'Premium', color: '#d827b7', desc: 'Todo incluido: la experiencia más completa.' },
 ]
+const PLAN = {
+    comida:   [1, 2, 3, 4],
+    bebida:   [1, 1, 2, 3],
+    servicio: [1, 2, 3, 5],
+    otro:     [0, 1, 2, 3],
+}
 
-// De un array ordenado por precio ASC, toma los `n` ítems más caros dentro de la
-// ventana [lo, hi] (fracciones del array).
-const pickVentana = (arr, lo, hi, n) => {
-    if (!arr.length || n <= 0) return []
-    const a = Math.floor(lo * arr.length)
-    const b = Math.max(a + 1, Math.ceil(hi * arr.length))
-    const pool = arr.slice(a, b)
-    return pool.slice(Math.max(0, pool.length - n))
+// Prefijo creciente de un array ordenado por precio ASC. En el último nivel
+// (Premium) además garantiza incluir el ítem más caro (el "tope") de la categoría,
+// para que lo mejor de cada rubro (ej. el pernil) siempre esté en Premium.
+const seleccionar = (arr, counts, nivel, incluirTope) => {
+    if (!arr.length) return []
+    const n = Math.min(counts[nivel], arr.length)
+    let sel = arr.slice(0, n)
+    if (incluirTope) {
+        const tope = arr[arr.length - 1]
+        if (!sel.some(x => x.id_servicio === tope.id_servicio)) sel = [...sel, tope]
+    }
+    return sel
 }
 
 // Arma los 4 paquetes combinando salón + servicios + productos del catálogo,
-// con las cantidades escaladas para cubrir a los invitados.
+// con cantidades escaladas a los invitados y precios monótonos entre niveles.
 export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubicacion = null) => {
     const inv = Math.max(1, Number(invitados) || 1)
 
@@ -73,7 +83,6 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
     }
 
     // Cercanía: por coordenadas (radio) o por departamento/localidad elegido.
-    // Si el filtro dejaría todo vacío, se ignora (mejor mostrar algo que nada).
     if (ubicacion) {
         if (ubicacion.modo === 'coords' && ubicacion.lat != null && ubicacion.lng != null) {
             const rango = Number(ubicacion.rangoKm) || 60
@@ -91,30 +100,41 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
             if (enZona.length) aptos = enZona
         }
     }
-
-    aptos.sort((a, b) => precioSalon(a) - precioSalon(b))
     if (aptos.length === 0) return []
 
-    const servs = servicios.filter(s => (s.tipo_item || 'producto') === 'servicio').sort((a, b) => precioBaseOrden(a) - precioBaseOrden(b))
-    const prods = servicios.filter(s => (s.tipo_item || 'producto') === 'producto').sort((a, b) => precioBaseOrden(a) - precioBaseOrden(b))
+    // Precio efectivo del salón (ajustado a la fecha) y orden por ese precio → salón monótono
+    const precioEfectivo = (s) => fecha
+        ? calcularPrecioEvento(precioSalon(s), s.precios_config, fecha, 1).precio
+        : precioSalon(s)
+    const aptosOrden = aptos.map(s => ({ s, pe: precioEfectivo(s) })).sort((a, b) => a.pe - b.pe)
 
-    const salonEnFrac = (frac) => aptos[Math.min(aptos.length - 1, Math.round(frac * (aptos.length - 1)))]
+    // Catálogo separado por grupo, ordenado por precio ASC
+    const esProducto = (s) => (s.tipo_item || 'producto') === 'producto'
+    const comidas = servicios.filter(s => esProducto(s) && COMIDA_CATS.includes(s.categoria)).sort((a, b) => precioBase(a) - precioBase(b))
+    const bebidas = servicios.filter(s => esProducto(s) && BEBIDA_CATS.includes(s.categoria)).sort((a, b) => precioBase(a) - precioBase(b))
+    const otrosProd = servicios.filter(s => esProducto(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria)).sort((a, b) => precioBase(a) - precioBase(b))
+    const servs = servicios.filter(s => (s.tipo_item || 'producto') === 'servicio').sort((a, b) => precioBase(a) - precioBase(b))
 
-    // Adjunta cantidad/subtotal (escalados a invitados) a cada ítem elegido
     const conCantidad = (arr) => arr.map(it => {
         const cs = cantidadYsubtotal(it, inv)
         return { ...it, _cant: cs.cantidad, _sub: cs.subtotal, _personas: cs.personas }
     })
 
+    const nTiers = TIERS_PAQUETE.length
     return TIERS_PAQUETE.map((tier, i) => {
-        const frac = TIERS_PAQUETE.length > 1 ? i / (TIERS_PAQUETE.length - 1) : 0
-        const salon = salonEnFrac(frac)
-        const salonPrecio = fecha
-            ? calcularPrecioEvento(precioSalon(salon), salon.precios_config, fecha, 1).precio
-            : precioSalon(salon)
+        const esPremium = i === nTiers - 1
+        const frac = nTiers > 1 ? i / (nTiers - 1) : 0
+        const elegido = aptosOrden[Math.min(aptosOrden.length - 1, Math.round(frac * (aptosOrden.length - 1)))]
+        const salon = elegido.s
+        const salonPrecio = elegido.pe
 
-        const serviciosSel = conCantidad(pickVentana(servs, tier.servLo, tier.servHi, tier.servN))
-        const productosSel = conCantidad(pickVentana(prods, tier.prodLo, tier.prodHi, tier.prodN))
+        const comidaSel = seleccionar(comidas, PLAN.comida, i, esPremium)
+        const bebidaSel = seleccionar(bebidas, PLAN.bebida, i, esPremium)
+        const otroSel = seleccionar(otrosProd, PLAN.otro, i, esPremium)
+        const servSel = seleccionar(servs, PLAN.servicio, i, esPremium)
+
+        const serviciosSel = conCantidad(servSel)
+        const productosSel = conCantidad([...comidaSel, ...bebidaSel, ...otroSel])
         const incluidos = [...serviciosSel, ...productosSel]
         const totalItems = incluidos.reduce((acc, it) => acc + it._sub, 0)
 
@@ -136,7 +156,7 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
 // Da forma a un ítem del catálogo como ítem del carrito del organizador.
 export const itemAServicioCarrito = (item) => ({
     ...item,
-    precio: Number(item.precio) || 0,
+    precio: precioBase(item),
     horas: 1,
     turnos: 1,
     hora_inicio: null,

@@ -71,7 +71,7 @@ const AsistenteScreen = () => {
             })
             .finally(() => {
                 setCargando(false)
-                pushBot('¡Hola! Soy tu asistente 🎉 Te ayudo a armar tu evento en unos pasos. Para empezar, ¿qué tipo de evento querés organizar?')
+                pushBot('¡Hola! Soy tu asistente 🎉 Te ayudo a armar tu evento en 5 pasos. Para empezar, ¿qué tipo de evento querés organizar?')
             })
     }, [])
 
@@ -207,7 +207,7 @@ const AsistenteScreen = () => {
                         <span className='asis-avatar'>🤖</span>
                         <div>
                             <h1>Asistente de eventos</h1>
-                            <span className='asis-estado'>Te armo tu evento en unos pasos</span>
+                            <span className='asis-estado'>Te armo tu evento en 5 pasos</span>
                         </div>
                     </div>
                     <div className='asis-header-btns'>
