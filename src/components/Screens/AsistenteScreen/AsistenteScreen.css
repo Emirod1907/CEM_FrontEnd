@@ -109,6 +109,23 @@
     transition: background 0.15s;
 }
 .asis-chip:hover { background: rgba(124, 58, 237, 0.2); }
+/* Paso ubicación */
+.asis-ubic { display: flex; flex-direction: column; gap: 9px; }
+.asis-ubic-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; align-self: flex-start;
+    background: linear-gradient(135deg, #6b23d8, #d827b7); color: #fff; border: none; border-radius: 11px;
+    padding: 10px 16px; font-size: 0.9rem; font-weight: 800; cursor: pointer; font-family: inherit; transition: filter 0.15s;
+}
+.asis-ubic-btn:hover:not(:disabled) { filter: brightness(1.08); }
+.asis-ubic-btn:disabled { opacity: 0.7; cursor: default; }
+.asis-ubic-label { font-size: 0.8rem; color: #6a5b7d; font-weight: 600; }
+.asis-ubic-omitir {
+    align-self: flex-start; background: none; border: none; color: #7c3aed; font-weight: 700;
+    font-size: 0.82rem; cursor: pointer; font-family: inherit; padding: 2px 0;
+}
+.asis-ubic-omitir:hover { text-decoration: underline; }
+.asis-ubic-err { font-size: 0.8rem; color: #d92d5e; font-weight: 600; }
+
 .asis-input-row { display: flex; gap: 10px; }
 .asis-input-row input {
     flex: 1; border: 1px solid rgba(107, 35, 216, 0.25); border-radius: 12px; padding: 11px 14px;

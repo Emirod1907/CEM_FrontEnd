@@ -7,6 +7,15 @@ const parsearJSON = (v) => {
 }
 const precioSalon = (s) => Number(s.precio_publico ?? s.precio_alquiler) || 0
 
+// Distancia en km entre dos coordenadas (Haversine)
+export const distanciaKm = (lat1, lon1, lat2, lon2) => {
+    const R = 6371
+    const dLat = ((lat2 - lat1) * Math.PI) / 180
+    const dLon = ((lon2 - lon1) * Math.PI) / 180
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
 // Cantidad y subtotal de un ítem del catálogo para cubrir a los invitados:
 // - Tortas / productos que rinden N personas → ⌈invitados / rinde⌉ unidades (discreto).
 // - Ítems "por persona" (catering por plato) → precio × invitados.
@@ -54,7 +63,7 @@ const pickVentana = (arr, lo, hi, n) => {
 
 // Arma los 4 paquetes combinando salón + servicios + productos del catálogo,
 // con las cantidades escaladas para cubrir a los invitados.
-export const generarPaquetes = (tipo, invitados, fecha, salones, servicios) => {
+export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubicacion = null) => {
     const inv = Math.max(1, Number(invitados) || 1)
 
     let aptos = salones.filter(s => Number(s.aforo) >= inv)
@@ -62,6 +71,27 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios) => {
         const conTipo = aptos.filter(s => parsearJSON(s.tipos_evento).includes(tipo))
         if (conTipo.length) aptos = conTipo
     }
+
+    // Cercanía: por coordenadas (radio) o por departamento/localidad elegido.
+    // Si el filtro dejaría todo vacío, se ignora (mejor mostrar algo que nada).
+    if (ubicacion) {
+        if (ubicacion.modo === 'coords' && ubicacion.lat != null && ubicacion.lng != null) {
+            const rango = Number(ubicacion.rangoKm) || 60
+            const conCoords = aptos.filter(s => s.latitud != null && s.longitud != null)
+            const cerca = conCoords.filter(s => distanciaKm(ubicacion.lat, ubicacion.lng, Number(s.latitud), Number(s.longitud)) <= rango)
+            if (cerca.length) aptos = cerca
+            else if (conCoords.length) {
+                aptos = conCoords.sort((a, b) =>
+                    distanciaKm(ubicacion.lat, ubicacion.lng, Number(a.latitud), Number(a.longitud)) -
+                    distanciaKm(ubicacion.lat, ubicacion.lng, Number(b.latitud), Number(b.longitud))
+                ).slice(0, 8)
+            }
+        } else if (ubicacion.modo === 'departamento' && ubicacion.valor) {
+            const enZona = aptos.filter(s => s.departamento === ubicacion.valor || s.localidad === ubicacion.valor)
+            if (enZona.length) aptos = enZona
+        }
+    }
+
     aptos.sort((a, b) => precioSalon(a) - precioSalon(b))
     if (aptos.length === 0) return []
 

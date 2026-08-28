@@ -5,7 +5,7 @@ import { getSalones } from '../../../services/salonesServices'
 import { getServicios } from '../../../services/servicioServices'
 import { solicitarReserva } from '../../../services/reservaServices'
 import { generarPaquetes, itemAServicioCarrito } from '../../../utils/paquetesUtils'
-import { FiSend, FiRefreshCw, FiGrid, FiMapPin, FiUsers, FiCheck, FiChevronDown, FiChevronUp } from 'react-icons/fi'
+import { FiSend, FiRefreshCw, FiGrid, FiMapPin, FiUsers, FiCheck, FiChevronDown, FiChevronUp, FiCrosshair } from 'react-icons/fi'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import './AsistenteScreen.css'
 
@@ -47,6 +47,8 @@ const AsistenteScreen = () => {
     const [entrada, setEntrada] = useState('')
     const [creando, setCreando] = useState(null)
     const [abiertos, setAbiertos] = useState(new Set())   // paquetes con el detalle abierto
+    const [ubicando, setUbicando] = useState(false)       // pidiendo geolocalización
+    const [errUbic, setErrUbic] = useState('')
     const finRef = useRef(null)
 
     const toggleDetalle = (key) => setAbiertos(prev => {
@@ -56,6 +58,7 @@ const AsistenteScreen = () => {
     })
 
     const tiposEventoUnicos = [...new Set(salones.flatMap(s => parsearJSON(s.tipos_evento)))].filter(Boolean).sort()
+    const departamentosUnicos = [...new Set(salones.map(s => s.departamento).filter(Boolean))].sort()
 
     const pushBot = (texto, comp = null) => setMensajes(m => [...m, { id: nuevoId(), from: 'bot', texto, comp }])
     const pushUser = (texto) => setMensajes(m => [...m, { id: nuevoId(), from: 'user', texto }])
@@ -68,17 +71,17 @@ const AsistenteScreen = () => {
             })
             .finally(() => {
                 setCargando(false)
-                pushBot('¡Hola! Soy tu asistente 🎉 Te ayudo a armar tu evento en 3 pasos. Para empezar, ¿qué tipo de evento querés organizar?')
+                pushBot('¡Hola! Soy tu asistente 🎉 Te ayudo a armar tu evento en unos pasos. Para empezar, ¿qué tipo de evento querés organizar?')
             })
     }, [])
 
     useEffect(() => { finRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [mensajes])
 
-    const mostrarPaquetes = (tipo, invitados, fechaISO) => {
+    const mostrarPaquetes = (tipo, invitados, fechaISO, ubic = null) => {
         setAbiertos(new Set())
-        const paqs = generarPaquetes(tipo, invitados, fechaISO, salones, servicios)
+        const paqs = generarPaquetes(tipo, invitados, fechaISO, salones, servicios, ubic)
         if (paqs.length === 0) {
-            pushBot(`No encontré salones para ${invitados} invitados${tipo ? ` de tipo "${tipo}"` : ''}. Probá con menos invitados u otro tipo tocando "Reiniciar".`)
+            pushBot(`No encontré salones para ${invitados} invitados${tipo ? ` de tipo "${tipo}"` : ''}${ubic ? ' en esa zona' : ''}. Probá con menos invitados, otra zona u otro tipo tocando "Reiniciar".`)
             setPaso('listo')
             return
         }
@@ -110,9 +113,38 @@ const AsistenteScreen = () => {
             pushUser(val)
             setDatos(d => ({ ...d, fecha: val }))
             setEntrada('')
-            mostrarPaquetes(datos.tipo, datos.invitados, iso)
+            setPaso('ubicacion')
+            pushBot('¿En qué zona querés hacer el evento? Activá tu ubicación para ver salones cercanos, o elegí el departamento 📍')
         }
     }
+
+    // --- Paso ubicación ---
+    const continuarConUbic = (ubic, etiqueta) => {
+        pushUser(etiqueta)
+        setEntrada('')
+        mostrarPaquetes(datos.tipo, datos.invitados, fechaAISO(datos.fecha), ubic)
+    }
+
+    const usarMiUbicacion = () => {
+        if (!navigator.geolocation) { setErrUbic('Tu navegador no soporta ubicación. Elegí un departamento.'); return }
+        setUbicando(true); setErrUbic('')
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                setUbicando(false)
+                continuarConUbic({ modo: 'coords', lat: pos.coords.latitude, lng: pos.coords.longitude, rangoKm: 60 }, '📍 Mi ubicación')
+            },
+            (err) => {
+                setUbicando(false)
+                setErrUbic(err.code === err.PERMISSION_DENIED
+                    ? 'Permiso de ubicación denegado. Elegí un departamento.'
+                    : 'No pudimos obtener tu ubicación. Elegí un departamento.')
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        )
+    }
+
+    const elegirDepartamento = (dep) => continuarConUbic({ modo: 'departamento', valor: dep }, dep)
+    const omitirUbicacion = () => continuarConUbic(null, 'Cualquier zona')
 
     const elegirTipo = (t) => {
         pushUser(t)
@@ -160,6 +192,8 @@ const AsistenteScreen = () => {
         setEntrada('')
         setPaso('tipo')
         setCreando(null)
+        setUbicando(false)
+        setErrUbic('')
         pushBot('Empecemos de nuevo 🙂 ¿Qué tipo de evento querés organizar?')
     }
 
@@ -173,7 +207,7 @@ const AsistenteScreen = () => {
                         <span className='asis-avatar'>🤖</span>
                         <div>
                             <h1>Asistente de eventos</h1>
-                            <span className='asis-estado'>Te armo tu evento en 3 pasos</span>
+                            <span className='asis-estado'>Te armo tu evento en unos pasos</span>
                         </div>
                     </div>
                     <div className='asis-header-btns'>
@@ -257,19 +291,40 @@ const AsistenteScreen = () => {
                                 ))}
                             </div>
                         )}
-                        <div className='asis-input-row'>
-                            <input
-                                type={paso === 'invitados' ? 'number' : 'text'}
-                                inputMode={paso === 'fecha' ? 'numeric' : undefined}
-                                min={paso === 'invitados' ? 1 : undefined}
-                                maxLength={paso === 'fecha' ? 10 : undefined}
-                                placeholder={paso === 'tipo' ? 'Escribí el tipo de evento…' : paso === 'invitados' ? 'Cantidad de invitados' : 'dd/mm/aaaa'}
-                                value={entrada}
-                                onChange={e => setEntrada(paso === 'fecha' ? formatFecha(e.target.value) : e.target.value)}
-                                onKeyDown={onKey}
-                            />
-                            <button className='asis-enviar' onClick={responder}><FiSend size={17} /></button>
-                        </div>
+                        {paso === 'ubicacion' ? (
+                            <div className='asis-ubic'>
+                                <button className='asis-ubic-btn' onClick={usarMiUbicacion} disabled={ubicando}>
+                                    {ubicando ? <TailSpin height={16} stroke='#fff' /> : <FiCrosshair size={16} />}
+                                    {ubicando ? 'Obteniendo ubicación…' : 'Usar mi ubicación'}
+                                </button>
+                                {departamentosUnicos.length > 0 && (
+                                    <>
+                                        <span className='asis-ubic-label'>o elegí el departamento:</span>
+                                        <div className='asis-chips'>
+                                            {departamentosUnicos.map(d => (
+                                                <button key={d} className='asis-chip' onClick={() => elegirDepartamento(d)}>{d}</button>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                                <button className='asis-ubic-omitir' onClick={omitirUbicacion}>Cualquier zona →</button>
+                                {errUbic && <span className='asis-ubic-err'>{errUbic}</span>}
+                            </div>
+                        ) : (
+                            <div className='asis-input-row'>
+                                <input
+                                    type={paso === 'invitados' ? 'number' : 'text'}
+                                    inputMode={paso === 'fecha' ? 'numeric' : undefined}
+                                    min={paso === 'invitados' ? 1 : undefined}
+                                    maxLength={paso === 'fecha' ? 10 : undefined}
+                                    placeholder={paso === 'tipo' ? 'Escribí el tipo de evento…' : paso === 'invitados' ? 'Cantidad de invitados' : 'dd/mm/aaaa'}
+                                    value={entrada}
+                                    onChange={e => setEntrada(paso === 'fecha' ? formatFecha(e.target.value) : e.target.value)}
+                                    onKeyDown={onKey}
+                                />
+                                <button className='asis-enviar' onClick={responder}><FiSend size={17} /></button>
+                            </div>
+                        )}
                     </div>
                 )}
 
