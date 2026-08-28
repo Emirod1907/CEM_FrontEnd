@@ -3,6 +3,8 @@ import Login from './components/Forms/Login/Login'
 import Register from './components/Forms/Register/Register'
 import { Route, Routes } from 'react-router-dom'
 import ReservaRapida from './components/Screens/EventoFlujo/ReservaRapida'
+import ElegirInterfazScreen from './components/Screens/ElegirInterfazScreen/ElegirInterfazScreen'
+import AsistenteScreen from './components/Screens/AsistenteScreen/AsistenteScreen'
 import CreateSalonForm from './components/Forms/CreateSalonForm/CreateSalonForm'
 import HomeScreen from './components/Screens/HomeScreen/HomeScreen'
 import EventosList from './components/Lists/EventosList/EventosList'
@@ -60,6 +62,8 @@ function App() {
                   {/* Organizador */}
                   <Route element={<RoleRoute roles={['organizador']} />}>
                     <Route path='/eventos/new' element={<ReservaRapida/>} />
+                    <Route path='/elegir-interfaz' element={<ElegirInterfazScreen/>} />
+                    <Route path='/asistente' element={<AsistenteScreen/>} />
                     <Route path='/organizar/salon' element={<EventoSalonScreen />} />
                     <Route path='/organizar/servicios' element={<EventoServiciosScreen />} />
                     <Route path='/organizar/productos' element={<EventoProductosScreen />} />

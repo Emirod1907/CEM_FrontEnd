@@ -101,6 +101,7 @@ const NavBar = () => {
                     <>
                         {link('/eventos', 'Mis Eventos')}
                         {link('/salones', 'Crear Evento')}
+                        {link('/asistente', 'Asistente')}
                         {link('/mis-reservas', 'Mis Reservas')}
                         {link('/mis-borradores', 'Borradores')}
                         {panelAdminBtn}

@@ -79,7 +79,7 @@ const Login = () => {
             } else {
                 const destinos = {
                     entusiasta: '/eventos',
-                    organizador: '/salones',
+                    organizador: '/elegir-interfaz',
                     dueno_salon: '/mi-salon',
                     proveedor_servicios: '/mis-servicios',
                     proveedor_insumos: '/mi-catalogo'
