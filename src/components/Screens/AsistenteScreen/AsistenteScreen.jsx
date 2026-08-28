@@ -140,7 +140,12 @@ const AsistenteScreen = () => {
             }
             const reserva = await solicitarReserva({ bodega_id: paq.salon.id_bodega, fecha: fISO, datos_evento })
             agregarReservaOrganizador(reserva, false)
-            paq.items.forEach(s => agregarServicioAdicional(itemAServicioCarrito(s)))
+            // Carga cada ítem con la cantidad necesaria para cubrir a los invitados
+            // (por_persona = 1 unidad, el carrito multiplica por personas del evento)
+            paq.items.forEach(s => {
+                const veces = Math.max(1, s._cant || 1)
+                for (let i = 0; i < veces; i++) agregarServicioAdicional(itemAServicioCarrito(s))
+            })
             navigate('/organizar/servicios')
         } catch (e) {
             console.error('Error al elegir paquete:', e)
@@ -212,17 +217,20 @@ const AsistenteScreen = () => {
                                                         {abierto && (
                                                             <div className='asis-paq-body'>
                                                                 <p className='asis-paq-desc'>{paq.desc}</p>
-                                                                <div className='asis-paq-salon-dir'><FiMapPin size={12} /> {paq.salon.localidad || paq.salon.domicilio} · ${Number(paq.salon.precio_publico ?? paq.salon.precio_alquiler ?? 0).toLocaleString('es-AR')} salón</div>
+                                                                <div className='asis-det-sec'>
+                                                                    <span className='asis-det-titulo'>Salón</span>
+                                                                    <ul><li><FiCheck size={11} /> {paq.salon.nombre} <span className='asis-det-cant'><FiMapPin size={10} /> {paq.salon.localidad || paq.salon.domicilio}</span><span className='asis-det-precio'>{fmt(paq.salonPrecio)}</span></li></ul>
+                                                                </div>
                                                                 {paq.servicios.length > 0 && (
                                                                     <div className='asis-det-sec'>
                                                                         <span className='asis-det-titulo'>Servicios incluidos</span>
-                                                                        <ul>{paq.servicios.map(s => <li key={s.id_servicio}><FiCheck size={11} /> {s.nombre}<span className='asis-det-precio'>{fmt(s.precio)}</span></li>)}</ul>
+                                                                        <ul>{paq.servicios.map(s => <li key={s.id_servicio}><FiCheck size={11} /> {s.nombre}{s._cant > 1 && <span className='asis-det-cant'>× {s._cant}</span>}{s._personas && <span className='asis-det-cant'>{s._personas} pers.</span>}<span className='asis-det-precio'>{fmt(s._sub)}</span></li>)}</ul>
                                                                     </div>
                                                                 )}
                                                                 {paq.productos.length > 0 && (
                                                                     <div className='asis-det-sec'>
                                                                         <span className='asis-det-titulo'>Productos incluidos</span>
-                                                                        <ul>{paq.productos.map(s => <li key={s.id_servicio}><FiCheck size={11} /> {s.nombre}<span className='asis-det-precio'>{fmt(s.precio)}</span></li>)}</ul>
+                                                                        <ul>{paq.productos.map(s => <li key={s.id_servicio}><FiCheck size={11} /> {s.nombre}{s._cant > 1 && <span className='asis-det-cant'>× {s._cant}</span>}{s._personas && <span className='asis-det-cant'>{s._personas} pers.</span>}<span className='asis-det-precio'>{fmt(s._sub)}</span></li>)}</ul>
                                                                     </div>
                                                                 )}
                                                             </div>

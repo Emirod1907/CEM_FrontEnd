@@ -95,7 +95,9 @@
 .asis-det-sec ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .asis-det-sec li { display: flex; align-items: center; gap: 7px; font-size: 0.82rem; color: #4a4060; }
 .asis-det-sec li svg { color: #22a06b; flex-shrink: 0; }
-.asis-det-precio { margin-left: auto; font-weight: 700; color: #7c3aed; }
+.asis-det-cant { display: inline-flex; align-items: center; gap: 3px; font-size: 0.7rem; font-weight: 600; color: #8a7b9d; background: rgba(124, 58, 237, 0.08); border-radius: 5px; padding: 1px 7px; }
+.asis-det-cant svg { color: #a08bd0 !important; }
+.asis-det-precio { margin-left: auto; font-weight: 700; color: #7c3aed; flex-shrink: 0; }
 
 /* Barra de entrada */
 .asis-input-bar { border-top: 1px solid rgba(107, 35, 216, 0.12); padding: 12px 14px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
