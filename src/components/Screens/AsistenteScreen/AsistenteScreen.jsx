@@ -5,7 +5,7 @@ import { getSalones } from '../../../services/salonesServices'
 import { getServicios } from '../../../services/servicioServices'
 import { solicitarReserva } from '../../../services/reservaServices'
 import { generarPaquetes, itemAServicioCarrito } from '../../../utils/paquetesUtils'
-import { FiSend, FiRefreshCw, FiGrid, FiMapPin, FiUsers, FiCheck } from 'react-icons/fi'
+import { FiSend, FiRefreshCw, FiGrid, FiMapPin, FiUsers, FiCheck, FiChevronDown, FiChevronUp } from 'react-icons/fi'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import './AsistenteScreen.css'
 
@@ -46,7 +46,14 @@ const AsistenteScreen = () => {
     const [datos, setDatos] = useState({ tipo: '', invitados: '', fecha: '' })
     const [entrada, setEntrada] = useState('')
     const [creando, setCreando] = useState(null)
+    const [abiertos, setAbiertos] = useState(new Set())   // paquetes con el detalle abierto
     const finRef = useRef(null)
+
+    const toggleDetalle = (key) => setAbiertos(prev => {
+        const n = new Set(prev)
+        n.has(key) ? n.delete(key) : n.add(key)
+        return n
+    })
 
     const tiposEventoUnicos = [...new Set(salones.flatMap(s => parsearJSON(s.tipos_evento)))].filter(Boolean).sort()
 
@@ -68,6 +75,7 @@ const AsistenteScreen = () => {
     useEffect(() => { finRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [mensajes])
 
     const mostrarPaquetes = (tipo, invitados, fechaISO) => {
+        setAbiertos(new Set())
         const paqs = generarPaquetes(tipo, invitados, fechaISO, salones, servicios)
         if (paqs.length === 0) {
             pushBot(`No encontré salones para ${invitados} invitados${tipo ? ` de tipo "${tipo}"` : ''}. Probá con menos invitados u otro tipo tocando "Reiniciar".`)
@@ -132,7 +140,7 @@ const AsistenteScreen = () => {
             }
             const reserva = await solicitarReserva({ bodega_id: paq.salon.id_bodega, fecha: fISO, datos_evento })
             agregarReservaOrganizador(reserva, false)
-            paq.servicios.forEach(s => agregarServicioAdicional(itemAServicioCarrito(s)))
+            paq.items.forEach(s => agregarServicioAdicional(itemAServicioCarrito(s)))
             navigate('/organizar/servicios')
         } catch (e) {
             console.error('Error al elegir paquete:', e)
@@ -172,42 +180,62 @@ const AsistenteScreen = () => {
                 <div className='asis-chat'>
                     {cargando && <div className='asis-cargando'><TailSpin /> Cargando catálogo...</div>}
 
-                    {mensajes.map(m => (
-                        <div key={m.id} className={`asis-msg asis-msg--${m.from}`}>
-                            {m.from === 'bot' && <span className='asis-msg-avatar'>🤖</span>}
-                            <div className='asis-burbuja'>
-                                {m.texto && <p>{m.texto}</p>}
-                                {m.comp?.tipo === 'paquetes' && (
-                                    <div className='asis-paquetes'>
-                                        {m.comp.paquetes.map(paq => (
-                                            <div key={paq.key} className='asis-paq' style={{ borderTopColor: paq.color }}>
-                                                <div className='asis-paq-head'>
-                                                    <span className='asis-paq-nivel' style={{ background: paq.color }}>{paq.label}</span>
-                                                    <span className='asis-paq-total'>{fmt(paq.total)}</span>
-                                                </div>
-                                                <p className='asis-paq-desc'>{paq.desc}</p>
-                                                <div className='asis-paq-salon'>
-                                                    <FiMapPin size={12} /> {paq.salon.nombre}
-                                                    <span className='asis-paq-aforo'><FiUsers size={11} /> {paq.salon.aforo}</span>
-                                                </div>
-                                                {paq.servicios.length > 0 && (
-                                                    <ul className='asis-paq-items'>
-                                                        {paq.servicios.map(s => (
-                                                            <li key={s.id_servicio}><FiCheck size={11} /> {s.nombre}</li>
-                                                        ))}
-                                                    </ul>
-                                                )}
-                                                <button className='asis-paq-btn' style={{ background: paq.color }}
-                                                    onClick={() => elegirPaquete(paq)} disabled={!!creando}>
-                                                    {creando === paq.key ? 'Agregando…' : 'Elegir este'}
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                    {mensajes.map(m => {
+                        const esPaq = m.comp?.tipo === 'paquetes'
+                        return (
+                            <div key={m.id} className={`asis-msg asis-msg--${m.from}${esPaq ? ' asis-msg--full' : ''}`}>
+                                {m.from === 'bot' && <span className='asis-msg-avatar'>🤖</span>}
+                                <div className='asis-burbuja'>
+                                    {m.texto && <p>{m.texto}</p>}
+                                    {esPaq && (
+                                        <div className='asis-paq-lista'>
+                                            {m.comp.paquetes.map(paq => {
+                                                const abierto = abiertos.has(paq.key)
+                                                return (
+                                                    <div key={paq.key} className={`asis-paq ${abierto ? 'asis-paq--abierto' : ''}`} style={{ borderLeftColor: paq.color }}>
+                                                        <div className='asis-paq-fila'>
+                                                            <span className='asis-paq-nivel' style={{ background: paq.color }}>{paq.label}</span>
+                                                            <div className='asis-paq-txt'>
+                                                                <span className='asis-paq-salon-n'>{paq.salon.nombre}</span>
+                                                                <span className='asis-paq-meta'><FiUsers size={11} /> aforo {paq.salon.aforo} · {paq.items.length} ítem{paq.items.length !== 1 ? 's' : ''}</span>
+                                                            </div>
+                                                            <span className='asis-paq-total'>{fmt(paq.total)}</span>
+                                                            <div className='asis-paq-btns'>
+                                                                <button className='asis-paq-detalle' onClick={() => toggleDetalle(paq.key)}>
+                                                                    Ver detalle {abierto ? <FiChevronUp size={14} /> : <FiChevronDown size={14} />}
+                                                                </button>
+                                                                <button className='asis-paq-elegir' style={{ background: paq.color }} onClick={() => elegirPaquete(paq)} disabled={!!creando}>
+                                                                    {creando === paq.key ? 'Agregando…' : 'Elegir'}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        {abierto && (
+                                                            <div className='asis-paq-body'>
+                                                                <p className='asis-paq-desc'>{paq.desc}</p>
+                                                                <div className='asis-paq-salon-dir'><FiMapPin size={12} /> {paq.salon.localidad || paq.salon.domicilio} · ${Number(paq.salon.precio_publico ?? paq.salon.precio_alquiler ?? 0).toLocaleString('es-AR')} salón</div>
+                                                                {paq.servicios.length > 0 && (
+                                                                    <div className='asis-det-sec'>
+                                                                        <span className='asis-det-titulo'>Servicios incluidos</span>
+                                                                        <ul>{paq.servicios.map(s => <li key={s.id_servicio}><FiCheck size={11} /> {s.nombre}<span className='asis-det-precio'>{fmt(s.precio)}</span></li>)}</ul>
+                                                                    </div>
+                                                                )}
+                                                                {paq.productos.length > 0 && (
+                                                                    <div className='asis-det-sec'>
+                                                                        <span className='asis-det-titulo'>Productos incluidos</span>
+                                                                        <ul>{paq.productos.map(s => <li key={s.id_servicio}><FiCheck size={11} /> {s.nombre}<span className='asis-det-precio'>{fmt(s.precio)}</span></li>)}</ul>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                     <div ref={finRef} />
                 </div>
 
