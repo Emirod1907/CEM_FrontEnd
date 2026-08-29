@@ -87,8 +87,15 @@ export const cantidadYsubtotal = (item, invitados, opciones = {}) => {
     const alco = esBebida && esAlcoholica(item)
     const personas = (alco && opciones.alcoholReducido) ? Math.max(1, Math.ceil(inv * 0.2)) : inv
 
-    if (cat === 'tortas' || rinde > 0) {
-        const cant = rinde > 0 ? Math.max(1, Math.ceil(personas / rinde)) : 1
+    // Torta: el precio es para su tamaño de referencia (rinde N personas) → se cobra
+    // proporcional al cupo: subtotal = (precio / rinde) × invitados.
+    if (cat === 'tortas') {
+        const r = rinde > 0 ? rinde : 1
+        return { cantidad: 1, subtotal: Math.round(base * personas / r), personas }
+    }
+    // Otros productos con rinde N (packs) → ⌈personas / rinde⌉ unidades (discreto).
+    if (rinde > 0) {
+        const cant = Math.max(1, Math.ceil(personas / rinde))
         return { cantidad: cant, subtotal: base * cant, personas: null }
     }
     if (item.tipo_precio === 'por_persona') {
@@ -204,8 +211,7 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
 
     const bebidas = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && BEBIDA_CATS.includes(s.categoria))))
     const vajilla = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && VAJILLA_CATS.includes(s.categoria))))
-    // Otros productos, EXCLUYENDO tortas: son discretas, necesitan requisitos/config → se agregan a mano.
-    const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !esPernil(s) && s.categoria !== 'tortas' && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria) && !VAJILLA_CATS.includes(s.categoria))))
+    const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !esPernil(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria) && !VAJILLA_CATS.includes(s.categoria))))
     const servs = ordenar(servicios.filter(s => (s.tipo_item || 'producto') === 'servicio'))
 
     const marcar = (it, cs) => ({ ...it, _cant: cs.cantidad, _sub: cs.subtotal, _personas: cs.personas, _presentacion: BEBIDA_CATS.includes(it.categoria) ? presentacionBebida(it) : '' })
@@ -255,12 +261,24 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
 }
 
 // Da forma a un ítem del catálogo como ítem del carrito del organizador.
-export const itemAServicioCarrito = (item) => ({
-    ...item,
-    precio: precioBase(item),
-    horas: 1,
-    turnos: 1,
-    hora_inicio: null,
-    hora_manual: false,
-    tramo: null,
-})
+export const itemAServicioCarrito = (item) => {
+    let precio = precioBase(item)
+    let tipo_precio = item.tipo_precio
+    // Torta: el precio es para su tamaño de referencia (rinde N). Se carga como
+    // "por persona" al precio unitario (precio/rinde) para cobrar proporcional al cupo.
+    const rinde = Number(item.ideal_para_personas) || 0
+    if (item.categoria === 'tortas' && rinde > 0) {
+        precio = Math.round(precio / rinde)
+        tipo_precio = 'por_persona'
+    }
+    return {
+        ...item,
+        precio,
+        tipo_precio,
+        horas: 1,
+        turnos: 1,
+        hora_inicio: null,
+        hora_manual: false,
+        tramo: null,
+    }
+}
