@@ -5,6 +5,7 @@ import { getSalones } from '../../../services/salonesServices'
 import { getServicios } from '../../../services/servicioServices'
 import { solicitarReserva } from '../../../services/reservaServices'
 import { generarPaquetes, itemAServicioCarrito } from '../../../utils/paquetesUtils'
+import { dedupCanonico } from '../../../utils/texto'
 import { FiSend, FiRefreshCw, FiGrid, FiMapPin, FiUsers, FiCheck, FiChevronDown, FiChevronUp, FiCrosshair } from 'react-icons/fi'
 import TailSpin from 'react-loading-icons/dist/esm/components/tail-spin'
 import './AsistenteScreen.css'
@@ -58,7 +59,7 @@ const AsistenteScreen = () => {
     })
 
     const tiposEventoUnicos = [...new Set(salones.flatMap(s => parsearJSON(s.tipos_evento)))].filter(Boolean).sort()
-    const departamentosUnicos = [...new Set(salones.map(s => s.departamento).filter(Boolean))].sort()
+    const departamentosUnicos = dedupCanonico(salones.map(s => s.departamento))
 
     const pushBot = (texto, comp = null) => setMensajes(m => [...m, { id: nuevoId(), from: 'bot', texto, comp }])
     const pushUser = (texto) => setMensajes(m => [...m, { id: nuevoId(), from: 'user', texto }])

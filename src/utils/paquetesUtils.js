@@ -1,4 +1,5 @@
 import { calcularPrecioEvento } from './preciosUtils'
+import { normalizarTexto } from './texto'
 
 const parsearJSON = (v) => {
     if (!v) return []
@@ -115,13 +116,8 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
         if (conTipo.length) aptos = conTipo
     }
 
-    // Fiesta infantil → mostrar mayormente peloteros (si hay)
-    if (opciones.preferirPeloteros) {
-        const pel = aptos.filter(s => (s.tipo_salon || '').toLowerCase().includes('pelotero'))
-        if (pel.length) aptos = pel
-    }
-
     // Cercanía: por coordenadas (radio) o por departamento/localidad elegido.
+    // (La ubicación es una restricción fuerte: se aplica ANTES de preferir peloteros.)
     if (ubicacion) {
         if (ubicacion.modo === 'coords' && ubicacion.lat != null && ubicacion.lng != null) {
             const rango = Number(ubicacion.rangoKm) || 60
@@ -135,9 +131,16 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
                 ).slice(0, 8)
             }
         } else if (ubicacion.modo === 'departamento' && ubicacion.valor) {
-            const enZona = aptos.filter(s => s.departamento === ubicacion.valor || s.localidad === ubicacion.valor)
+            const valN = normalizarTexto(ubicacion.valor)
+            const enZona = aptos.filter(s => normalizarTexto(s.departamento) === valN || normalizarTexto(s.localidad) === valN)
             if (enZona.length) aptos = enZona
         }
+    }
+
+    // Fiesta infantil → mostrar mayormente peloteros (dentro de la zona ya filtrada)
+    if (opciones.preferirPeloteros) {
+        const pel = aptos.filter(s => (s.tipo_salon || '').toLowerCase().includes('pelotero'))
+        if (pel.length) aptos = pel
     }
     if (aptos.length === 0) return []
 

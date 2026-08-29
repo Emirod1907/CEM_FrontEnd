@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { dedupCanonico } from '../../../utils/texto'
 import './SalonesFiltros.css'
 
 const parsearJSON = (valor) => {
@@ -22,8 +23,8 @@ const Seccion = ({ titulo, activos, children }) => {
 }
 
 const SalonesFiltros = ({ salones, filters, onFiltersChange, cupoFiltro }) => {
-    const departamentosUnicos = [...new Set(salones.map(b => b.departamento).filter(Boolean))].sort()
-    const localidadesUnicas = [...new Set(salones.map(b => b.localidad).filter(Boolean))].sort()
+    const departamentosUnicos = dedupCanonico(salones.map(b => b.departamento))
+    const localidadesUnicas = dedupCanonico(salones.map(b => b.localidad))
 
     const aforoValues = salones.map(b => b.aforo).filter(a => a != null)
     const aforoMinGlobal = aforoValues.length ? Math.min(...aforoValues) : 0

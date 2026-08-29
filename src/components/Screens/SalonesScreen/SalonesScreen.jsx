@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { normalizarTexto } from '../../../utils/texto'
 import SalonesFiltros from '../../Filters/SalonesFiltros/SalonesFiltros'
 import SalonesMapaInline from './SalonesMapaInline'
 import DestacadosCarousel from './DestacadosCarousel'
@@ -148,8 +149,8 @@ const SalonesScreen = () => {
     }
 
     const pasaFiltros = (salon) => {
-        if (filters.departamentos.length > 0 && !filters.departamentos.includes(salon.departamento)) return false
-        if (filters.localidades.length > 0 && !filters.localidades.includes(salon.localidad)) return false
+        if (filters.departamentos.length > 0 && !filters.departamentos.some(d => normalizarTexto(d) === normalizarTexto(salon.departamento))) return false
+        if (filters.localidades.length > 0 && !filters.localidades.some(l => normalizarTexto(l) === normalizarTexto(salon.localidad))) return false
         if (filters.aforoMin !== '' && salon.aforo < Number(filters.aforoMin)) return false
         if (filters.aforoMax !== '' && salon.aforo > Number(filters.aforoMax)) return false
         if (filters.servicios.length > 0) {
