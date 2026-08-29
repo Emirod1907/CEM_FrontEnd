@@ -299,7 +299,7 @@ const AsistenteScreen = () => {
                                                                 {paq.productos.length > 0 && (
                                                                     <div className='asis-det-sec'>
                                                                         <span className='asis-det-titulo'>Productos incluidos</span>
-                                                                        <ul>{paq.productos.map(s => <li key={s.id_servicio}><FiCheck size={11} /> {s.nombre}{s._cant > 1 && <span className='asis-det-cant'>× {s._cant}</span>}{s._personas && <span className='asis-det-cant'>{s._personas} pers.</span>}<span className='asis-det-precio'>{fmt(s._sub)}</span></li>)}</ul>
+                                                                        <ul>{paq.productos.map(s => <li key={s.id_servicio}><FiCheck size={11} /> {s.nombre}{s._presentacion ? ` ${s._presentacion}` : ''}{s._cant > 1 && <span className='asis-det-cant'>× {s._cant}</span>}{s._personas && <span className='asis-det-cant'>{s._personas} pers.</span>}<span className='asis-det-precio'>{fmt(s._sub)}</span></li>)}</ul>
                                                                     </div>
                                                                 )}
                                                             </div>

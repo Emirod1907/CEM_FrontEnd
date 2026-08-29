@@ -54,6 +54,19 @@ const dedupPorNombre = (arr) => {
     return [...grupos.values()]
 }
 
+// ¿El producto es un pernil (plato principal que se escala por nivel)?
+const esPernil = (it) => normalizarTexto(it.nombre || '').includes('pernil')
+
+// Texto de presentación/volumen de una bebida (ej. "2,15 L", "975 ml"), inferido del nombre/unidad/descripción.
+const presentacionBebida = (item) => {
+    const t = `${item.nombre || ''} ${item.unidad || ''} ${item.descripcion || ''}`
+    let m = t.match(/(\d+(?:[.,]\d+)?)\s*(?:l|lt|lts|litros?)\b/i)
+    if (m) return `${m[1].replace('.', ',')} L`
+    m = t.match(/(\d+(?:[.,]\d+)?)\s*(?:ml|cc)\b/i)
+    if (m) return `${m[1].replace('.', ',')} ml`
+    return ''
+}
+
 // Cantidad y subtotal de un ítem del catálogo para cubrir a los invitados:
 // - Tortas / productos que rinden N personas → ⌈personas / rinde⌉ unidades (discreto).
 // - "Por persona" (catering por plato) → precio × personas.
@@ -102,12 +115,17 @@ export const TIERS_PAQUETE = [
     { key: 'premium', label: 'Premium', color: '#d827b7', desc: 'Todo incluido: la experiencia más completa.' },
 ]
 const PLAN = {
-    comida:   [1, 2, 3, 4],
+    comida:   [1, 2, 3, 4],   // se usa cuando NO hay pernil (la comida común garantiza el rubro)
+    snack:    [0, 1, 1, 2],   // comida extra (papas, etc.) cuando el pernil es el plato principal
     bebida:   [1, 1, 2, 3],
     vajilla:  [1, 1, 1, 2],
     servicio: [1, 2, 3, 5],
     otro:     [0, 1, 2, 3],
 }
+// Pernil (plato principal): cobertura del cupo y # de sabores por nivel.
+// Económica 40%, Estándar 50%, Plus 75%, Premium 120% repartido en 2 sabores (60% c/u).
+const PERNIL_COBERTURA = [0.4, 0.5, 0.75, 1.2]
+const PERNIL_SABORES = [1, 1, 1, 2]
 
 // Prefijo creciente de un array ordenado por precio ASC. En el último nivel
 // (Premium) además garantiza incluir el ítem más caro (el "tope") de la categoría,
@@ -172,21 +190,24 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
     const esProducto = (s) => (s.tipo_item || 'producto') === 'producto'
     const ordenar = (arr) => arr.sort((a, b) => precioBase(a) - precioBase(b))
 
-    // Comidas: si hay alimentos (pernil, etc.) NO se incluye catering (cubre lo mismo, es redundante).
-    let comidas = servicios.filter(s => esProducto(s) && COMIDA_CATS.includes(s.categoria))
-    if (comidas.some(c => c.categoria === 'alimentos' || c.categoria === 'comida')) {
-        comidas = comidas.filter(c => c.categoria !== 'catering')
+    // Comidas: si hay alimentos (pernil) NO se incluye catering (cubre lo mismo, es redundante).
+    let comidasBase = servicios.filter(s => esProducto(s) && COMIDA_CATS.includes(s.categoria))
+    if (comidasBase.some(c => c.categoria === 'alimentos' || c.categoria === 'comida')) {
+        comidasBase = comidasBase.filter(c => c.categoria !== 'catering')
     }
-    comidas = ordenar(dedupPorNombre(comidas))
+    comidasBase = dedupPorNombre(comidasBase)
+    const perniles = ordenar(comidasBase.filter(esPernil))            // plato principal (escala por nivel)
+    const snacks = ordenar(comidasBase.filter(it => !esPernil(it)))   // comida extra (papas, etc.)
+    const hayPernil = perniles.length > 0
+    const PLAN_COMIDA = hayPernil ? PLAN.snack : PLAN.comida          // sin pernil, la comida común garantiza el rubro
+
     const bebidas = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && BEBIDA_CATS.includes(s.categoria))))
     const vajilla = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && VAJILLA_CATS.includes(s.categoria))))
     const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria) && !VAJILLA_CATS.includes(s.categoria))))
     const servs = ordenar(servicios.filter(s => (s.tipo_item || 'producto') === 'servicio'))
 
-    const conCantidad = (arr) => arr.map(it => {
-        const cs = cantidadYsubtotal(it, inv, opciones)
-        return { ...it, _cant: cs.cantidad, _sub: cs.subtotal, _personas: cs.personas }
-    })
+    const marcar = (it, cs) => ({ ...it, _cant: cs.cantidad, _sub: cs.subtotal, _personas: cs.personas, _presentacion: BEBIDA_CATS.includes(it.categoria) ? presentacionBebida(it) : '' })
+    const conCantidad = (arr) => arr.map(it => marcar(it, cantidadYsubtotal(it, inv, opciones)))
 
     const nTiers = TIERS_PAQUETE.length
     return TIERS_PAQUETE.map((tier, i) => {
@@ -196,14 +217,23 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
         const salon = elegido.s
         const salonPrecio = elegido.pe
 
-        const comidaSel = seleccionar(comidas, PLAN.comida, i, esPremium)
+        // Pernil (plato principal) escalado por cobertura del nivel; Premium reparte en varios sabores.
+        let pernilItems = []
+        if (hayPernil) {
+            const nSab = Math.min(PERNIL_SABORES[i], perniles.length)
+            const factor = PERNIL_COBERTURA[i] / nSab
+            pernilItems = perniles.slice(0, nSab).map(p =>
+                marcar(p, cantidadYsubtotal(p, Math.max(1, Math.round(inv * factor)), opciones)))
+        }
+
+        const snackSel = seleccionar(snacks, PLAN_COMIDA, i, esPremium)
         const bebidaSel = seleccionar(bebidas, PLAN.bebida, i, esPremium)
         const vajillaSel = seleccionar(vajilla, PLAN.vajilla, i, esPremium)
         const otroSel = seleccionar(otrosProd, PLAN.otro, i, esPremium)
         const servSel = seleccionar(servs, PLAN.servicio, i, esPremium)
 
         const serviciosSel = conCantidad(servSel)
-        const productosSel = conCantidad([...comidaSel, ...bebidaSel, ...vajillaSel, ...otroSel])
+        const productosSel = [...pernilItems, ...conCantidad([...snackSel, ...bebidaSel, ...vajillaSel, ...otroSel])]
         const incluidos = [...serviciosSel, ...productosSel]
         const totalItems = incluidos.reduce((acc, it) => acc + it._sub, 0)
 
