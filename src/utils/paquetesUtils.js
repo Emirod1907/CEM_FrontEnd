@@ -38,6 +38,21 @@ const volumenLitros = (item) => {
     return 1
 }
 
+// Clave para agrupar productos "iguales" (mismo nombre, distinto tamaño): saca el volumen del nombre.
+const claveProducto = (item) => normalizarTexto((item.nombre || '').replace(/\d+(?:[.,]\d+)?\s*(?:l|lt|lts|litro|litros|ml|cc)\b/gi, ' '))
+// Deja un solo producto por nombre (evita "3 aguas distintas"); prefiere mayor volumen (menos unidades), luego menor precio.
+const dedupPorNombre = (arr) => {
+    const grupos = new Map()
+    for (const it of arr) {
+        const k = claveProducto(it)
+        const prev = grupos.get(k)
+        if (!prev) { grupos.set(k, it); continue }
+        const vN = volumenLitros(it), vP = volumenLitros(prev)
+        if (vN > vP || (vN === vP && precioBase(it) < precioBase(prev))) grupos.set(k, it)
+    }
+    return [...grupos.values()]
+}
+
 // Cantidad y subtotal de un ítem del catálogo para cubrir a los invitados:
 // - Tortas / productos que rinden N personas → ⌈personas / rinde⌉ unidades (discreto).
 // - "Por persona" (catering por plato) → precio × personas.
@@ -152,10 +167,17 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
 
     // Catálogo separado por grupo, ordenado por precio ASC
     const esProducto = (s) => (s.tipo_item || 'producto') === 'producto'
-    const comidas = servicios.filter(s => esProducto(s) && COMIDA_CATS.includes(s.categoria)).sort((a, b) => precioBase(a) - precioBase(b))
-    const bebidas = servicios.filter(s => esProducto(s) && BEBIDA_CATS.includes(s.categoria)).sort((a, b) => precioBase(a) - precioBase(b))
-    const otrosProd = servicios.filter(s => esProducto(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria)).sort((a, b) => precioBase(a) - precioBase(b))
-    const servs = servicios.filter(s => (s.tipo_item || 'producto') === 'servicio').sort((a, b) => precioBase(a) - precioBase(b))
+    const ordenar = (arr) => arr.sort((a, b) => precioBase(a) - precioBase(b))
+
+    // Comidas: si hay alimentos (pernil, etc.) NO se incluye catering (cubre lo mismo, es redundante).
+    let comidas = servicios.filter(s => esProducto(s) && COMIDA_CATS.includes(s.categoria))
+    if (comidas.some(c => c.categoria === 'alimentos' || c.categoria === 'comida')) {
+        comidas = comidas.filter(c => c.categoria !== 'catering')
+    }
+    comidas = ordenar(dedupPorNombre(comidas))
+    const bebidas = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && BEBIDA_CATS.includes(s.categoria))))
+    const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria))))
+    const servs = ordenar(servicios.filter(s => (s.tipo_item || 'producto') === 'servicio'))
 
     const conCantidad = (arr) => arr.map(it => {
         const cs = cantidadYsubtotal(it, inv, opciones)

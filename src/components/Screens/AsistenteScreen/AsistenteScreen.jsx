@@ -21,10 +21,16 @@ const formatFecha = (value) => {
     return out
 }
 const fechaAISO = (s) => {
-    const m = (s || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+    // Acepta dd/mm (año en curso), dd/mm/aa (20aa) o dd/mm/aaaa
+    const m = (s || '').trim().match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{2}|\d{4}))?$/)
     if (!m) return ''
-    const [, dd, mm, yyyy] = m
-    const iso = `${yyyy}-${mm}-${dd}`
+    const dd = m[1].padStart(2, '0')
+    const mm = m[2].padStart(2, '0')
+    let year
+    if (!m[3]) year = new Date().getFullYear()
+    else if (m[3].length === 2) year = 2000 + Number(m[3])
+    else year = Number(m[3])
+    const iso = `${year}-${mm}-${dd}`
     const dt = new Date(iso + 'T00:00:00')
     if (isNaN(dt.getTime()) || dt.getMonth() + 1 !== Number(mm) || dt.getDate() !== Number(dd)) return ''
     return iso
@@ -138,7 +144,7 @@ const AsistenteScreen = () => {
             setDatos(d => ({ ...d, invitados: String(inv) }))
             setEntrada('')
             setPaso('fecha')
-            pushBot('Perfecto. ¿Para qué fecha? (dd/mm/aaaa)')
+            pushBot('Perfecto. ¿Para qué fecha? Podés poner dd/mm (uso el año actual) o dd/mm/aa 📅')
         } else if (paso === 'fecha') {
             const iso = fechaAISO(val)
             if (!iso) return
@@ -346,7 +352,7 @@ const AsistenteScreen = () => {
                                     inputMode={paso === 'fecha' ? 'numeric' : undefined}
                                     min={(paso === 'invitados' || paso === 'edad') ? 1 : undefined}
                                     maxLength={paso === 'fecha' ? 10 : undefined}
-                                    placeholder={paso === 'tipo' ? 'Escribí el tipo de evento…' : paso === 'edad' ? 'Edad (años)' : paso === 'invitados' ? 'Cantidad de invitados' : 'dd/mm/aaaa'}
+                                    placeholder={paso === 'tipo' ? 'Escribí el tipo de evento…' : paso === 'edad' ? 'Edad (años)' : paso === 'invitados' ? 'Cantidad de invitados' : 'dd/mm (año opcional)'}
                                     value={entrada}
                                     onChange={e => setEntrada(paso === 'fecha' ? formatFecha(e.target.value) : e.target.value)}
                                     onKeyDown={onKey}
