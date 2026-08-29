@@ -57,14 +57,15 @@ const dedupPorNombre = (arr) => {
 // ¿El producto es un pernil (plato principal que se escala por nivel)?
 const esPernil = (it) => normalizarTexto(it.nombre || '').includes('pernil')
 
-// Texto de presentación/volumen de una bebida (ej. "2,15 L", "975 ml"), inferido del nombre/unidad/descripción.
+// Texto de presentación/volumen de una bebida (ej. "2,15 L", "975 ml"), inferido de la
+// unidad/descripción. Si el volumen ya está en el nombre, devuelve '' (no duplicar).
 const presentacionBebida = (item) => {
-    const t = `${item.nombre || ''} ${item.unidad || ''} ${item.descripcion || ''}`
-    let m = t.match(/(\d+(?:[.,]\d+)?)\s*(?:l|lt|lts|litros?)\b/i)
-    if (m) return `${m[1].replace('.', ',')} L`
-    m = t.match(/(\d+(?:[.,]\d+)?)\s*(?:ml|cc)\b/i)
-    if (m) return `${m[1].replace('.', ',')} ml`
-    return ''
+    const reVol = /(\d+(?:[.,]\d+)?)\s*(l|lt|lts|litros?|ml|cc)\b/i
+    if (reVol.test(item.nombre || '')) return ''
+    const m = `${item.unidad || ''} ${item.descripcion || ''}`.match(reVol)
+    if (!m) return ''
+    const uni = /ml|cc/i.test(m[2]) ? 'ml' : 'L'
+    return `${m[1].replace('.', ',')} ${uni}`
 }
 
 // Cantidad y subtotal de un ítem del catálogo para cubrir a los invitados:
