@@ -18,9 +18,10 @@ export const distanciaKm = (lat1, lon1, lat2, lon2) => {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-// Categorías de producto que cuentan como "comida" y como "bebida"
+// Categorías de producto que cuentan como "comida", "bebida" y "vajilla"
 const COMIDA_CATS = ['alimentos', 'comida', 'catering']
 const BEBIDA_CATS = ['bebidas']
+const VAJILLA_CATS = ['vajilla']
 
 const CONSUMO_BEBIDA_L = 0.7   // litros de bebida por persona (ref. 500–750 ml)
 const ALCOHOL_KEYWORDS = ['cerveza', 'birra', 'vino', 'fernet', 'champagne', 'champán', 'champan', 'sidra', 'whisky', 'whiskey', 'vodka', 'ron ', 'gin', 'ginebra', 'aperitivo', 'licor', 'espumante', 'aperol', 'campari', 'tequila', 'trago', 'alcohol']
@@ -57,7 +58,7 @@ const dedupPorNombre = (arr) => {
 // - Tortas / productos que rinden N personas → ⌈personas / rinde⌉ unidades (discreto).
 // - "Por persona" (catering por plato) → precio × personas.
 // - Bebida fija → cantidad por volumen: ⌈personas × 0.7 L / litros_por_unidad⌉.
-// - Comida/snack fijo → una porción por persona (cubre el cupo).
+// - Comida/snack/vajilla fija → una unidad por persona (cubre el cupo).
 // - Otros fijos (seguridad, sonido, show, cotillón…) → 1, cubre el evento.
 // El alcohol en eventos infantiles/bautismo se calcula solo para ~20% del cupo.
 export const cantidadYsubtotal = (item, invitados, opciones = {}) => {
@@ -66,6 +67,7 @@ export const cantidadYsubtotal = (item, invitados, opciones = {}) => {
     const cat = item.categoria
     const esBebida = BEBIDA_CATS.includes(cat)
     const esComida = COMIDA_CATS.includes(cat)
+    const esVajilla = VAJILLA_CATS.includes(cat)
     const rinde = Number(item.ideal_para_personas) || 0
 
     const alco = esBebida && esAlcoholica(item)
@@ -83,7 +85,7 @@ export const cantidadYsubtotal = (item, invitados, opciones = {}) => {
         const cant = Math.max(1, Math.ceil(personas * CONSUMO_BEBIDA_L / (volU || 1)))
         return { cantidad: cant, subtotal: base * cant, personas: null }
     }
-    if (esComida) {
+    if (esComida || esVajilla) {
         return { cantidad: personas, subtotal: base * personas, personas: null }
     }
     return { cantidad: 1, subtotal: base, personas: null }
@@ -102,6 +104,7 @@ export const TIERS_PAQUETE = [
 const PLAN = {
     comida:   [1, 2, 3, 4],
     bebida:   [1, 1, 2, 3],
+    vajilla:  [1, 1, 1, 2],
     servicio: [1, 2, 3, 5],
     otro:     [0, 1, 2, 3],
 }
@@ -176,7 +179,8 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
     }
     comidas = ordenar(dedupPorNombre(comidas))
     const bebidas = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && BEBIDA_CATS.includes(s.categoria))))
-    const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria))))
+    const vajilla = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && VAJILLA_CATS.includes(s.categoria))))
+    const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria) && !VAJILLA_CATS.includes(s.categoria))))
     const servs = ordenar(servicios.filter(s => (s.tipo_item || 'producto') === 'servicio'))
 
     const conCantidad = (arr) => arr.map(it => {
@@ -194,11 +198,12 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
 
         const comidaSel = seleccionar(comidas, PLAN.comida, i, esPremium)
         const bebidaSel = seleccionar(bebidas, PLAN.bebida, i, esPremium)
+        const vajillaSel = seleccionar(vajilla, PLAN.vajilla, i, esPremium)
         const otroSel = seleccionar(otrosProd, PLAN.otro, i, esPremium)
         const servSel = seleccionar(servs, PLAN.servicio, i, esPremium)
 
         const serviciosSel = conCantidad(servSel)
-        const productosSel = conCantidad([...comidaSel, ...bebidaSel, ...otroSel])
+        const productosSel = conCantidad([...comidaSel, ...bebidaSel, ...vajillaSel, ...otroSel])
         const incluidos = [...serviciosSel, ...productosSel]
         const totalItems = incluidos.reduce((acc, it) => acc + it._sub, 0)
 
