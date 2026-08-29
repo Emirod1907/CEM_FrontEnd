@@ -204,7 +204,8 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
 
     const bebidas = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && BEBIDA_CATS.includes(s.categoria))))
     const vajilla = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && VAJILLA_CATS.includes(s.categoria))))
-    const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !esPernil(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria) && !VAJILLA_CATS.includes(s.categoria))))
+    // Otros productos, EXCLUYENDO tortas: son discretas, necesitan requisitos/config → se agregan a mano.
+    const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !esPernil(s) && s.categoria !== 'tortas' && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria) && !VAJILLA_CATS.includes(s.categoria))))
     const servs = ordenar(servicios.filter(s => (s.tipo_item || 'producto') === 'servicio'))
 
     const marcar = (it, cs) => ({ ...it, _cant: cs.cantidad, _sub: cs.subtotal, _personas: cs.personas, _presentacion: BEBIDA_CATS.includes(it.categoria) ? presentacionBebida(it) : '' })
