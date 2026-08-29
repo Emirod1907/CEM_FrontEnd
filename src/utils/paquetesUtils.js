@@ -17,28 +17,61 @@ export const distanciaKm = (lat1, lon1, lat2, lon2) => {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-// Cantidad y subtotal de un ítem del catálogo para cubrir a los invitados:
-// - Tortas / productos que rinden N personas → ⌈invitados / rinde⌉ unidades (discreto).
-// - Ítems "por persona" (catering por plato) → precio × invitados.
-// - Fijo / por hora / por turno (seguridad, sonido, show) → 1 unidad, cubre el evento.
-export const cantidadYsubtotal = (item, invitados) => {
-    const base = precioBase(item)
-    const inv = Math.max(1, Number(invitados) || 1)
-    const rinde = Number(item.ideal_para_personas) || 0
-    const esDiscreto = item.categoria === 'tortas' || rinde > 0
-    if (esDiscreto) {
-        const cant = rinde > 0 ? Math.max(1, Math.ceil(inv / rinde)) : 1
-        return { cantidad: cant, subtotal: base * cant, personas: null }
-    }
-    if (item.tipo_precio === 'por_persona') {
-        return { cantidad: 1, subtotal: base * inv, personas: inv }
-    }
-    return { cantidad: 1, subtotal: base, personas: null }
-}
-
 // Categorías de producto que cuentan como "comida" y como "bebida"
 const COMIDA_CATS = ['alimentos', 'comida', 'catering']
 const BEBIDA_CATS = ['bebidas']
+
+const CONSUMO_BEBIDA_L = 0.7   // litros de bebida por persona (ref. 500–750 ml)
+const ALCOHOL_KEYWORDS = ['cerveza', 'birra', 'vino', 'fernet', 'champagne', 'champán', 'champan', 'sidra', 'whisky', 'whiskey', 'vodka', 'ron ', 'gin', 'ginebra', 'aperitivo', 'licor', 'espumante', 'aperol', 'campari', 'tequila', 'trago', 'alcohol']
+const esAlcoholica = (item) => {
+    const t = `${item.nombre || ''} ${item.subcategoria || ''} ${item.descripcion || ''}`.toLowerCase()
+    return ALCOHOL_KEYWORDS.some(k => t.includes(k))
+}
+// Litros por unidad de una bebida (parsea "2.25L", "750ml", "473cc" del nombre/unidad; default 1L)
+const volumenLitros = (item) => {
+    const t = `${item.nombre || ''} ${item.unidad || ''}`.toLowerCase()
+    let m = t.match(/(\d+(?:[.,]\d+)?)\s*(?:l|lt|lts|litro|litros)\b/)
+    if (m) return parseFloat(m[1].replace(',', '.')) || 1
+    m = t.match(/(\d+(?:[.,]\d+)?)\s*(?:ml|cc)\b/)
+    if (m) return (parseFloat(m[1].replace(',', '.')) || 1000) / 1000
+    return 1
+}
+
+// Cantidad y subtotal de un ítem del catálogo para cubrir a los invitados:
+// - Tortas / productos que rinden N personas → ⌈personas / rinde⌉ unidades (discreto).
+// - "Por persona" (catering por plato) → precio × personas.
+// - Bebida fija → cantidad por volumen: ⌈personas × 0.7 L / litros_por_unidad⌉.
+// - Comida/snack fijo → una porción por persona (cubre el cupo).
+// - Otros fijos (seguridad, sonido, show, cotillón…) → 1, cubre el evento.
+// El alcohol en eventos infantiles/bautismo se calcula solo para ~20% del cupo.
+export const cantidadYsubtotal = (item, invitados, opciones = {}) => {
+    const base = precioBase(item)
+    const inv = Math.max(1, Number(invitados) || 1)
+    const cat = item.categoria
+    const esBebida = BEBIDA_CATS.includes(cat)
+    const esComida = COMIDA_CATS.includes(cat)
+    const rinde = Number(item.ideal_para_personas) || 0
+
+    const alco = esBebida && esAlcoholica(item)
+    const personas = (alco && opciones.alcoholReducido) ? Math.max(1, Math.ceil(inv * 0.2)) : inv
+
+    if (cat === 'tortas' || rinde > 0) {
+        const cant = rinde > 0 ? Math.max(1, Math.ceil(personas / rinde)) : 1
+        return { cantidad: cant, subtotal: base * cant, personas: null }
+    }
+    if (item.tipo_precio === 'por_persona') {
+        return { cantidad: 1, subtotal: base * personas, personas }
+    }
+    if (esBebida) {
+        const volU = volumenLitros(item)
+        const cant = Math.max(1, Math.ceil(personas * CONSUMO_BEBIDA_L / (volU || 1)))
+        return { cantidad: cant, subtotal: base * cant, personas: null }
+    }
+    if (esComida) {
+        return { cantidad: personas, subtotal: base * personas, personas: null }
+    }
+    return { cantidad: 1, subtotal: base, personas: null }
+}
 
 // Niveles de paquete (de menor a mayor). Cuántos ítems de cada grupo incluye cada
 // nivel. Son cantidades CRECIENTES por columna → cada nivel es un superconjunto del
@@ -73,13 +106,19 @@ const seleccionar = (arr, counts, nivel, incluirTope) => {
 
 // Arma los 4 paquetes combinando salón + servicios + productos del catálogo,
 // con cantidades escaladas a los invitados y precios monótonos entre niveles.
-export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubicacion = null) => {
+export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubicacion = null, opciones = {}) => {
     const inv = Math.max(1, Number(invitados) || 1)
 
     let aptos = salones.filter(s => Number(s.aforo) >= inv)
     if (tipo) {
         const conTipo = aptos.filter(s => parsearJSON(s.tipos_evento).includes(tipo))
         if (conTipo.length) aptos = conTipo
+    }
+
+    // Fiesta infantil → mostrar mayormente peloteros (si hay)
+    if (opciones.preferirPeloteros) {
+        const pel = aptos.filter(s => (s.tipo_salon || '').toLowerCase().includes('pelotero'))
+        if (pel.length) aptos = pel
     }
 
     // Cercanía: por coordenadas (radio) o por departamento/localidad elegido.
@@ -116,7 +155,7 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
     const servs = servicios.filter(s => (s.tipo_item || 'producto') === 'servicio').sort((a, b) => precioBase(a) - precioBase(b))
 
     const conCantidad = (arr) => arr.map(it => {
-        const cs = cantidadYsubtotal(it, inv)
+        const cs = cantidadYsubtotal(it, inv, opciones)
         return { ...it, _cant: cs.cantidad, _sub: cs.subtotal, _personas: cs.personas }
     })
 

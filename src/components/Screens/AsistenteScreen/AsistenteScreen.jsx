@@ -42,8 +42,8 @@ const AsistenteScreen = () => {
     const [cargando, setCargando] = useState(true)
 
     const [mensajes, setMensajes] = useState([])
-    const [paso, setPaso] = useState('tipo')   // tipo | invitados | fecha | paquetes | listo
-    const [datos, setDatos] = useState({ tipo: '', invitados: '', fecha: '' })
+    const [paso, setPaso] = useState('tipo')   // tipo | edad | invitados | fecha | ubicacion | paquetes | listo
+    const [datos, setDatos] = useState({ tipo: '', edad: '', invitados: '', fecha: '' })
     const [entrada, setEntrada] = useState('')
     const [creando, setCreando] = useState(null)
     const [abiertos, setAbiertos] = useState(new Set())   // paquetes con el detalle abierto
@@ -77,9 +77,20 @@ const AsistenteScreen = () => {
 
     useEffect(() => { finRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [mensajes])
 
+    // Bautismo o cumpleaños < 12 → evento infantil (alcohol al 20%, mayormente peloteros)
+    const calcularOpciones = (tipo, edad) => {
+        const t = (tipo || '').toLowerCase()
+        const esBautismo = /bautismo|bautizo/.test(t)
+        const esCumple = /cumple/.test(t)
+        const edadN = parseInt(edad, 10)
+        const infantil = /infantil/.test(t) || (esCumple && edadN > 0 && edadN < 12)
+        return { alcoholReducido: esBautismo || infantil, preferirPeloteros: infantil }
+    }
+
     const mostrarPaquetes = (tipo, invitados, fechaISO, ubic = null) => {
         setAbiertos(new Set())
-        const paqs = generarPaquetes(tipo, invitados, fechaISO, salones, servicios, ubic)
+        const opciones = calcularOpciones(tipo, datos.edad)
+        const paqs = generarPaquetes(tipo, invitados, fechaISO, salones, servicios, ubic, opciones)
         if (paqs.length === 0) {
             pushBot(`No encontré salones para ${invitados} invitados${tipo ? ` de tipo "${tipo}"` : ''}${ubic ? ' en esa zona' : ''}. Probá con menos invitados, otra zona u otro tipo tocando "Reiniciar".`)
             setPaso('listo')
@@ -89,16 +100,36 @@ const AsistenteScreen = () => {
         setPaso('paquetes')
     }
 
+    // Avanza desde el tipo: si es cumpleaños pregunta la edad, si no va a invitados.
+    const avanzarDesdeTipo = (tipo) => {
+        setDatos(d => ({ ...d, tipo }))
+        setEntrada('')
+        if (/cumple/i.test(tipo)) {
+            setPaso('edad')
+            pushBot('¡Un cumpleaños! 🎂 Para una mejor experiencia, ¿de cuántos años es la fiesta?')
+        } else {
+            setPaso('invitados')
+            pushBot(`Genial, un evento de ${tipo}. ¿Para cuántos invitados?`)
+        }
+    }
+
     const responder = () => {
         const val = entrada.trim()
         if (paso === 'tipo') {
             const tipo = val
             if (!tipo) return
             pushUser(tipo)
-            setDatos(d => ({ ...d, tipo }))
+            avanzarDesdeTipo(tipo)
+        } else if (paso === 'edad') {
+            const edad = parseInt(val, 10)
+            if (!edad || edad < 1) return
+            pushUser(`${edad} años`)
+            setDatos(d => ({ ...d, edad: String(edad) }))
             setEntrada('')
             setPaso('invitados')
-            pushBot(`Genial, un evento de ${tipo}. ¿Para cuántos invitados?`)
+            pushBot(edad < 12
+                ? '¡Genial, una fiesta infantil! 🎈 ¿Para cuántos invitados?'
+                : '¡Perfecto! ¿Para cuántos invitados?')
         } else if (paso === 'invitados') {
             const inv = parseInt(val, 10)
             if (!inv || inv < 1) return
@@ -148,10 +179,7 @@ const AsistenteScreen = () => {
 
     const elegirTipo = (t) => {
         pushUser(t)
-        setDatos(d => ({ ...d, tipo: t }))
-        setEntrada('')
-        setPaso('invitados')
-        pushBot(`Genial, un evento de ${t}. ¿Para cuántos invitados?`)
+        avanzarDesdeTipo(t)
     }
 
     const elegirPaquete = async (paq) => {
@@ -188,7 +216,7 @@ const AsistenteScreen = () => {
 
     const reiniciar = () => {
         setMensajes([])
-        setDatos({ tipo: '', invitados: '', fecha: '' })
+        setDatos({ tipo: '', edad: '', invitados: '', fecha: '' })
         setEntrada('')
         setPaso('tipo')
         setCreando(null)
@@ -313,11 +341,11 @@ const AsistenteScreen = () => {
                         ) : (
                             <div className='asis-input-row'>
                                 <input
-                                    type={paso === 'invitados' ? 'number' : 'text'}
+                                    type={(paso === 'invitados' || paso === 'edad') ? 'number' : 'text'}
                                     inputMode={paso === 'fecha' ? 'numeric' : undefined}
-                                    min={paso === 'invitados' ? 1 : undefined}
+                                    min={(paso === 'invitados' || paso === 'edad') ? 1 : undefined}
                                     maxLength={paso === 'fecha' ? 10 : undefined}
-                                    placeholder={paso === 'tipo' ? 'Escribí el tipo de evento…' : paso === 'invitados' ? 'Cantidad de invitados' : 'dd/mm/aaaa'}
+                                    placeholder={paso === 'tipo' ? 'Escribí el tipo de evento…' : paso === 'edad' ? 'Edad (años)' : paso === 'invitados' ? 'Cantidad de invitados' : 'dd/mm/aaaa'}
                                     value={entrada}
                                     onChange={e => setEntrada(paso === 'fecha' ? formatFecha(e.target.value) : e.target.value)}
                                     onKeyDown={onKey}
