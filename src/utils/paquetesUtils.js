@@ -191,20 +191,20 @@ export const generarPaquetes = (tipo, invitados, fecha, salones, servicios, ubic
     const esProducto = (s) => (s.tipo_item || 'producto') === 'producto'
     const ordenar = (arr) => arr.sort((a, b) => precioBase(a) - precioBase(b))
 
-    // Comidas: si hay alimentos (pernil) NO se incluye catering (cubre lo mismo, es redundante).
-    let comidasBase = servicios.filter(s => esProducto(s) && COMIDA_CATS.includes(s.categoria))
-    if (comidasBase.some(c => c.categoria === 'alimentos' || c.categoria === 'comida')) {
-        comidasBase = comidasBase.filter(c => c.categoria !== 'catering')
-    }
-    comidasBase = dedupPorNombre(comidasBase)
-    const perniles = ordenar(comidasBase.filter(esPernil))            // plato principal (escala por nivel)
-    const snacks = ordenar(comidasBase.filter(it => !esPernil(it)))   // comida extra (papas, etc.)
+    // Pernil = plato principal, detectado por NOMBRE en cualquier categoría (a veces está en 'catering').
+    const perniles = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && esPernil(s))))
     const hayPernil = perniles.length > 0
+
+    // Comida no-pernil (snacks / guarniciones). Si hay pernil se saca el catering genérico
+    // (Catering Básico/Premium), porque el pernil cumple ese rol; el pernil NUNCA se saca.
+    let comidaResto = servicios.filter(s => esProducto(s) && COMIDA_CATS.includes(s.categoria) && !esPernil(s))
+    if (hayPernil) comidaResto = comidaResto.filter(c => c.categoria !== 'catering')
+    const snacks = ordenar(dedupPorNombre(comidaResto))
     const PLAN_COMIDA = hayPernil ? PLAN.snack : PLAN.comida          // sin pernil, la comida común garantiza el rubro
 
     const bebidas = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && BEBIDA_CATS.includes(s.categoria))))
     const vajilla = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && VAJILLA_CATS.includes(s.categoria))))
-    const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria) && !VAJILLA_CATS.includes(s.categoria))))
+    const otrosProd = ordenar(dedupPorNombre(servicios.filter(s => esProducto(s) && !esPernil(s) && !COMIDA_CATS.includes(s.categoria) && !BEBIDA_CATS.includes(s.categoria) && !VAJILLA_CATS.includes(s.categoria))))
     const servs = ordenar(servicios.filter(s => (s.tipo_item || 'producto') === 'servicio'))
 
     const marcar = (it, cs) => ({ ...it, _cant: cs.cantidad, _sub: cs.subtotal, _personas: cs.personas, _presentacion: BEBIDA_CATS.includes(it.categoria) ? presentacionBebida(it) : '' })
